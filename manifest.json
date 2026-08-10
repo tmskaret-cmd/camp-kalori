@@ -1,0 +1,16 @@
+{
+  "name": "Camp Kalori 2026-2027",
+  "short_name": "Camp Kalori",
+  "description": "Kosthold, vekt og sesongplan for Camp Kalori 2026-2027",
+  "lang": "nb",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fcfcfb",
+  "theme_color": "#8e2a23",
+  "icons": [
+    { "src": "ikon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "ikon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "ikon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

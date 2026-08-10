@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Camp Kalori 2026–2027</title>
+<meta name="description" content="Kosthold, vekt og sesongplan for Camp Kalori 2026–2027">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Camp Kalori">
+<meta name="theme-color" content="#8e2a23">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="ikon-180.png">
+<link rel="icon" type="image/png" href="ikon-192.png">
+<style>
+:root{
+  --accent:#8e2a23;         /* Camp Kalori-rød */
+  --accent-soft:#f6e7e5;
+  --accent-dark:#6e1f1a;
+  --surface:#fcfcfb;
+  --card:#ffffff;
+  --line:#e7e5e1;
+  --text:#0b0b0b;
+  --text-2:#52514e;
+  --text-3:#8a8880;
+  --good:#008300;
+  --good-soft:#e7f3e7;
+  --warn:#a36a00;
+  --warn-soft:#fdf3e0;
+  --bad:#c22a28;
+  --bad-soft:#fbe9e9;
+  --blue:#2a78d6;           /* vektserie (validert kategorisk slot 1) */
+  --radius:14px;
+  --nav-h:62px;
+  color-scheme: light;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--surface);color:var(--text);
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 12px);
+  min-height:100vh;
+}
+header.app{
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);
+  color:#fff;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 14px;
+  position:sticky;top:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+header.app h1{font-size:1.15rem;font-weight:700;letter-spacing:.2px}
+header.app .sub{font-size:.72rem;opacity:.85;font-weight:400;display:block;margin-top:1px}
+.wrap{max-width:640px;margin:0 auto;padding:14px 14px 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.card h2{font-size:.95rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card h2 .mini{font-size:.72rem;color:var(--text-3);font-weight:400;margin-left:auto}
+.muted{color:var(--text-2);font-size:.85rem;line-height:1.45}
+.small{font-size:.78rem;color:var(--text-3);line-height:1.4}
+hr.sep{border:0;border-top:1px solid var(--line);margin:10px 0}
+button,.btn{
+  font:inherit;border:0;border-radius:10px;padding:10px 14px;cursor:pointer;
+  background:var(--accent);color:#fff;font-weight:600;font-size:.9rem;
+  display:inline-flex;align-items:center;gap:6px;justify-content:center;text-decoration:none;
+}
+.btn.sec{background:#f1f0ed;color:var(--text)}
+.btn.ghost{background:transparent;color:var(--accent);padding:8px 10px}
+.btn.sm{padding:7px 11px;font-size:.82rem;border-radius:8px}
+.btn:active{opacity:.85}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+input[type=text],input[type=number],input[type=date],select,textarea{
+  font:inherit;width:100%;border:1px solid var(--line);border-radius:10px;
+  padding:10px 12px;background:#fff;color:var(--text);font-size:16px;
+}
+textarea{resize:vertical;min-height:58px;line-height:1.45}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+label.f{display:block;font-size:.75rem;font-weight:700;letter-spacing:.4px;color:var(--text-2);margin:12px 0 4px;text-transform:uppercase}
+label.f:first-child{margin-top:0}
+label.f.klrow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.klbtn{background:#f1f0ed;color:var(--text-2);font-size:.68rem;font-weight:700;padding:5px 10px;border-radius:99px;text-transform:none;letter-spacing:0}
+.klbtn:active{background:var(--accent-soft);color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.banner{border-radius:var(--radius);padding:12px 14px;margin-bottom:12px;font-size:.87rem;line-height:1.45;border:1px solid transparent}
+.banner.warn{background:var(--warn-soft);border-color:#ecd9b0;color:#5c3d00}
+.banner.bad{background:var(--bad-soft);border-color:#efc7c6;color:#7a1614}
+.banner.good{background:var(--good-soft);border-color:#c4e2c4;color:#0f5c0f}
+.banner.info{background:#eaf2fc;border-color:#c9dcf5;color:#173e6e}
+.badge{display:inline-block;font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:99px;letter-spacing:.3px;vertical-align:1px}
+.badge.good{background:var(--good-soft);color:var(--good)}
+.badge.warn{background:var(--warn-soft);color:var(--warn)}
+.badge.bad{background:var(--bad-soft);color:var(--bad)}
+.badge.neutral{background:#f1f0ed;color:var(--text-2)}
+.badge.accent{background:var(--accent-soft);color:var(--accent)}
+/* Countdown / next deadline */
+.count{display:flex;align-items:baseline;gap:8px;margin:4px 0 2px}
+.count .n{font-size:1.9rem;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.count .u{font-size:.85rem;color:var(--text-2)}
+.statrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px}
+.stat{background:#faf9f7;border:1px solid var(--line);border-radius:10px;padding:9px 10px;text-align:center}
+.stat .v{font-size:1.05rem;font-weight:800;font-variant-numeric:tabular-nums}
+.stat .l{font-size:.68rem;color:var(--text-3);margin-top:2px}
+.stat .v.good{color:var(--good)} .stat .v.bad{color:var(--bad)}
+/* Day strip (kosthold week overview) */
+.daystrip{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:12px}
+.daystrip button{background:#faf9f7;border:1px solid var(--line);color:var(--text-2);border-radius:9px;padding:7px 2px;font-size:.72rem;font-weight:600;display:flex;flex-direction:column;gap:3px;align-items:center}
+.daystrip button .d{font-size:.85rem;color:var(--text);font-weight:700}
+.daystrip button.sel{border-color:var(--accent);background:var(--accent-soft)}
+.daystrip button .dot{width:6px;height:6px;border-radius:99px;background:var(--line)}
+.daystrip button .dot.on{background:var(--good)}
+.datenav{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.datenav .cur{flex:1;text-align:center;font-weight:700;font-size:.95rem}
+.datenav .cur .wk{display:block;font-size:.7rem;color:var(--text-3);font-weight:400}
+.datenav button{background:#f1f0ed;color:var(--text);padding:8px 13px;border-radius:9px;font-size:1rem}
+/* Lists */
+.list{display:flex;flex-direction:column;gap:8px}
+.li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;display:flex;gap:10px;align-items:flex-start}
+.li .date{min-width:52px;text-align:center;background:#faf9f7;border:1px solid var(--line);border-radius:9px;padding:5px 4px}
+.li .date .dd{font-size:1rem;font-weight:800;line-height:1.1}
+.li .date .mm{font-size:.62rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px}
+.li .bod{flex:1;min-width:0}
+.li .t{font-weight:700;font-size:.88rem;line-height:1.3}
+.li .s{font-size:.78rem;color:var(--text-2);margin-top:2px;line-height:1.4}
+.li.dim{opacity:.55}
+.li.hl{border-color:var(--accent);background:#fffdfc}
+/* Rapport list */
+.rep{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:9px;background:var(--card)}
+.rep .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rep .top .t{font-weight:700;font-size:.9rem}
+.rep .meta{font-size:.78rem;color:var(--text-2);margin-top:3px}
+.rep .prog{height:5px;border-radius:99px;background:#efeeea;margin-top:8px;overflow:hidden}
+.rep .prog i{display:block;height:100%;background:var(--good);border-radius:99px}
+.rep .prog i.mid{background:var(--warn)}
+/* Vekt */
+.wlist .li .t{font-variant-numeric:tabular-nums}
+.delta{font-size:.75rem;font-weight:700}
+.delta.down{color:var(--good)} .delta.up{color:var(--bad)} .delta.zero{color:var(--text-3)}
+/* Trening */
+.sess{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:11px;padding:9px 11px;margin-bottom:7px;background:var(--card)}
+.sess .inf{flex:1;min-width:0}
+.sess .d{font-weight:700;font-size:.86rem}
+.sess .tm{font-size:.75rem;color:var(--text-2)}
+.sess .note{font-size:.72rem;color:var(--warn);margin-top:2px}
+.sess button{min-width:96px;font-size:.76rem;padding:8px 6px}
+.sess button.st-deltatt{background:var(--good-soft);color:var(--good)}
+.sess button.st-fravaer{background:var(--bad-soft);color:var(--bad)}
+.sess button.st-meldt{background:var(--warn-soft);color:var(--warn)}
+.sess button.st-none{background:#f1f0ed;color:var(--text-3)}
+/* Kalender */
+.evfilter{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px}
+.evfilter button{background:#f1f0ed;color:var(--text-2);font-size:.75rem;padding:7px 12px;border-radius:99px;white-space:nowrap}
+.evfilter button.on{background:var(--accent);color:#fff}
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(10,8,8,.5);z-index:90;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);width:100%;max-width:640px;max-height:88vh;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));overflow:auto}
+.modal h3{font-size:1rem;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.modal pre{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:.72rem;white-space:pre-wrap;word-break:break-word;line-height:1.5;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;max-height:46vh;overflow:auto}
+/* Chart */
+.chartbox{position:relative}
+.chartbox svg{display:block;width:100%;height:auto}
+.tip{position:absolute;background:var(--text);color:#fff;font-size:.72rem;padding:5px 9px;border-radius:8px;pointer-events:none;transform:translate(-50%,-130%);white-space:nowrap;display:none;font-variant-numeric:tabular-nums;z-index:5}
+/* Måltidsbilder */
+.photorow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:7px 0 2px}
+.photorow .addph{background:#f1f0ed;color:var(--text-2);font-size:.74rem;padding:7px 10px;border-radius:8px}
+.thumb{position:relative}
+.thumb img{width:54px;height:54px;object-fit:cover;border-radius:9px;border:1px solid var(--line);display:block}
+.thumb .rm{position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:99px;background:var(--text);color:#fff;font-size:.62rem;padding:0;line-height:1;display:flex;align-items:center;justify-content:center}
+.phgrid{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.phgrid img{width:46px;height:46px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+/* Mer-siden */
+.merlist{display:flex;flex-direction:column;gap:8px}
+.merlist button{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:14px;justify-content:flex-start;font-weight:600;font-size:.92rem;display:flex;gap:10px;width:100%}
+.merlist button .ar{margin-left:auto;color:var(--text-3)}
+.subhead{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.subhead button{background:transparent;color:var(--accent);padding:6px 8px 6px 0;font-size:.85rem}
+.subhead h2{font-size:1.02rem}
+/* Bottom nav */
+nav.tabs{
+  position:fixed;bottom:0;left:0;right:0;z-index:40;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(6,1fr);
+  padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));
+}
+nav.tabs button{background:none;color:var(--text-3);flex-direction:column;gap:2px;font-size:.6rem;font-weight:600;padding:4px 0;border-radius:8px}
+nav.tabs button svg{width:21px;height:21px}
+nav.tabs button.on{color:var(--accent)}
+.pill-dot{position:absolute;top:2px;right:calc(50% - 14px);width:7px;height:7px;border-radius:99px;background:var(--bad)}
+nav.tabs button{position:relative}
+.hidden{display:none!important}
+.center{text-align:center}
+.storage-warn{background:var(--warn-soft);color:#5c3d00;font-size:.75rem;padding:8px 14px;text-align:center;border-bottom:1px solid #ecd9b0}
+@media(min-width:640px){ body{padding-bottom:calc(var(--nav-h) + 24px)} }
+</style>
+</head>
+<body>
+<div id="storagewarn" class="storage-warn hidden">Testmodus: data lagres ikke permanent i denne visningen. Installer appen på telefonen for varig lagring.</div>
+<div id="demobar" class="storage-warn hidden" style="background:#eaf2fc;border-bottom-color:#c9dcf5;color:#173e6e">DEMO-MODUS – du ser eksempeldata. Dine egne data er trygt lagret. <a href="#" id="demoexit" style="color:inherit;font-weight:700">Avslutt demo</a></div>
+<header class="app">
+  <h1>Camp Kalori<span class="sub">Sesongen 2026–2027 · Skullerud Aktivitetspark</span></h1>
+  <span id="hdrweek" class="badge" style="background:rgba(255,255,255,.16);color:#fff"></span>
+</header>
+
+<main id="view" class="wrap" aria-live="polite"></main>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="hjem" aria-label="Hjem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a2 2 0 01-2 2h-4v-7h-6v7H5a2 2 0 01-2-2z"/></svg>Hjem</button>
+  <button data-tab="kosthold" aria-label="Kosthold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 3v7a2 2 0 002 2h0a2 2 0 002-2V3M6 3v18M15 3c-1.5 1.5-2 3.5-2 6 0 2 .5 3 2 3v9M15 3c1.5 1.5 2 3.5 2 6 0 2-.5 3-2 3"/></svg>Kosthold</button>
+  <button data-tab="vekt" aria-label="Vekt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 3a9 9 0 00-7 4l3 2a5 5 0 018 0l3-2a9 9 0 00-7-4z" fill="currentColor" stroke="none" opacity=".25"/><path d="M12 13l2.5-3.5"/></svg>Vekt</button>
+  <button data-tab="rapport" aria-label="Rapport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M3 7l9 6 9-6"/></svg>Rapport</button>
+  <button data-tab="plan" aria-label="Plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Plan</button>
+  <button data-tab="mer" aria-label="Mer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>Mer</button>
+</nav>
+
+<div class="modal-bg" id="modalbg"><div class="modal" id="modal"></div></div>
+<script>
+'use strict';
+/* ==================== Camp Kalori 2026-2027 – kjerne ==================== */
+const KEY='campkalori_2026_2027_v1';
+const SEASON_START='2026-08-10', SEASON_END='2027-06-24';
+const TERJE_EPOST='terje@cardiokickboxing.no';
+const KATHRINE_EPOST='kathrine@cardiokickboxing.no';
+const TERJE_TLF='95066227';
+
+/* ---------- datoverktøy ---------- */
+const pad=n=>String(n).padStart(2,'0');
+function pd(s){const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c);}
+function dstr(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function addD(d,n){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+n);return x;}
+function today(){const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate());}
+function isoWeek(d){
+  const t=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  t.setDate(t.getDate()+3-((t.getDay()+6)%7));
+  const w1=new Date(t.getFullYear(),0,4);
+  w1.setDate(w1.getDate()+3-((w1.getDay()+6)%7));
+  return {week:1+Math.round((t-w1)/604800000),year:t.getFullYear()};
+}
+const DAGER=['SØNDAG','MANDAG','TIRSDAG','ONSDAG','TORSDAG','FREDAG','LØRDAG'];
+const DAGER_K=['søn','man','tir','ons','tor','fre','lør'];
+const MND=['januar','februar','mars','april','mai','juni','juli','august','september','oktober','november','desember'];
+const MND_K=['jan','feb','mar','apr','mai','jun','jul','aug','sep','okt','nov','des'];
+function fmt(d){if(typeof d==='string')d=pd(d);return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear();}
+function fmtShort(d){if(typeof d==='string')d=pd(d);return d.getDate()+'. '+MND_K[d.getMonth()];}
+function fmtLong(d){if(typeof d==='string')d=pd(d);return DAGER[d.getDay()].toLowerCase()+' '+d.getDate()+'. '+MND[d.getMonth()]+' '+d.getFullYear();}
+function kg(v){return (Math.round(v*10)/10).toFixed(1).replace('.',',');}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ---------- lagring (med fallback for forhåndsvisning) ---------- */
+let storageOK=true, MEMSTORE=null;
+function defaultDB(){return {
+  profile:{navn:'',hoyde:null,startvekt:null,maalEgen:null,maalTerje:null,
+           tider:{tir:'17',ons:'17',tor:'17'}},
+  weights:{}, meals:{}, meds:[], attendance:{}, sent:{}, updated:null
+};}
+function loadDB(){
+  try{
+    const r=localStorage.getItem(KEY);
+    if(r){const p=JSON.parse(r);return Object.assign(defaultDB(),p);}
+    return defaultDB();
+  }catch(e){storageOK=false;MEMSTORE=MEMSTORE||defaultDB();return MEMSTORE;}
+}
+let DB=loadDB();
+function saveDB(){
+  DB.updated=new Date().toISOString();
+  try{localStorage.setItem(KEY,JSON.stringify(DB));}
+  catch(e){storageOK=false;MEMSTORE=DB;document.getElementById('storagewarn').classList.remove('hidden');}
+}
+if(!storageOK)document.getElementById('storagewarn').classList.remove('hidden');
+
+/* ---------- måltidsbilder (IndexedDB – tar ikke plass fra tekstlagringen) ---------- */
+let _idb=null;
+function idb(){
+  if(_idb)return Promise.resolve(_idb);
+  return new Promise((res,rej)=>{
+    if(!window.indexedDB){rej(new Error('IndexedDB utilgjengelig'));return;}
+    const r=indexedDB.open('campkalori_photos_v1',1);
+    r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('photos')){const s=d.createObjectStore('photos',{keyPath:'id'});s.createIndex('date','date',{unique:false});}};
+    r.onsuccess=()=>{_idb=r.result;res(_idb);};
+    r.onerror=()=>rej(r.error);
+  });
+}
+function photoPut(rec){return idb().then(d=>new Promise((res,rej)=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').put(rec);tx.oncomplete=()=>res(rec.id);tx.onerror=()=>rej(tx.error);}));}
+function photoAdd(date,meal,blob){return photoPut({id:date+'_'+meal+'_'+Date.now()+'_'+Math.floor(Math.random()*1e4),date,meal,blob,ts:Date.now()});}
+function photoDel(id){return idb().then(d=>new Promise((res,rej)=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').delete(id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);}));}
+function photosByDate(date){return photosInRange(date,date);}
+function photosInRange(from,to){
+  return idb().then(d=>new Promise((res,rej)=>{
+    const out=[];const req=d.transaction('photos').objectStore('photos').index('date').openCursor(IDBKeyRange.bound(from,to));
+    req.onsuccess=()=>{const c=req.result;if(c){out.push(c.value);c.continue();}else{out.sort((a,b)=>a.ts-b.ts);res(out);}};
+    req.onerror=()=>rej(req.error);
+  })).catch(()=>[]);
+}
+function photosAll(){return photosInRange('0000-00-00','9999-99-99');}
+function compressImage(file,maxSide,quality){
+  const MAX=maxSide||640,Q=quality||0.55;
+  const draw=src=>{
+    let w=src.width||src.naturalWidth,h=src.height||src.naturalHeight;
+    const sc=Math.min(1,MAX/Math.max(w,h));
+    w=Math.max(1,Math.round(w*sc));h=Math.max(1,Math.round(h*sc));
+    const c=document.createElement('canvas');c.width=w;c.height=h;
+    c.getContext('2d').drawImage(src,0,0,w,h);
+    return new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('toBlob feilet')),'image/jpeg',Q));
+  };
+  if(window.createImageBitmap){
+    return createImageBitmap(file,{imageOrientation:'from-image'}).catch(()=>createImageBitmap(file)).then(draw);
+  }
+  return new Promise((res,rej)=>{
+    const u=URL.createObjectURL(file),im=new Image();
+    im.onload=()=>{draw(im).then(b=>{URL.revokeObjectURL(u);res(b);},rej);};
+    im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('kunne ikke lese bildet'));};
+    im.src=u;
+  });
+}
+function photoFileName(p){
+  const d=pd(p.date);
+  return DAGER_K[d.getDay()]+'-'+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'-'+p.meal+'.jpg';
+}
+function photoIndexOf(list){
+  const idx={};
+  list.forEach(p=>{(idx[p.date]=idx[p.date]||{})[p.meal]=true;});
+  return idx;
+}
+
+/* ---------- sesongdata ---------- */
+const EGENTRENING=[
+  ['2026-09-28','2026-10-04','Uke 40'],
+  ['2026-12-21','2027-01-03','Uke 52–53 (jul og nyttår)'],
+  ['2027-02-22','2027-02-28','Uke 8 (vinterferie)'],
+  ['2027-03-22','2027-04-04','Uke 12–13 (påsken)']
+];
+function inEgentrening(ds){return EGENTRENING.some(r=>ds>=r[0]&&ds<=r[1]);}
+const RAA_TID_FRA='2026-11-30', RAA_TID_TIL='2026-12-20'; // uke 49-51: kl. 18.20-19.30
+
+/* Innleveringsperioder: annenhver mandag fra 24.08.26; ekstra pga. uke 53; siste torsdag 24.06.27 */
+function buildReports(){
+  const dues=[];
+  for(let d=pd('2026-08-24');d<=pd('2026-12-28');d=addD(d,14))dues.push(d);
+  dues.push(pd('2027-01-04'));
+  for(let d=pd('2027-01-18');d<=pd('2027-06-21');d=addD(d,14))dues.push(d);
+  const list=[];let prev=pd(SEASON_START);
+  dues.forEach(due=>{
+    const from=prev,to=addD(due,-1);
+    const weeks=[];for(let m=new Date(from);m<=to;m=addD(m,7))weeks.push(isoWeek(m).week);
+    list.push({due:dstr(due),from:dstr(from),to:dstr(to),weeks,final:false});
+    prev=due;
+  });
+  list.push({due:'2027-06-24',from:'2027-06-21',to:'2027-06-23',weeks:[25],final:true});
+  return list;
+}
+const REPORTS=buildReports();
+
+/* Treningsøkter */
+function buildSessions(){
+  const s=[];
+  for(let d=pd('2026-08-18');d<=pd('2027-06-24');d=addD(d,1)){
+    const dow=d.getDay();
+    if(dow<2||dow>4)continue;
+    const ds=dstr(d);
+    if(inEgentrening(ds))continue;
+    if(ds==='2026-09-10'||ds==='2027-05-13')continue; // flyttet til mandag
+    let note=null,warn=false;
+    if(ds==='2027-05-06'){warn=true;note='Kristi himmelfart (rød dag = studio stengt). Står ikke i planen – avklar med Terje.';}
+    s.push({date:ds,dow,note,warn});
+  }
+  s.push({date:'2026-09-07',dow:1,note:'Flyttet fra torsdag 10.09 – samme treningstid som torsdag.',warn:false});
+  s.push({date:'2027-05-10',dow:1,note:'Flyttet fra torsdag 13.05 – samme treningstid som torsdag.',warn:false});
+  s.sort((a,b)=>a.date<b.date?-1:1);
+  return s;
+}
+const SESSIONS=buildSessions();
+function sessionTime(sess){
+  if(sess.date>=RAA_TID_FRA&&sess.date<=RAA_TID_TIL)return '18:20–19:30 (RAA-tid, uke 49–51)';
+  const t=DB.profile.tider||{};
+  const key=sess.dow===2?'tir':sess.dow===3?'ons':'tor'; // mandagsøkter følger torsdagstiden
+  return (t[key]==='19'?'19:50–20:50':'17:00–18:00');
+}
+
+/* Hendelser i sesongen */
+const EVENTS=[
+ {d:'2026-08-10',type:'viktig',t:'Første veiedag – startvekten',s:'Vei deg om morgenen og send vekten til Terje før kl. 14:00 – med bilde der føttene og vekttallet vises. Fra i dag noterer du alt du spiser og drikker. Nye batterier i vekten anbefales.'},
+ {d:'2026-08-18',type:'viktig',t:'Første treningsdag',s:'Sesongen er i gang! Husk: barbeint/sokker, kun vann i flasken, ingen smykker/klokker/pulsbelte, ikke glidelås på tøyet.'},
+ {d:'2026-08-24',type:'frist',t:'Første kostholdsrapport (uke 33–34)',s:'Sendes til Terje før kl. 14:00. Deretter annenhver mandag.'},
+ {d:'2026-08-24',type:'frist',t:'Påmelding kostholds- og infomøte (uke 35)',s:'Meld deg på til Kathrine (kathrine@cardiokickboxing.no) i løpet av uke 35 (24.–30.08). Ingen etterregistrering.'},
+ {d:'2026-09-04',type:'moete',t:'Kostholds- og infomøte kl. 17:00–18:30',s:'Veldig viktig å prioritere – mye nyttig informasjon.'},
+ {d:'2026-09-07',type:'info',t:'Trening flyttet: mandag i stedet for torsdag 10.09',s:'Samme treningstider gjelder.'},
+ {d:'2026-09-28',type:'egentrening',t:'Egentreningsuke (uke 40)',s:'28.09–04.10. Egentreningsprogram kommer på e-post. Ta med hanskene hjem.'},
+ {d:'2026-10-13',type:'info',t:'Info om 1. Happening gis på treningen',s:'Er du ikke til stede: kontakt Terje på telefon innen søndag 18.10 for å få informasjonen.'},
+ {d:'2026-10-12',type:'frist',t:'Påmelding 1. Happening (uke 42)',s:'Meld deg på til Kathrine i løpet av uke 42 (12.–18.10). Ingen etterregistrering.'},
+ {d:'2026-10-23',type:'happening',t:'1. Happening – fredag 23.10 eller lørdag 24.10',s:'Hold av begge dager om du vil delta. Oppmøtested og aktivitet fortelles på treningen 13.10.'},
+ {d:'2026-11-13',type:'happening',t:'SUPERDUPER-fredag',s:'For de som er påmeldt julebordet.'},
+ {d:'2026-11-14',type:'happening',t:'Julebord',s:'Kr 1.150 for Camp Kalori-deltagere. Min. 20 / maks 32 påmeldte. Påmelding via informasjonstavlen og Facebook.'},
+ {d:'2026-11-30',type:'info',t:'Uke 49–51: treningene går på RAA-tid kl. 18:20–19:30',s:'Gjelder 30.11–20.12.'},
+ {d:'2026-12-14',type:'info',t:'Siste treningsuke i 2026 (uke 51)',s:'Også start for prioritert påmelding til RAA 2027–2028 (14.12–31.12) hos Kathrine.'},
+ {d:'2026-12-21',type:'egentrening',t:'Egentreningsuker jul og nyttår (uke 52–53)',s:'21.12–03.01. NB: kostholdsrapport skal leveres BÅDE mandag 28.12 og mandag 04.01 – 2026 har 53 uker.'},
+ {d:'2027-01-05',type:'viktig',t:'Oppstart trening 2027',s:'Godt nytt treningsår!'},
+ {d:'2027-01-11',type:'frist',t:'Påmelding kostholdsmøte (uke 2)',s:'Meld deg på til Kathrine i løpet av uke 2 (11.–17.01). Ingen etterregistrering.'},
+ {d:'2027-01-22',type:'moete',t:'Kostholdsmøte kl. 17:00–18:30',s:'Prioriter dette møtet.'},
+ {d:'2027-02-22',type:'egentrening',t:'Egentreningsuke (uke 8)',s:'22.02–28.02.'},
+ {d:'2027-03-22',type:'egentrening',t:'Egentreningsuker påske (uke 12–13)',s:'22.03–04.04. (I planen står dette under april, men ukene ligger i mars/første april-dager.)'},
+ {d:'2027-05-06',type:'info',t:'Kristi himmelfart – rød dag (studio normalt stengt)',s:'Denne torsdagen er IKKE omtalt i planen. Avklar med Terje om treningen utgår eller flyttes.'},
+ {d:'2027-05-10',type:'info',t:'Trening flyttet: mandag i stedet for torsdag 13.05',s:'Samme treningstider gjelder.'},
+ {d:'2027-05-17',type:'info',t:'Grunnlovsdag og 2. pinsedag – rød dag',s:'Studio stengt (mandag – ingen fast treningsdag).'},
+ {d:'2027-05-17',type:'frist',t:'Påmelding 2. Happening (uke 20)',s:'Meld deg på til Kathrine i løpet av uke 20 (17.–23.05). Ingen etterregistrering.'},
+ {d:'2027-05-18',type:'info',t:'Info om 2. Happening gis på treningen',s:'Er du ikke til stede: kontakt Terje på telefon innen søndag 23.05.'},
+ {d:'2027-05-28',type:'happening',t:'2. Happening – fredag 28.05 eller lørdag 29.05',s:'Hold av begge dager om du vil delta.'},
+ {d:'2027-06-24',type:'viktig',t:'Siste treningsdag og siste innlevering',s:'Siste kostholdsrapport OG morgenvekten (sluttvekten) sendes så tidlig som mulig, senest kl. 14:00.'}
+];
+const EVENTTYPES={viktig:'Viktig',frist:'Frister',moete:'Møter',happening:'Happenings',egentrening:'Egentrening',info:'Info'};
+
+/* Huskeregler (fra Camp Kalori-planen, studioreglene og e-postene) */
+const REGLER=[
+ ['Innlevering','Kost og vekt sendes til terje@cardiokickboxing.no annenhver mandag før kl. 14:00 – uansett jul, påske, røde dager og egentreningsuker. Send så tidlig som mulig på dagen. Du får tilbakemelding innen neste innlevering. For sent = du skal fortsatt ALLTID levere, men risikerer treninger på boksesekken (minst 3) til Terje har lest rapporten.'],
+ ['Veiing','Vei deg hver mandag morgen – alltid på din egen vekt. På reise? Ta med vekten. Mandagsvekten påføres hver innlevering. Startvekten mandag 10.08.2026 sendes MED bilde der du står på vekten (føtter og vekttall synlig) – senere veiinger trenger ikke bilde. Nye batterier i vekten anbefales.'],
+ ['Kostholdsføring','Skriv ned alt du spiser og drikker (også kaffe/te), så spesifisert som mulig. IKKE vei maten og IKKE tell kalorier – det er Terjes jobb. Ikke bruk håndskrift. Klokkeslett er ikke nødvendig. Før løpende gjennom dagen – ikke klipp og lim fra uke til uke.'],
+ ['Fravær og oppmøte','Fravær meldes til Terje på SMS i forkant, så tidlig som mulig i samme uke. Kom gjerne før timen starter. Kommer du etter oppstart, tas oppvarmingen på sekk/skyggeboksing – kommer du for sent kan hele timen bli på sekken. Må du gå før timen og praten er ferdig, si fra FØR timen starter (og beregn buffer for overtid).'],
+ ['Medisiner','Begynner du på nye medisiner (uansett hva – også antibiotika o.l.) eller endrer faste medisiner: meld fra SKRIFTLIG til Terje. Smertestillende før trening skal avtales på forhånd.'],
+ ['I studioet','Telefonfri sone – telefonen legges bort før du går inn (unntak avtales på forhånd). Kun vann i drikkeflasken, og flasken ligger i bagen (skadedyrhensyn). Ingen mat. Tyggegummi/pastiller/snus er ikke tillatt – kastes i søppelbøttene utenfor før du går inn. Tigerbalsam o.l. brukes ikke før eller på trening. Unngå parfyme (allergihensyn).'],
+ ['Antrekk og kropp','Barbeint eller sokker (ikke skli-sokker) – aldri sko. Må du teipe/plastre tær eller føtter: sokk over. Blør du: sportstape og sokk til det har grodd. Ingen glidelås på treningstøy. Ingen hengende ørepynt (små dobber ok), halssmykker, armbånd, klokker eller pulsbelte. Piercing som henger/stikker ut tas bort. Briller på eget ansvar. Kortklipte tånegler.'],
+ ['Bandasjer og hansker','Bandasjer tas på inne i studioet (ikke i fellesgangen) og skal være ferdig på når timen starter – må du ut igjen, tas de av først. I nedstunden på slutten: hansker av først når lyset går på, bandasjer av først når praten er avsluttet.'],
+ ['Utstyr','Du får ett par egne boksehansker og to sett bandasjer. Kjøp i studio: bandasjer kr 100, hansker kr 360 (adm.gebyr kr 60 på faktura). Andre hansker enn studioets må avtales før trening. Kun studioets sparkeputer/pads brukes. Legg utstyret tilbake på anvist plass, og ikke sitt/ligg på sparkeputene. Ta med hanskene hjem ved hver egentreningsperiode.'],
+ ['Sykdom og skader','Feber = ikke lov å trene. Skader, begrensninger eller lengre fravær: si fra, så tilpasses treningen (sekk/pute) – avtales med Terje før timen. Er du i tvil om en øvelse, si fra underveis.'],
+ ['Sikkerhet i lokalet','Brannalarm: opptre rolig, lytt til beskjeder og legg bokseutstyret inntil nærmeste vegg. To røde felt på matten: skadeområdet (tape/hjelp) og resepsjonsfeltet – hold deg utenfor resepsjonsfeltet under trening. Ikke len deg mot speil, hyller eller vinduer.'],
+ ['Garderobe og logistikk','Bag og jakke legges i garderobehyllene, ikke på gulvet – hyller og bord inne i lokalet skal ikke brukes. Dame- og herregarderober med dusj/toalett ligger i fellesarealet. Det er 20 minutter mellom treningsgruppene: gå raskt ut etter endt time. Tøying skjer i fellesgangen, ikke inne i studioet.'],
+ ['Annen trening','Det er ikke ønskelig med annen trening utenfor Camp Kalori dette året. Unntak avtales med Terje.'],
+ ['Motivasjon og trivsel','Mister du motivasjonen eller noe plager deg: si fra med en gang, så tar Terje en samtale. Opplever du ubehag med andre i gruppen: ta kontakt snarest. Egne «chattegrupper» på sosiale medier er ikke ønsket.'],
+ ['Parkering','Følg skiltanvisningen på området. Gratis parkering i områdene rundt – spør om du lurer.'],
+ ['Kontakt og endringer','Terje: 950 66 227 / terje@cardiokickboxing.no (kost, helse, trening, fravær – kan kontaktes «hele døgnet»). Kathrine: kathrine@cardiokickboxing.no (påmeldinger, faktura, og melding om flytting/nytt navn/telefonnummer/e-post).']
+];
+
+/* ---------- avledet logikk ---------- */
+function due14(r){const d=pd(r.due);return new Date(d.getFullYear(),d.getMonth(),d.getDate(),14,0,0);}
+function reportStatus(r){
+  const now=new Date(), t=dstr(today());
+  if(DB.sent[r.due])return 'sendt';
+  if(now>due14(r))return 'forfalt';
+  if(t>=r.from)return 'aktiv';
+  return 'kommende';
+}
+function nextReport(){
+  const now=new Date();
+  return REPORTS.find(r=>now<=due14(r)&&!DB.sent[r.due])||REPORTS.find(r=>!DB.sent[r.due])||REPORTS[REPORTS.length-1];
+}
+function daysInPeriod(r){const out=[];for(let d=pd(r.from);d<=pd(r.to);d=addD(d,1))out.push(dstr(d));return out;}
+function mealFilled(ds){const m=DB.meals[ds];return !!(m&&(m.frokost||m.lunsj||m.middag||m.kveld||m.annet||m.trening));}
+function periodProgress(r){const days=daysInPeriod(r);const done=days.filter(mealFilled).length;return {done,total:days.length};}
+function mondayOf(ds){const d=pd(ds);return dstr(addD(d,-((d.getDay()+6)%7)));}
+
+/* Rapporttekst i Terjes format */
+function buildReportText(r,phIdx){
+  const lines=[];
+  const byWeek={};
+  daysInPeriod(r).forEach(ds=>{
+    const w=isoWeek(pd(ds)).week;
+    (byWeek[w]=byWeek[w]||[]).push(ds);
+  });
+  const weekOrder=[...new Set(daysInPeriod(r).map(ds=>isoWeek(pd(ds)).week))];
+  weekOrder.forEach((w,i)=>{
+    const days=byWeek[w];
+    const mw=DB.weights[mondayOf(days[0])];
+    lines.push('Kostholds rapport uke '+w+'   VEKT: '+(mw!=null?kg(mw)+' kg':''));
+    lines.push('');
+    days.forEach(ds=>{
+      const d=pd(ds), m=DB.meals[ds]||{};
+      lines.push(DAGER[d.getDay()]+' '+fmt(d)+':');
+      lines.push('');
+      [['FROKOST','frokost'],['LUNSJ','lunsj'],['MIDDAG','middag'],['KVELD','kveld'],['ANNET','annet'],['TRENING','trening']].forEach(([lab,key])=>{
+        const hasPh=phIdx&&phIdx[ds]&&phIdx[ds][key];
+        lines.push(lab+(hasPh?' (bilde vedlagt)':'')+':');
+        lines.push(m[key]?m[key].trim():'');
+        lines.push('');
+      });
+    });
+    if(i<weekOrder.length-1)lines.push('');
+  });
+  if(r.final){
+    const fw=DB.weights['2027-06-24'];
+    lines.push('');
+    lines.push('MORGENVEKT torsdag 24.06.2027 (sluttvekt): '+(fw!=null?kg(fw)+' kg':''));
+  }
+  return lines.join('\n').replace(/\n{4,}/g,'\n\n\n');
+}
+function reportTextFor(r){
+  return photosInRange(r.from,r.to).then(all=>{
+    const photos=all.filter(p=>p.meal!=='vekt');
+    let text=buildReportText(r,photoIndexOf(photos));
+    if(photos.length)text+='\n\nVedlagt: '+photos.length+' bilde'+(photos.length>1?'r':'')+' av måltider.';
+    return {text,photos};
+  });
+}
+function reportSubject(r){
+  const w=r.weeks.length>1?('uke '+r.weeks.join(' og ')):'uke '+r.weeks[0];
+  const n=DB.profile.navn?(' – '+DB.profile.navn):'';
+  return 'Kostholds rapport '+w+n;
+}
+
+/* ---------- PDF-rapport (egen generator, ingen avhengigheter) ---------- */
+const HELV_W=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,761,556,556,222,556,333,1000,556,556,333,1000,667,333,1000,556,611,556,556,222,222,333,333,350,556,1000,333,1000,500,333,944,556,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500];
+const HELVB_W=[278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,761,556,611,278,556,500,1000,556,556,333,1000,667,333,1000,611,611,611,611,278,278,500,500,350,556,1000,333,1000,556,333,944,611,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556];
+const WINANSI_MAP={0x2013:150,0x2014:151,0x2018:145,0x2019:146,0x201C:147,0x201D:148,0x2026:133,0x2022:149,0x20AC:128,0x201A:130,0x201E:132,0x2020:134,0x2021:135,0x02C6:136,0x2030:137,0x0160:138,0x2039:139,0x0152:140,0x017D:142,0x02DC:152,0x2122:153,0x0161:154,0x203A:155,0x0153:156,0x017E:158,0x0178:159};
+function winByte(ch){
+  const c=ch.charCodeAt(0);
+  if((c>=32&&c<=126)||(c>=160&&c<=255))return c;
+  return WINANSI_MAP[c]||63;
+}
+function pdfStrW(s,bold,size){
+  const t=bold?HELVB_W:HELV_W;let w=0;
+  for(let i=0;i<s.length;i++){const b=winByte(s[i]);w+=(b>=32?t[b-32]||556:556);}
+  return w*size/1000;
+}
+function pdfEsc(s){
+  let out='';
+  for(let i=0;i<s.length;i++){
+    const b=winByte(s[i]);
+    if(b===40||b===41||b===92)out+='\\'+String.fromCharCode(b);
+    else out+=String.fromCharCode(b);
+  }
+  return out;
+}
+function pdfWrap(s,bold,size,maxW){
+  const lines=[];
+  String(s).split('\n').forEach(raw=>{
+    raw=raw.replace(/\s+$/,'');
+    if(!raw){lines.push('');return;}
+    let cur='';
+    raw.split(/\s+/).forEach(word=>{
+      while(pdfStrW(word,bold,size)>maxW){ // harddel svært lange ord
+        let cut=1;
+        while(cut<word.length&&pdfStrW(word.slice(0,cut+1),bold,size)<=maxW)cut++;
+        if(cur){lines.push(cur);cur='';}
+        lines.push(word.slice(0,cut));word=word.slice(cut);
+      }
+      const cand=cur?cur+' '+word:word;
+      if(pdfStrW(cand,bold,size)<=maxW)cur=cand;
+      else{if(cur)lines.push(cur);cur=word;}
+    });
+    lines.push(cur);
+  });
+  return lines;
+}
+async function buildReportPdf(r){
+  const photos=(await photosInRange(r.from,r.to)).filter(p=>p.meal!=='vekt');
+  const imgs=[];
+  for(const p of photos){
+    try{
+      const bytes=new Uint8Array(await p.blob.arrayBuffer());
+      let w=640,h=480;
+      try{const bm=await createImageBitmap(p.blob);w=bm.width;h=bm.height;}catch(e){}
+      imgs.push({date:p.date,meal:p.meal,bytes,w,h});
+    }catch(e){}
+  }
+  const PW=595.28,PH=841.89,ML=52,MR=52,MT=52,MB=60,CW=PW-ML-MR;
+  const ACC='0.557 0.165 0.137';
+  const pages=[];let ops=null,y=0;
+  function np(){ops=[];pages.push(ops);y=PH-MT;}
+  function ensure(h){if(y-h<MB)np();}
+  function line(s,o){
+    o=o||{};const size=o.size||10,lh=o.lh||size*1.42;
+    ensure(lh);y-=lh;
+    ops.push('BT /'+(o.bold?'F2':'F1')+' '+size+' Tf '+(o.col||'0 0 0')+' rg '+(o.x!=null?o.x:ML).toFixed(2)+' '+y.toFixed(2)+' Td ('+pdfEsc(s)+') Tj ET');
+  }
+  function rightText(s,o){
+    o=o||{};const size=o.size||10;
+    ops.push('BT /'+(o.bold?'F2':'F1')+' '+size+' Tf '+(o.col||'0 0 0')+' rg '+(PW-MR-pdfStrW(s,o.bold,size)).toFixed(2)+' '+y.toFixed(2)+' Td ('+pdfEsc(s)+') Tj ET');
+  }
+  function para(s,o){
+    o=o||{};const size=o.size||10;
+    pdfWrap(s,o.bold,size,CW).forEach(l=>line(l,o));
+  }
+  function rule(){ensure(8);y-=5;ops.push('q 0.88 0.88 0.86 RG 0.7 w '+ML+' '+y.toFixed(2)+' m '+(PW-MR).toFixed(2)+' '+y.toFixed(2)+' l S Q');y-=4;}
+  function imgRowFor(list){
+    let i=0;
+    while(i<list.length){
+      const row=[];let x=ML,rowH=0;
+      while(i<list.length){
+        const im=list[i];
+        const sc=Math.min(150/im.w,120/im.h);
+        const w=im.w*sc,h=im.h*sc;
+        if(row.length&&x+w>PW-MR)break;
+        row.push({im,x,w,h});x+=w+8;rowH=Math.max(rowH,h);i++;
+      }
+      ensure(rowH+10);y-=rowH+4;
+      row.forEach(c=>{
+        ops.push('q '+c.w.toFixed(2)+' 0 0 '+c.h.toFixed(2)+' '+c.x.toFixed(2)+' '+y.toFixed(2)+' cm /Im'+(imgs.indexOf(c.im)+1)+' Do Q');
+        ops.push('q 0.85 0.85 0.83 RG 0.8 w '+c.x.toFixed(2)+' '+y.toFixed(2)+' '+c.w.toFixed(2)+' '+c.h.toFixed(2)+' re S Q');
+      });
+      y-=4;
+    }
+  }
+  np();
+  const weekOrder=[...new Set(daysInPeriod(r).map(ds=>isoWeek(pd(ds)).week))];
+  const byWeek={};
+  daysInPeriod(r).forEach(ds=>{const w=isoWeek(pd(ds)).week;(byWeek[w]=byWeek[w]||[]).push(ds);});
+  weekOrder.forEach((w,wi)=>{
+    const days=byWeek[w];
+    const mw=DB.weights[mondayOf(days[0])];
+    ensure(64);
+    y-=8;
+    line('Kostholds rapport uke '+w,{bold:true,size:14,col:ACC,lh:20});
+    rightText('VEKT: '+(mw!=null?kg(mw)+' kg':'____'),{bold:true,size:13});
+    if(wi===0){
+      line((DB.profile.navn?DB.profile.navn+' · ':'')+fmt(r.from)+' – '+fmt(r.to)+' · leveres innen '+(r.final?'torsdag ':'mandag ')+fmt(r.due)+' kl. 14:00',{size:8.5,col:'0.45 0.44 0.42',lh:13});
+    }
+    rule();
+    days.forEach(ds=>{
+      const d=pd(ds),m=DB.meals[ds]||{};
+      ensure(46);
+      y-=5;
+      line(DAGER[d.getDay()]+' '+fmt(d),{bold:true,size:10.5,lh:16});
+      rule();
+      [['FROKOST','frokost'],['LUNSJ','lunsj'],['MIDDAG','middag'],['KVELD','kveld'],['ANNET','annet'],['TRENING','trening']].forEach(([lab,key])=>{
+        line(lab,{bold:true,size:7.5,col:'0.45 0.44 0.42',lh:14});
+        const v=(m[key]||'').trim();
+        if(v)para(v,{size:10,lh:13.5});
+        else line('–',{size:10,col:'0.7 0.7 0.68',lh:13.5});
+        const ph=imgs.filter(im=>im.date===ds&&im.meal===key);
+        if(ph.length)imgRowFor(ph);
+        y-=2;
+      });
+    });
+    if(wi<weekOrder.length-1)y-=8;
+  });
+  if(r.final){
+    ensure(30);y-=8;
+    line('MORGENVEKT torsdag 24.06.2027 (sluttvekt): '+(DB.weights['2027-06-24']!=null?kg(DB.weights['2027-06-24'])+' kg':'____'),{bold:true,size:11,lh:16});
+  }
+  // Bunntekst på alle sider
+  const total=pages.length;
+  pages.forEach((p,i)=>{
+    const ft=(DB.profile.navn?DB.profile.navn+' · ':'')+'Camp Kalori 2026–2027 · side '+(i+1)+' av '+total;
+    p.push('BT /F1 8 Tf 0.55 0.54 0.52 rg '+((PW-pdfStrW(ft,false,8))/2).toFixed(2)+' 32 Td ('+pdfEsc(ft)+') Tj ET');
+  });
+  // Sett sammen PDF-en
+  const parts=[];let off=0;const offs=[];
+  const B=s=>{const u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i)&0xff;return u;};
+  function push(u){if(typeof u==='string')u=B(u);parts.push(u);off+=u.length;}
+  function obj(n,body){offs[n]=off;push(n+' 0 obj\n'+body+'\nendobj\n');}
+  push('%PDF-1.4\n%âãÏÓ\n');
+  const nImg=imgs.length,firstPageObj=5+nImg,nObj=4+nImg+pages.length*2;
+  const kids=pages.map((p,i)=>(firstPageObj+i*2+1)+' 0 R').join(' ');
+  obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+  obj(2,'<< /Type /Pages /Kids ['+kids+'] /Count '+pages.length+' >>');
+  obj(3,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+  obj(4,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+  imgs.forEach((im,i)=>{
+    offs[5+i]=off;
+    push((5+i)+' 0 obj\n<< /Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+im.bytes.length+' >>\nstream\n');
+    push(im.bytes);
+    push('\nendstream\nendobj\n');
+  });
+  const xobj=nImg?' /XObject << '+imgs.map((im,i)=>'/Im'+(i+1)+' '+(5+i)+' 0 R').join(' ')+' >>':'';
+  pages.forEach((p,i)=>{
+    const stream=p.join('\n');
+    obj(firstPageObj+i*2,'<< /Length '+B(stream).length+' >>\nstream\n'+stream+'\nendstream');
+    obj(firstPageObj+i*2+1,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >>'+xobj+' >> /Contents '+(firstPageObj+i*2)+' 0 R >>');
+  });
+  const xrefOff=off;
+  let xr='xref\n0 '+(nObj+1)+'\n0000000000 65535 f \n';
+  for(let i=1;i<=nObj;i++)xr+=String(offs[i]).padStart(10,'0')+' 00000 n \n';
+  push(xr+'trailer\n<< /Size '+(nObj+1)+' /Root 1 0 R >>\nstartxref\n'+xrefOff+'\n%%EOF');
+  return {blob:new Blob(parts,{type:'application/pdf'}),name:reportSubject(r).replace(/[\/\\:*?"<>|]/g,'-')+'.pdf',photoCount:nImg,pageCount:pages.length};
+}
+function downloadBlob(blob,name){
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+async function sharePdf(r){
+  const {blob,name}=await buildReportPdf(r);
+  const f=new File([blob],name,{type:'application/pdf'});
+  await copyText(reportSubject(r));
+  if(navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){
+    try{await navigator.share({title:reportSubject(r),files:[f]});}
+    catch(e){if(e&&e.name!=='AbortError'){downloadBlob(blob,name);toast('Deling ble avbrutt – PDF-en er lastet ned i stedet');}}
+  }else{
+    downloadBlob(blob,name);
+    toast('Deling støttes ikke her – PDF-en er lastet ned. Emnet er kopiert.');
+  }
+}
+</script>
+<script>
+'use strict';
+/* ==================== visninger ==================== */
+const V=document.getElementById('view');
+const state={tab:'hjem',kostDate:clampSeason(dstr(today())),merPage:null,trenUke:null,planFilter:'alle'};
+function clampSeason(ds){if(ds<SEASON_START)return SEASON_START;if(ds>SEASON_END)return SEASON_END;return ds;}
+
+function render(){
+  const w=isoWeek(today());
+  document.getElementById('hdrweek').textContent='Uke '+w.week;
+  try{document.getElementById('demobar').classList.toggle('hidden',!inDemo());}catch(e){}
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===state.tab));
+  ({hjem:renderHjem,kosthold:renderKosthold,vekt:renderVekt,rapport:renderRapport,plan:renderPlan,mer:renderMer})[state.tab]();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{state.tab=b.dataset.tab;state.merPage=null;render();}));
+
+/* ---------- modal ---------- */
+const modalBg=document.getElementById('modalbg'),modalEl=document.getElementById('modal');
+function openModal(html){modalEl.innerHTML=html;modalBg.classList.add('open');}
+function closeModal(){modalBg.classList.remove('open');modalEl.innerHTML='';}
+modalBg.addEventListener('click',e=>{if(e.target===modalBg)closeModal();});
+
+/* ---------- felles småting ---------- */
+function toast(msg){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:calc(var(--nav-h) + 24px);left:50%;transform:translateX(-50%);background:#0b0b0b;color:#fff;padding:10px 18px;border-radius:99px;font-size:.82rem;z-index:99;transition:opacity .3s;max-width:88vw;text-align:center';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._h);t._h=setTimeout(()=>{t.style.opacity='0';},2600);
+}
+async function copyText(txt){
+  try{await navigator.clipboard.writeText(txt);toast('Kopiert til utklippstavlen');}
+  catch(e){
+    const ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;opacity:0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');toast('Kopiert til utklippstavlen');}catch(e2){toast('Kunne ikke kopiere – bruk Forhåndsvis og marker teksten');}
+    ta.remove();
+  }
+}
+
+/* ==================== HJEM ==================== */
+function renderHjem(){
+  const t=today(),ts=dstr(t);
+  const r=nextReport(),st=reportStatus(r),pr=periodProgress(r);
+  const nm=DB.profile.navn?', '+DB.profile.navn.split(' ')[0]:'';
+  let html='';
+
+  if(ts<SEASON_START){
+    const dl=Math.round((pd(SEASON_START)-t)/86400000);
+    html+='<div class="banner info"><b>'+dl+' dager til første veiedag</b> (mandag 10. august 2026). Da sender du morgenvekten med bilde til Terje før kl. 14:00 – og starter føring av alt du inntar.</div>';
+  }
+  if(ts===SEASON_START){
+    html+='<div class="banner warn"><b>I dag er første veiedag – startvekten!</b> Vei deg om morgenen, ta bilde der du står på vekten (føtter og vekttall synlig), og send begge deler til Terje før kl. 14:00. <a href="#" data-go="vekt" style="color:inherit;font-weight:700">Registrer startvekt og bilde →</a></div>';
+  }else if(t.getDay()===1&&ts>=SEASON_START&&ts<=SEASON_END&&DB.weights[ts]==null){
+    html+='<div class="banner warn"><b>I dag er veiedag.</b> Vei deg om morgenen og registrer mandagsvekten – den skal med i rapporten. <a href="#" data-go="vekt" style="color:inherit;font-weight:700">Registrer vekt →</a></div>';
+  }
+  if(ts==='2027-06-24'){
+    html+='<div class="banner good"><b>Siste dag!</b> Send morgenvekten (sluttvekten) og siste rapport før kl. 14:00. Gratulerer med gjennomført Camp Kalori-år!</div>';
+  }
+
+  // Neste frist
+  const d14=due14(r),now=new Date(),ms=d14-now;
+  const dd=Math.floor(ms/86400000),hh=Math.floor(ms%86400000/3600000),mi=Math.floor(ms%3600000/60000);
+  const cdTxt=ms<0?'Forfalt':(dd>0?dd+' d '+hh+' t':hh+' t '+mi+' min');
+  html+='<div class="card"><h2>Neste innlevering<span class="mini">uke '+r.weeks.join(' og ')+'</span></h2>'
+    +'<div class="count"><span class="n" id="cd">'+cdTxt+'</span><span class="u">til '+(r.final?'torsdag':'mandag')+' '+fmt(r.due)+' kl. 14:00</span></div>'
+    +'<div class="muted">Perioden '+fmt(r.from)+'–'+fmt(r.to)+': <b>'+pr.done+' av '+pr.total+'</b> dager ført'
+    +(st==='forfalt'?' · <span class="badge bad">FORFALT – lever likevel!</span>':'')+'</div>'
+    +'<div class="rep"><div class="prog" style="margin-top:2px"><i class="'+(pr.done===pr.total?'':'mid')+'" style="width:'+Math.round(pr.done/pr.total*100)+'%"></i></div></div>'
+    +'<div class="btnrow"><button data-go="kosthold" class="btn sm">Før dagens kosthold</button><button data-go="rapport" class="btn sec sm">Til rapporten</button></div></div>';
+
+  // Trening i dag
+  const sess=SESSIONS.find(s=>s.date===ts);
+  if(sess){
+    const a=DB.attendance[ts];
+    html+='<div class="card"><h2>Trening i dag</h2><div class="muted"><b>'+sessionTime(sess)+'</b>'
+      +(sess.note?'<br><span style="color:var(--warn)">'+esc(sess.note)+'</span>':'')
+      +'</div><div class="btnrow">'
+      +'<button class="btn sm '+(a==='deltatt'?'':'sec')+'" data-att="deltatt">Deltatt</button>'
+      +'<button class="btn sm sec" data-go-mer="trening">Se oppmøte</button></div></div>';
+  }else if(inEgentrening(ts)&&ts>=SEASON_START){
+    html+='<div class="card"><h2>Egentreningsuke</h2><div class="muted">'
+      +esc((EGENTRENING.find(x=>ts>=x[0]&&ts<=x[1])||[])[2]||'')
+      +' – følg egentreningsprogrammet fra Terje. Kosthold og vekt leveres som normalt.</div></div>';
+  }
+
+  // Vektstatus
+  const wk=weightSeries();
+  const goal=goalWeight();
+  if(wk.length){
+    const last=wk[wk.length-1];
+    const start=startWeight();
+    const diff=start!=null?last.v-start:null;
+    const exp=expectedToday();
+    html+='<div class="card"><h2>Vekten din<span class="mini">mål: '+(goal!=null?kg(goal)+' kg':'ikke satt')+'</span></h2>'
+      +'<div class="statrow">'
+      +'<div class="stat"><div class="v">'+kg(last.v)+'</div><div class="l">siste ('+fmtShort(last.d)+')</div></div>'
+      +'<div class="stat"><div class="v '+(diff==null?'':diff<=0?'good':'bad')+'">'+(diff==null?'–':(diff>0?'+':'')+kg(diff))+'</div><div class="l">siden start</div></div>'
+      +'<div class="stat"><div class="v '+(exp!=null&&last.v<=exp?'good':'')+'">'+(exp!=null?kg(exp):'–')+'</div><div class="l">målbane i dag</div></div>'
+      +'</div><div class="chartbox" id="chart" style="margin-top:10px"></div>'
+      +(goal==null?'<div class="small" style="margin-top:6px">Sett vektmålet ditt under Vekt for å se målbanen.</div>':'')
+      +'</div>';
+  }else{
+    html+='<div class="card"><h2>Vekten din</h2><div class="muted">Ingen vekt registrert ennå. Første veiing er mandag 10. august 2026 – din egen vekt, hver mandag morgen.</div><div class="btnrow"><button data-go="vekt" class="btn sm">Registrer vekt</button></div></div>';
+  }
+
+  // Kommende hendelser
+  const upcoming=EVENTS.filter(e=>e.d>=ts).slice(0,3);
+  if(upcoming.length){
+    html+='<div class="card"><h2>Kommende<span class="mini"><a href="#" data-go="plan" style="color:var(--accent)">hele planen →</a></span></h2><div class="list">'
+      +upcoming.map(evLi).join('')+'</div></div>';
+  }
+  V.innerHTML=html;
+  bindGo();
+  const att=V.querySelector('[data-att]');
+  if(att)att.addEventListener('click',()=>{DB.attendance[ts]=DB.attendance[ts]==='deltatt'?undefined:'deltatt';if(!DB.attendance[ts])delete DB.attendance[ts];saveDB();render();});
+  if(wk.length)renderChart(document.getElementById('chart'));
+}
+function bindGo(){
+  V.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();state.tab=el.dataset.go;state.merPage=null;render();}));
+  V.querySelectorAll('[data-go-mer]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();state.tab='mer';state.merPage=el.dataset.goMer;render();}));
+}
+function evLi(e){
+  const d=pd(e.d),past=e.d<dstr(today());
+  return '<div class="li'+(past?' dim':'')+'"><div class="date"><div class="dd">'+d.getDate()+'</div><div class="mm">'+MND_K[d.getMonth()]+'</div></div>'
+    +'<div class="bod"><div class="t">'+esc(e.t)+' <span class="badge '+(e.type==='frist'?'warn':e.type==='viktig'?'accent':'neutral')+'">'+EVENTTYPES[e.type]+'</span></div>'
+    +'<div class="s">'+esc(e.s)+'</div></div></div>';
+}
+
+/* ---------- vektserie/graf ---------- */
+function weightSeries(){return Object.keys(DB.weights).sort().map(d=>({d,v:DB.weights[d]})).filter(x=>x.v!=null);}
+function startWeight(){if(DB.profile.startvekt!=null)return DB.profile.startvekt;if(DB.weights[SEASON_START]!=null)return DB.weights[SEASON_START];const s=weightSeries();return s.length?s[0].v:null;}
+function goalWeight(){return DB.profile.maalTerje!=null?DB.profile.maalTerje:DB.profile.maalEgen;}
+function expectedToday(){
+  const s=startWeight(),g=goalWeight();if(s==null||g==null)return null;
+  const t0=pd(SEASON_START),t1=pd(SEASON_END),n=today();
+  if(n<=t0)return s;if(n>=t1)return g;
+  return s+(g-s)*((n-t0)/(t1-t0));
+}
+function renderChart(box){
+  if(!box)return;
+  const Wd=640,H=300,L=46,R=16,T=16,B=34;
+  const t0=pd('2026-08-01').getTime(),t1=pd('2027-07-01').getTime();
+  const ser=weightSeries(),s=startWeight(),g=goalWeight();
+  const vals=ser.map(x=>x.v);if(s!=null)vals.push(s);if(g!=null)vals.push(g);
+  let lo=Math.min(...vals),hi=Math.max(...vals);
+  if(hi-lo<4){const m=(hi+lo)/2;lo=m-2;hi=m+2;}
+  lo=Math.floor(lo-1);hi=Math.ceil(hi+1);
+  const X=d=>L+(pd(d).getTime()-t0)/(t1-t0)*(Wd-L-R);
+  const Y=v=>T+(hi-v)/(hi-lo)*(H-T-B);
+  const step=(hi-lo)>20?5:(hi-lo)>8?2:1;
+  let grid='',ylab='';
+  for(let v=Math.ceil(lo/step)*step;v<=hi;v+=step){
+    grid+='<line x1="'+L+'" y1="'+Y(v)+'" x2="'+(Wd-R)+'" y2="'+Y(v)+'" stroke="#eeede9" stroke-width="1"/>';
+    ylab+='<text x="'+(L-7)+'" y="'+(Y(v)+3.5)+'" text-anchor="end" font-size="10.5" fill="#8a8880">'+v+'</text>';
+  }
+  let xlab='';
+  [['2026-08-10','aug'],['2026-09-01','sep'],['2026-10-01','okt'],['2026-11-01','nov'],['2026-12-01','des'],['2027-01-01','jan'],['2027-02-01','feb'],['2027-03-01','mar'],['2027-04-01','apr'],['2027-05-01','mai'],['2027-06-01','jun']].forEach(([d,l])=>{
+    xlab+='<text x="'+X(d)+'" y="'+(H-B+16)+'" text-anchor="middle" font-size="10.5" fill="#8a8880">'+l+'</text>';
+  });
+  let goalLine='';
+  if(s!=null&&g!=null){
+    goalLine='<line x1="'+X(SEASON_START)+'" y1="'+Y(s)+'" x2="'+X(SEASON_END)+'" y2="'+Y(g)+'" stroke="#8a8880" stroke-width="2" stroke-dasharray="6 5" stroke-linecap="round"/>'
+      +'<text x="'+(X(SEASON_END)-4)+'" y="'+(Y(g)-7)+'" text-anchor="end" font-size="10.5" fill="#52514e">mål '+kg(g)+'</text>';
+  }
+  const ts=dstr(today());
+  let todayLine='';
+  if(ts>'2026-08-01'&&ts<'2027-07-01'){
+    todayLine='<line x1="'+X(ts)+'" y1="'+T+'" x2="'+X(ts)+'" y2="'+(H-B)+'" stroke="#e7e5e1" stroke-width="1.5" stroke-dasharray="2 3"/>';
+  }
+  let path='',dots='',hits='';
+  ser.forEach((p,i)=>{
+    const x=X(p.d),y=Y(p.v);
+    path+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' ';
+    dots+='<circle cx="'+x+'" cy="'+y+'" r="3.4" fill="#2a78d6" stroke="#fff" stroke-width="1.6"/>';
+    hits+='<circle cx="'+x+'" cy="'+y+'" r="13" fill="transparent" data-i="'+i+'"/>';
+  });
+  let lastLab='';
+  if(ser.length){
+    const lp=ser[ser.length-1];
+    lastLab='<text x="'+Math.min(X(lp.d)+8,Wd-R-30)+'" y="'+(Y(lp.v)-9)+'" font-size="11.5" font-weight="700" fill="#0b0b0b">'+kg(lp.v)+'</text>';
+  }
+  box.innerHTML='<svg viewBox="0 0 '+Wd+' '+H+'" role="img" aria-label="Vektutvikling mot mål">'
+    +grid+ylab+xlab+todayLine+goalLine
+    +'<path d="'+path+'" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
+    +dots+lastLab+hits+'</svg><div class="tip" id="charttip"></div>';
+  const tip=box.querySelector('#charttip'),svg=box.querySelector('svg');
+  svg.addEventListener('click',e=>{
+    const c=e.target.closest('[data-i]');
+    if(!c){tip.style.display='none';return;}
+    const p=ser[+c.dataset.i],rect=svg.getBoundingClientRect(),sc=rect.width/Wd;
+    tip.textContent=fmt(p.d)+' · '+kg(p.v)+' kg';
+    tip.style.left=(parseFloat(c.getAttribute('cx'))*sc)+'px';
+    tip.style.top=(parseFloat(c.getAttribute('cy'))*(rect.height/H))+'px';
+    tip.style.display='block';
+  });
+}
+
+/* ==================== KOSTHOLD ==================== */
+const FELT=[['frokost','Frokost'],['lunsj','Lunsj'],['middag','Middag'],['kveld','Kveld'],['annet','Annet (alt mellom måltidene, snacks, drikke m.m.)'],['trening','Trening (hva du gjorde i dag)']];
+function renderKosthold(){
+  const ds=state.kostDate,d=pd(ds),w=isoWeek(d);
+  const mon=pd(mondayOf(ds));
+  let strip='';
+  for(let i=0;i<7;i++){
+    const dd=addD(mon,i),dds=dstr(dd);
+    const in_=dds>=SEASON_START&&dds<=SEASON_END;
+    strip+='<button data-day="'+dds+'" '+(in_?'':'disabled style="opacity:.35"')+' class="'+(dds===ds?'sel':'')+'">'
+      +DAGER_K[dd.getDay()]+'<span class="d">'+dd.getDate()+'</span><span class="dot '+(mealFilled(dds)?'on':'')+'"></span></button>';
+  }
+  const m=DB.meals[ds]||{};
+  const r=REPORTS.find(x=>ds>=x.from&&ds<=x.to);
+  let html='<div class="datenav">'
+    +'<button data-nav="-1" aria-label="Forrige dag">‹</button>'
+    +'<div class="cur" style="position:relative">'+fmtLong(d)+'<span class="wk">uke '+w.week+(r?' · leveres '+fmt(r.due):'')+' · trykk for å velge dato</span>'
+    +'<input type="date" id="kdate" value="'+ds+'" min="'+SEASON_START+'" max="'+SEASON_END+'" style="position:absolute;inset:0;opacity:0;width:100%;height:100%" aria-label="Velg dato"></div>'
+    +'<button data-nav="1" aria-label="Neste dag">›</button></div>'
+    +'<div class="daystrip">'+strip+'</div>';
+  if(d.getDay()===1&&DB.weights[ds]==null&&ds>=SEASON_START){
+    html+='<div class="banner warn" style="padding:9px 12px;font-size:.8rem">Mandag = veiedag. <a href="#" data-go="vekt" style="color:inherit;font-weight:700">Registrer mandagsvekten →</a></div>';
+  }
+  html+='<div class="card">';
+  FELT.forEach(([k,lab])=>{
+    html+='<label class="f klrow" for="f_'+k+'"><span>'+lab+'</span><button type="button" class="klbtn" data-kl="'+k+'" aria-label="Sett inn klokkeslett i '+k+'">+ kl. nå</button></label>'
+      +'<textarea id="f_'+k+'" data-f="'+k+'" placeholder="'+(k==='frokost'?'F.eks.: kl. 07:15 – 2 skiver brød, en med egg og en med hvit ost. 1 glass melk, 1 kopp svart kaffe.':k==='trening'?'F.eks.: Camp Kalori-trening kl. 17, eller egentrening/gåtur':'')+'">'+esc(m[k]||'')+'</textarea>';
+    if(k!=='trening'){
+      html+='<div class="photorow" data-pr="'+k+'"><button class="addph" data-photo="'+k+'" type="button" aria-label="Legg til bilde av '+k+'">'
+        +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L17 6h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.4"/></svg>Bilde</button>'
+        +'<span class="thumbs" data-th="'+k+'"></span>'
+        +'<input type="file" accept="image/*" multiple data-pf="'+k+'" style="display:none"></div>';
+    }
+  });
+  html+='<div class="small" style="margin-top:10px">Skriv alt du inntar – også kaffe, te og all drikke. Ikke vei maten, ikke tell kalorier. Klokkeslett er ikke påkrevd, men fører du «live» med <b>+ kl. nå</b>-knappen får både du og Terje frem regulariteten på måltider og væskeinntak. Lagres automatisk. Bilder er valgfritt og komprimeres til et lite format.</div></div>';
+  V.innerHTML=html;
+  bindGo();
+  V.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{
+    const nd=dstr(addD(pd(state.kostDate),+b.dataset.nav));
+    state.kostDate=clampSeason(nd);render();
+  }));
+  V.querySelectorAll('[data-day]').forEach(b=>b.addEventListener('click',()=>{state.kostDate=b.dataset.day;render();}));
+  const kd=document.getElementById('kdate');
+  if(kd)kd.addEventListener('change',()=>{if(kd.value)state.kostDate=clampSeason(kd.value);render();});
+  V.querySelectorAll('[data-kl]').forEach(b=>b.addEventListener('click',()=>{
+    const ta=document.getElementById('f_'+b.dataset.kl);
+    if(!ta)return;
+    const n=new Date();
+    const stamp='kl. '+pad(n.getHours())+':'+pad(n.getMinutes())+' – ';
+    ta.value=ta.value.trim()?(ta.value.replace(/\s+$/,'')+'\n'+stamp):stamp;
+    ta.focus();
+    ta.setSelectionRange(ta.value.length,ta.value.length);
+    ta.dispatchEvent(new Event('input'));
+  }));
+  V.querySelectorAll('[data-photo]').forEach(b=>b.addEventListener('click',()=>{
+    const inp=V.querySelector('input[data-pf="'+b.dataset.photo+'"]');if(inp)inp.click();
+  }));
+  V.querySelectorAll('input[data-pf]').forEach(inp=>inp.addEventListener('change',async()=>{
+    const files=Array.from(inp.files||[]).slice(0,6);
+    if(!files.length)return;
+    const day=state.kostDate;
+    let ok=0,kb=0;
+    for(const f of files){
+      try{
+        const blob=await compressImage(f);
+        await photoAdd(day,inp.dataset.pf,blob);
+        ok++;kb+=Math.round(blob.size/1024);
+      }catch(e){}
+    }
+    if(ok)toast(ok===1?('Bilde lagret ('+Math.max(1,kb)+' kB)'):(ok+' bilder lagret ('+kb+' kB totalt)'));
+    else toast('Kunne ikke lagre bildet – prøv et annet bilde');
+    loadDayPhotos(day);
+    inp.value='';
+  }));
+  loadDayPhotos(ds);
+  V.querySelectorAll('textarea[data-f]').forEach(ta=>{
+    ta.addEventListener('input',()=>{
+      const cur=DB.meals[state.kostDate]||(DB.meals[state.kostDate]={});
+      cur[ta.dataset.f]=ta.value;
+      clearTimeout(ta._h);ta._h=setTimeout(()=>{saveDB();
+        const btn=V.querySelector('[data-day="'+state.kostDate+'"] .dot');
+        if(btn)btn.classList.toggle('on',mealFilled(state.kostDate));
+      },400);
+    });
+  });
+}
+
+let PHOTO_URLS=[];
+function freePhotoUrls(){PHOTO_URLS.forEach(u=>URL.revokeObjectURL(u));PHOTO_URLS=[];}
+async function loadDayPhotos(day){
+  if(state.tab!=='kosthold'||state.kostDate!==day)return;
+  const list=await photosByDate(day);
+  if(state.tab!=='kosthold'||state.kostDate!==day)return;
+  freePhotoUrls();
+  V.querySelectorAll('.thumbs').forEach(t=>t.innerHTML='');
+  list.forEach(p=>{
+    const holder=V.querySelector('.thumbs[data-th="'+p.meal+'"]');
+    if(!holder)return;
+    const u=URL.createObjectURL(p.blob);PHOTO_URLS.push(u);
+    const el=document.createElement('span');el.className='thumb';
+    el.innerHTML='<img alt="Bilde av '+esc(p.meal)+'"><button class="rm" aria-label="Fjern bilde">✕</button>';
+    el.querySelector('img').src=u;
+    el.querySelector('.rm').addEventListener('click',async()=>{
+      if(confirm('Fjerne dette bildet?')){await photoDel(p.id);loadDayPhotos(day);}
+    });
+    holder.appendChild(el);
+  });
+}
+
+/* ==================== VEKT ==================== */
+function renderVekt(){
+  const t=today(),ts=dstr(t);
+  const defDate=t.getDay()===1?ts:mondayOf(ts);
+  const s=startWeight(),g=goalWeight(),exp=expectedToday();
+  const ser=weightSeries();
+  let html='<div class="card"><h2>Registrer vekt</h2>'
+    +'<div class="grid2"><div><label class="f">Dato</label><input type="date" id="wdate" value="'+clampSeason(defDate)+'" min="'+SEASON_START+'" max="'+SEASON_END+'"></div>'
+    +'<div><label class="f">Vekt (kg)</label><input type="number" id="wval" inputmode="decimal" step="0.1" min="30" max="300" placeholder="f.eks. 92,4"></div></div>'
+    +'<div class="btnrow"><button id="wsave">Lagre vekt</button></div>'
+    +'<div class="small" style="margin-top:8px">Vei deg hver mandag morgen på din egen vekt. På reise: ta med vekten din.</div></div>';
+
+  // Startvekt-kort: Terje krever bilde av vekten ved første innlevering (kun 10.08)
+  const svW=DB.weights[SEASON_START];
+  html+='<div class="card" id="svcard"><h2>Startvekten – mandag 10.08.2026'
+    +'<span class="mini" id="svstatus"></span></h2>'
+    +'<div class="muted">Terje skal ha startvekten på e-post <b>før kl. 14:00</b> denne dagen – <b>med bilde der du står på vekten</b>, slik at føttene og vekttallet vises. Dette gjelder kun startvekten; senere veiinger trenger ikke bilde.</div>'
+    +'<div class="photorow" style="margin-top:9px"><button class="addph" id="svphoto" type="button">'
+    +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L17 6h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.4"/></svg>Bilde av vekten</button>'
+    +'<span class="thumbs" id="svthumbs"></span>'
+    +'<input type="file" accept="image/*" id="svfile" style="display:none"></div>'
+    +'<div class="btnrow"><button class="btn sm" id="svshare">Del startvekt + bilde</button>'
+    +'<a class="btn sec sm" id="svmail" href="#">E-post (kun tekst)</a></div>'
+    +'<div class="small" style="margin-top:6px">«Del» åpner delingsarket med bildet vedlagt – velg E-post. Teksten kopieres samtidig.</div></div>';
+
+  html+='<div class="card"><h2>Mål</h2><div class="grid2">'
+    +'<div><label class="f">Ditt vektmål (24.06.27)</label><input type="number" id="gEgen" inputmode="decimal" step="0.1" value="'+(DB.profile.maalEgen!=null?DB.profile.maalEgen:'')+'" placeholder="kg"></div>'
+    +'<div><label class="f">Terjes anbefalte mål</label><input type="number" id="gTerje" inputmode="decimal" step="0.1" value="'+(DB.profile.maalTerje!=null?DB.profile.maalTerje:'')+'" placeholder="kg"></div>'
+    +'</div>'
+    +(s!=null&&g!=null?'<div class="muted" style="margin-top:10px">Startvekt <b>'+kg(s)+' kg</b> → mål <b>'+kg(g)+' kg</b> = <b>'+kg(s-g)+' kg</b> på sesongen.'
+      +(exp!=null?' Målbanen sier <b>'+kg(exp)+' kg</b> i dag.':'')+'</div>':'<div class="small" style="margin-top:10px">Målene settes i veiledningssamtalen med Terje – Terjes anbefalte mål gjelder (kan justeres underveis).</div>')
+    +'<div class="btnrow"><button id="gsave" class="btn sec sm">Lagre mål</button></div></div>';
+
+  html+='<div class="card wlist"><h2>Veiinger<span class="mini">'+ser.length+' registrert</span></h2>';
+  if(!ser.length)html+='<div class="muted">Ingen veiinger ennå.</div>';
+  else{
+    html+='<div class="list">';
+    const rev=[...ser].reverse();
+    rev.forEach((p,i)=>{
+      const prev=rev[i+1];
+      const d=pd(p.d);
+      const isMon=d.getDay()===1;
+      const df=prev?p.v-prev.v:null;
+      html+='<div class="li"><div class="date"><div class="dd">'+d.getDate()+'</div><div class="mm">'+MND_K[d.getMonth()]+'</div></div>'
+        +'<div class="bod"><div class="t">'+kg(p.v)+' kg '+(df!=null?'<span class="delta '+(df<0?'down':df>0?'up':'zero')+'">'+(df>0?'+':'')+kg(df)+'</span>':'<span class="badge accent">start</span>')+'</div>'
+        +'<div class="s">'+DAGER[d.getDay()].toLowerCase()+' uke '+isoWeek(d).week+(isMon?'':' · <span style="color:var(--warn)">ikke mandag</span>')+'</div></div>'
+        +'<button class="btn ghost sm" data-del="'+p.d+'" aria-label="Slett">✕</button></div>';
+    });
+    html+='</div>';
+  }
+  html+='</div>';
+  V.innerHTML=html;
+  bindGo();
+  document.getElementById('wsave').addEventListener('click',()=>{
+    const dEl=document.getElementById('wdate'),vEl=document.getElementById('wval');
+    const ds=dEl.value,v=parseFloat(String(vEl.value).replace(',','.'));
+    if(!ds||isNaN(v)||v<25||v>350){toast('Skriv inn gyldig dato og vekt');return;}
+    DB.weights[ds]=Math.round(v*10)/10;
+    if(ds===SEASON_START&&DB.profile.startvekt==null)DB.profile.startvekt=DB.weights[ds];
+    saveDB();toast('Vekt lagret: '+kg(v)+' kg');render();
+  });
+  document.getElementById('gsave').addEventListener('click',()=>{
+    const e=parseFloat(String(document.getElementById('gEgen').value).replace(',','.'));
+    const tj=parseFloat(String(document.getElementById('gTerje').value).replace(',','.'));
+    DB.profile.maalEgen=isNaN(e)?null:e;DB.profile.maalTerje=isNaN(tj)?null:tj;
+    saveDB();toast('Mål lagret');render();
+  });
+  V.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{
+    if(confirm('Slette veiingen '+fmt(b.dataset.del)+'?')){delete DB.weights[b.dataset.del];saveDB();render();}
+  }));
+  // Startvekt-kortet
+  document.getElementById('svphoto').addEventListener('click',()=>document.getElementById('svfile').click());
+  document.getElementById('svfile').addEventListener('change',async e=>{
+    const f=e.target.files&&e.target.files[0];if(!f)return;
+    try{
+      const blob=await compressImage(f,1000,0.72); // høyere oppløsning så vekttallet er lesbart
+      await photoAdd(SEASON_START,'vekt',blob);
+      toast('Vektbilde lagret ('+Math.max(1,Math.round(blob.size/1024))+' kB)');
+      loadSvPhotos();
+    }catch(err){toast('Kunne ikke lagre bildet – prøv igjen');}
+    e.target.value='';
+  });
+  document.getElementById('svshare').addEventListener('click',shareStartvekt);
+  const svm=document.getElementById('svmail');
+  svm.setAttribute('href','mailto:'+TERJE_EPOST+'?subject='+encodeURIComponent('Startvekt 10.08.2026'+(DB.profile.navn?' – '+DB.profile.navn:''))+'&body='+encodeURIComponent(startvektText()));
+  loadSvPhotos();
+}
+function startvektText(){
+  const svW=DB.weights[SEASON_START];
+  return 'Hei Terje!\n\nStartvekt mandag 10.08.2026: '+(svW!=null?kg(svW)+' kg':'____ kg')+'.\nBilde av vekten er vedlagt.\n\nHilsen '+(DB.profile.navn||'');
+}
+async function loadSvPhotos(){
+  if(state.tab!=='vekt')return;
+  const list=(await photosByDate(SEASON_START)).filter(p=>p.meal==='vekt');
+  const holder=document.getElementById('svthumbs');
+  if(!holder)return;
+  holder.innerHTML='';
+  list.forEach(p=>{
+    const u=URL.createObjectURL(p.blob);
+    const el=document.createElement('span');el.className='thumb';
+    el.innerHTML='<img alt="Bilde av vekten"><button class="rm" aria-label="Fjern bilde">✕</button>';
+    el.querySelector('img').src=u;
+    el.querySelector('.rm').addEventListener('click',async()=>{
+      if(confirm('Fjerne vektbildet?')){await photoDel(p.id);loadSvPhotos();}
+    });
+    holder.appendChild(el);
+  });
+  const st=document.getElementById('svstatus');
+  if(st){
+    const w=DB.weights[SEASON_START];
+    st.innerHTML=(w!=null&&list.length)?'<span class="badge good">vekt + bilde klart</span>'
+      :(w!=null?'<span class="badge warn">mangler bilde</span>'
+      :(list.length?'<span class="badge warn">mangler vekt</span>':''));
+  }
+}
+async function shareStartvekt(){
+  const list=(await photosByDate(SEASON_START)).filter(p=>p.meal==='vekt');
+  const w=DB.weights[SEASON_START];
+  if(w==null){toast('Registrer startvekten (10.08.2026) først');return;}
+  if(!list.length){toast('Legg til bilde av vekten først – Terje krever det ved startvekten');return;}
+  const files=list.map((p,i)=>new File([p.blob],'startvekt-10.08.2026'+(list.length>1?'-'+(i+1):'')+'.jpg',{type:'image/jpeg'}));
+  await copyText(startvektText());
+  if(navigator.canShare&&navigator.canShare({files})&&navigator.share){
+    try{await navigator.share({title:'Startvekt 10.08.2026',text:startvektText(),files});}
+    catch(e){if(e&&e.name!=='AbortError')toast('Delingen ble avbrutt – teksten er kopiert, legg ved bildet manuelt');}
+  }else{
+    files.forEach(f=>downloadBlob(f,f.name));
+    toast('Deling støttes ikke her – bildet er lastet ned og teksten kopiert');
+  }
+}
+
+/* ==================== RAPPORT ==================== */
+function renderRapport(){
+  const nr=nextReport();
+  let html='<div class="banner info" style="font-size:.8rem">Rapporten sendes til <b>'+TERJE_EPOST+'</b> annenhver mandag <b>før kl. 14:00</b> – uansett høytider og egentreningsuker. Send så tidlig som mulig, da får du raskere tilbakemelding.</div>';
+  REPORTS.forEach((r,i)=>{
+    const st=reportStatus(r),pr=periodProgress(r);
+    const badge=st==='sendt'?'<span class="badge good">Sendt</span>'
+      :st==='forfalt'?'<span class="badge bad">Forfalt – lever likevel</span>'
+      :st==='aktiv'?'<span class="badge warn">Pågår nå</span>'
+      :'<span class="badge neutral">Kommende</span>';
+    const hl=r.due===nr.due;
+    html+='<div class="rep" '+(hl?'style="border-color:var(--accent)"':'')+'>'
+      +'<div class="top"><span class="t">'+(r.final?'SISTE: torsdag ':'')+fmt(r.due)+' · uke '+r.weeks.join(' og ')+'</span>'+badge+'</div>'
+      +'<div class="meta">Dekker '+fmt(r.from)+' – '+fmt(r.to)+' · '+pr.done+'/'+pr.total+' dager ført'
+      +(r.final?' · + morgenvekt (sluttvekt) 24.06':'')
+      +(r.due==='2027-01-04'?' · NB: egen rapport for uke 53':'')+'</div>'
+      +'<div class="prog"><i class="'+(pr.done===pr.total?'':'mid')+'" style="width:'+(pr.total?Math.round(pr.done/pr.total*100):0)+'%"></i></div>'
+      +'<div class="btnrow">'
+      +'<button class="btn sec sm" data-prev="'+i+'">Forhåndsvis</button>'
+      +'<button class="btn sm" data-copy="'+i+'">Kopier</button>'
+      +'<a class="btn sec sm" data-mail="'+i+'" href="#">E-post</a>'
+      +'<button class="btn ghost sm" data-sent="'+i+'">'+(DB.sent[r.due]?'Angre sendt':'Merk som sendt')+'</button>'
+      +'</div></div>';
+  });
+  V.innerHTML=html;
+  V.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click',async()=>{
+    const r=REPORTS[+b.dataset.prev];
+    const {text,photos}=await reportTextFor(r);
+    let phHtml='';
+    if(photos.length){
+      phHtml='<div class="banner info" style="font-size:.78rem;padding:8px 12px">Rapporten har '+photos.length+' bilde'+(photos.length>1?'r':'')
+        +' – de bygges automatisk inn i PDF-en, pent plassert under riktig måltid.</div><div class="phgrid" id="mph"></div>';
+    }
+    openModal('<h3>'+esc(reportSubject(r))+'<button class="btn ghost sm" onclick="closeModal()">Lukk</button></h3>'
+      +missingWarn(r)+phHtml
+      +'<pre>'+esc(text)+'</pre>'
+      +'<div class="btnrow">'
+      +'<button class="btn" id="mpdfshare">Del PDF-rapport</button>'
+      +'<button class="btn sec" id="mpdfdl">Last ned PDF</button>'
+      +'<button class="btn sec" id="mcopy">Kopier teksten</button>'
+      +'<a class="btn sec" id="mmail" href="#">Åpne i E-post</a></div>'
+      +'<div class="small" style="margin-top:8px">«Del PDF-rapport» åpner delingsarket – velg E-post, så ligger PDF-en klar som vedlegg (emnet kopieres til utklippstavlen). «Åpne i E-post» sender kun teksten, uten bilder.</div>');
+    if(photos.length){
+      const g=document.getElementById('mph');
+      photos.forEach(p=>{const u=URL.createObjectURL(p.blob);const im=document.createElement('img');im.src=u;im.alt=photoFileName(p);g.appendChild(im);});
+    }
+    document.getElementById('mpdfshare').addEventListener('click',()=>sharePdf(r));
+    document.getElementById('mpdfdl').addEventListener('click',async()=>{
+      const {blob,name}=await buildReportPdf(r);downloadBlob(blob,name);
+    });
+    document.getElementById('mcopy').addEventListener('click',()=>copyText(text));
+    const mm=document.getElementById('mmail');
+    const href=mailtoFromText(r,text);
+    if(href)mm.setAttribute('href',href);
+    else mm.addEventListener('click',e=>{e.preventDefault();toast('Rapporten er for lang for e-postlenken – bruk Kopier og lim inn i E-post');});
+  }));
+  V.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{
+    const r=REPORTS[+b.dataset.copy];
+    const {text}=await reportTextFor(r);
+    copyText(reportSubject(r)+'\n\n'+text);
+  }));
+  V.querySelectorAll('[data-mail]').forEach(b=>b.addEventListener('click',async e=>{
+    e.preventDefault();
+    const r=REPORTS[+b.dataset.mail];
+    const {text}=await reportTextFor(r);
+    const href=mailtoFromText(r,text);
+    if(!href){toast('Rapporten er for lang for e-postlenken – bruk Kopier og lim inn i E-post');return;}
+    location.href=href;
+  }));
+  V.querySelectorAll('[data-sent]').forEach(b=>b.addEventListener('click',()=>{
+    const r=REPORTS[+b.dataset.sent];
+    if(DB.sent[r.due])delete DB.sent[r.due];else DB.sent[r.due]=new Date().toISOString();
+    saveDB();render();
+  }));
+}
+function missingWarn(r){
+  const pr=periodProgress(r);
+  const miss=[];
+  daysInPeriod(r).forEach(ds=>{if(!mealFilled(ds))miss.push(fmt(ds).slice(0,5));});
+  const mw=[];
+  r.weeks.forEach((w,idx)=>{
+    const monday=dstr(addD(pd(r.from),idx*7));
+    if(DB.weights[monday]==null)mw.push(fmt(monday));
+  });
+  let out='';
+  if(miss.length)out+='<div class="banner warn" style="font-size:.78rem;padding:8px 12px">Mangler kosthold for: '+miss.join(', ')+'</div>';
+  if(mw.length)out+='<div class="banner warn" style="font-size:.78rem;padding:8px 12px">Mangler mandagsvekt: '+mw.join(' og ')+'</div>';
+  if(!out)out='<div class="banner good" style="font-size:.78rem;padding:8px 12px">Alle dager ført og vekt registrert – klar til innsending.</div>';
+  return out;
+}
+function mailtoFromText(r,text){
+  const href='mailto:'+TERJE_EPOST+'?subject='+encodeURIComponent(reportSubject(r))+'&body='+encodeURIComponent(text);
+  if(href.length>14000)return null;
+  return href;
+}
+
+/* ==================== PLAN ==================== */
+function renderPlan(){
+  const ts=dstr(today());
+  let chips='<div class="evfilter"><button data-fl="alle" class="'+(state.planFilter==='alle'?'on':'')+'">Alle</button>';
+  Object.keys(EVENTTYPES).forEach(k=>{chips+='<button data-fl="'+k+'" class="'+(state.planFilter===k?'on':'')+'">'+EVENTTYPES[k]+'</button>';});
+  chips+='</div>';
+  const evs=EVENTS.filter(e=>state.planFilter==='alle'||e.type===state.planFilter);
+  const first=evs.findIndex(e=>e.d>=ts);
+  let html=chips
+    +'<div class="card" style="padding:11px 14px"><h2 style="margin:0">Alle innleveringsfrister<span class="mini">'+REPORTS.length+' stk</span></h2>'
+    +'<div class="btnrow" style="margin-top:8px"><button class="btn sec sm" id="showfrister">Vis liste</button></div></div>'
+    +'<div class="list">';
+  evs.forEach((e,i)=>{
+    if(i===first)html+='<div class="small" style="margin:4px 0 -2px;font-weight:700;color:var(--accent)">— I dag / neste —</div>';
+    html+=evLi(e);
+  });
+  html+='</div><div class="small" style="margin-top:12px">Røde dager = studio stengt. Planlagte aktiviteter kan endres – følg med på informasjonstavlen og Facebook.</div>';
+  V.innerHTML=html;
+  V.querySelectorAll('[data-fl]').forEach(b=>b.addEventListener('click',()=>{state.planFilter=b.dataset.fl;render();}));
+  document.getElementById('showfrister').addEventListener('click',()=>{
+    let rows='';
+    REPORTS.forEach(r=>{
+      const st=reportStatus(r);
+      rows+='<div class="li'+(st==='sendt'?' dim':'')+'" style="padding:8px 11px"><div class="bod"><div class="t" style="font-size:.83rem">'+(r.final?'Torsdag ':'Mandag ')+fmt(r.due)+' kl. 14:00 · uke '+r.weeks.join(' og ')+'</div>'
+        +'<div class="s">dekker '+fmt(r.from)+'–'+fmt(r.to)+(r.final?' + sluttvekt':'')+'</div></div>'
+        +(st==='sendt'?'<span class="badge good">Sendt</span>':'')+'</div>';
+    });
+    openModal('<h3>Innleveringsfrister 2026–2027<button class="btn ghost sm" onclick="closeModal()">Lukk</button></h3><div class="list">'+rows+'</div>'
+      +'<div class="small" style="margin-top:10px">Annenhver mandag før kl. 14:00. NB: både 28.12.2026 (uke 53) og 04.01.2027 – 2026 har 53 uker. Siste levering torsdag 24.06.2027 med morgenvekt.</div>');
+  });
+}
+
+/* ==================== MER ==================== */
+function renderMer(){
+  if(state.merPage)return renderMerPage(state.merPage);
+  const items=[['trening','Trening og oppmøte'],['medisin','Medisinlogg'],['regler','Huskeregler'],['profil','Profil og treningstider'],['backup','Sikkerhetskopi og data'],['demo','Test appen (demo-modus)'],['om','Om appen og kontakt']];
+  V.innerHTML='<div class="merlist">'+items.map(([k,t])=>'<button data-mp="'+k+'">'+t+'<span class="ar">›</span></button>').join('')+'</div>';
+  V.querySelectorAll('[data-mp]').forEach(b=>b.addEventListener('click',()=>{state.merPage=b.dataset.mp;render();}));
+}
+function subhead(t){return '<div class="subhead"><button id="back">‹ Mer</button><h2>'+t+'</h2></div>';}
+function bindBack(){document.getElementById('back').addEventListener('click',()=>{state.merPage=null;render();});}
+
+function renderMerPage(p){
+  if(p==='trening')return renderTrening();
+  if(p==='medisin')return renderMedisin();
+  if(p==='regler')return renderRegler();
+  if(p==='profil')return renderProfil();
+  if(p==='backup')return renderBackup();
+  if(p==='demo')return renderDemo();
+  if(p==='om')return renderOm();
+}
+
+function renderDemo(){
+  const on=inDemo();
+  V.innerHTML=subhead('Test appen (demo-modus)')
+    +'<div class="card"><h2>'+(on?'Demo-modus er PÅ':'Prøv alle funksjonene uten risiko')+'</h2>'
+    +'<div class="muted">'+(on
+      ?'Du ser nå eksempeldata: 12 veiinger med vektkurve, 18 dager ført kosthold, måltids- og vektbilder, oppmøte, medisinlogg og en rapport merket sendt. Prøv gjerne: forhåndsvis og lag PDF under Rapport, se grafen på Hjem, del startvekten under Vekt. Alt du gjør i demo er ufarlig.<br><br>Når du avslutter, kommer dine egne data tilbake nøyaktig slik de var.'
+      :'Demo-modus fyller appen med realistiske eksempeldata (vekt, kosthold, bilder, oppmøte) slik at du kan teste alle funksjoner – også PDF-rapporten og delingsknappene. Dine egne data lagres trygt unna og gjenopprettes uendret når du avslutter demoen.')
+    +'</div><div class="btnrow">'
+    +(on?'<button class="btn" id="dstop">Avslutt demo og hent tilbake mine data</button>'
+        :'<button class="btn" id="dstart">Start demo</button>')
+    +'</div></div>';
+  bindBack();
+  const b=document.getElementById(on?'dstop':'dstart');
+  b.addEventListener('click',on?endDemo:startDemo);
+}
+
+function renderTrening(){
+  const ts=dstr(today());
+  if(state.trenUke==null)state.trenUke=mondayOf(clampSeason(ts));
+  const mon=pd(state.trenUke),sun=addD(mon,6);
+  const wk=isoWeek(mon);
+  const weekS=SESSIONS.filter(s=>s.date>=dstr(mon)&&s.date<=dstr(sun));
+  const past=SESSIONS.filter(s=>s.date<=ts);
+  const att=past.filter(s=>DB.attendance[s.date]==='deltatt').length;
+  const eg=EGENTRENING.find(x=>dstr(mon)>=x[0]&&dstr(mon)<=x[1]);
+  let html=subhead('Trening og oppmøte')
+    +'<div class="statrow" style="margin-bottom:12px">'
+    +'<div class="stat"><div class="v">'+att+'</div><div class="l">økter deltatt</div></div>'
+    +'<div class="stat"><div class="v">'+past.length+'</div><div class="l">økter så langt</div></div>'
+    +'<div class="stat"><div class="v">'+(past.length?Math.round(att/past.length*100)+'%':'–')+'</div><div class="l">oppmøte</div></div></div>'
+    +'<div class="datenav"><button data-wnav="-7">‹</button><div class="cur">Uke '+wk.week+'<span class="wk">'+fmtShort(mon)+' – '+fmtShort(sun)+' '+sun.getFullYear()+'</span></div><button data-wnav="7">›</button></div>';
+  if(eg)html+='<div class="banner info" style="font-size:.8rem">Egentreningsuke ('+esc(eg[2])+') – ingen fellestreninger. Følg egentreningsprogrammet.</div>';
+  if(!weekS.length&&!eg)html+='<div class="muted">Ingen treningsøkter denne uken.</div>';
+  weekS.forEach(s=>{
+    const d=pd(s.date),a=DB.attendance[s.date]||'none';
+    const lab=a==='deltatt'?'Deltatt ✓':a==='fravaer'?'Fravær':a==='meldt'?'Meldt fravær':(s.date<=ts?'Sett status':'Kommende');
+    html+='<div class="sess"><div class="inf"><div class="d">'+DAGER[d.getDay()].charAt(0)+DAGER[d.getDay()].slice(1).toLowerCase()+' '+fmt(d)+'</div>'
+      +'<div class="tm">'+sessionTime(s)+'</div>'
+      +(s.note?'<div class="note">'+esc(s.note)+'</div>':'')+'</div>'
+      +'<button data-att="'+s.date+'" class="st-'+a+'">'+lab+'</button></div>';
+  });
+  html+='<div class="small" style="margin-top:10px">Trykk på knappen for å bla: deltatt → fravær → meldt fravær. Husk: fravær meldes til Terje på SMS i forkant, så tidlig som mulig i samme uke.</div>';
+  V.innerHTML=html;
+  bindBack();
+  V.querySelectorAll('[data-wnav]').forEach(b=>b.addEventListener('click',()=>{
+    state.trenUke=dstr(addD(pd(state.trenUke),+b.dataset.wnav));render();
+  }));
+  V.querySelectorAll('[data-att]').forEach(b=>b.addEventListener('click',()=>{
+    const ds=b.dataset.att,cur=DB.attendance[ds];
+    const next=cur==null?'deltatt':cur==='deltatt'?'fravaer':cur==='fravaer'?'meldt':null;
+    if(next)DB.attendance[ds]=next;else delete DB.attendance[ds];
+    saveDB();render();
+  }));
+}
+
+function renderMedisin(){
+  let html=subhead('Medisinlogg')
+    +'<div class="banner warn" style="font-size:.8rem">Starter du på nye medisiner (uansett hva, også antibiotika) eller endrer faste medisiner, skal det meldes <b>skriftlig</b> til Terje. Smertestillende før trening avtales på forhånd.</div>'
+    +'<div class="card"><label class="f">Dato</label><input type="date" id="mdate" value="'+dstr(today())+'">'
+    +'<label class="f">Hva er nytt/endret?</label><textarea id="mtxt" placeholder="F.eks.: Startet på antibiotika (kur 7 dager) for ørebetennelse."></textarea>'
+    +'<div class="btnrow"><button id="madd">Legg til</button></div></div><div class="list">';
+  [...DB.meds].sort((a,b)=>b.dato<a.dato?-1:1).forEach(m=>{
+    html+='<div class="li"><div class="bod"><div class="t">'+fmt(m.dato)+'</div><div class="s">'+esc(m.tekst)+'</div>'
+      +'<div class="btnrow" style="margin-top:6px">'
+      +(m.meldt?'<span class="badge good">Meldt til Terje</span>':'<a class="btn sec sm" href="mailto:'+TERJE_EPOST+'?subject='+encodeURIComponent('Medisinendring – '+(DB.profile.navn||''))+'&body='+encodeURIComponent('Hei Terje!\n\n'+fmt(m.dato)+': '+m.tekst+'\n\nHilsen '+(DB.profile.navn||''))+'">Send e-post</a><button class="btn ghost sm" data-meldt="'+m.id+'">Merk som meldt</button>')
+      +'<button class="btn ghost sm" data-mdel="'+m.id+'">Slett</button></div></div></div>';
+  });
+  html+='</div>';
+  V.innerHTML=html;bindBack();
+  document.getElementById('madd').addEventListener('click',()=>{
+    const dt=document.getElementById('mdate').value,tx=document.getElementById('mtxt').value.trim();
+    if(!dt||!tx){toast('Fyll ut dato og tekst');return;}
+    DB.meds.push({id:Date.now()+''+Math.floor(Math.random()*1e4),dato:dt,tekst:tx,meldt:false});
+    saveDB();render();
+  });
+  V.querySelectorAll('[data-meldt]').forEach(b=>b.addEventListener('click',()=>{
+    const m=DB.meds.find(x=>x.id===b.dataset.meldt);if(m){m.meldt=true;saveDB();render();}
+  }));
+  V.querySelectorAll('[data-mdel]').forEach(b=>b.addEventListener('click',()=>{
+    if(confirm('Slette oppføringen?')){DB.meds=DB.meds.filter(x=>x.id!==b.dataset.mdel);saveDB();render();}
+  }));
+}
+
+function renderRegler(){
+  let html=subhead('Huskeregler')+'<div class="list">';
+  REGLER.forEach(([t,s])=>{html+='<div class="li"><div class="bod"><div class="t">'+esc(t)+'</div><div class="s">'+esc(s)+'</div></div></div>';});
+  html+='</div><div class="small" style="margin-top:10px">Sammendrag av Camp Kalori-planen og studioreglene 2026–2027. Ved tvil gjelder alltid Terjes dokumenter og beskjeder.</div>';
+  V.innerHTML=html;bindBack();
+}
+
+function renderProfil(){
+  const p=DB.profile;
+  const selT=(k)=>['<select id="t_'+k+'"><option value="17"'+(p.tider[k]==='17'?' selected':'')+'>17:00–18:00</option><option value="19"'+(p.tider[k]==='19'?' selected':'')+'>19:50–20:50</option></select>'].join('');
+  V.innerHTML=subhead('Profil og treningstider')
+    +'<div class="card"><label class="f">Navn</label><input type="text" id="pnavn" value="'+esc(p.navn)+'" placeholder="Fornavn Etternavn" autocomplete="name">'
+    +'<label class="f">Høyde (cm)</label><input type="number" id="phoyde" inputmode="numeric" value="'+(p.hoyde!=null?p.hoyde:'')+'" placeholder="cm">'
+    +'<label class="f">Startvekt 10.08.2026 (kg)</label><input type="number" id="pstart" inputmode="decimal" step="0.1" value="'+(p.startvekt!=null?p.startvekt:'')+'" placeholder="settes automatisk ved veiing 10.08">'
+    +'</div>'
+    +'<div class="card"><h2>Dine faste treningstider</h2><div class="muted" style="margin-bottom:8px">Én tid per dag – valget er fast for hele sesongen (kan ikke veksles fra uke til uke).</div>'
+    +'<label class="f">Tirsdag</label>'+selT('tir')
+    +'<label class="f">Onsdag</label>'+selT('ons')
+    +'<label class="f">Torsdag</label>'+selT('tor')
+    +'<div class="small" style="margin-top:8px">Uke 49–51 (30.11–20.12) trener alle kl. 18:20–19:30 (RAA-tid). Flyttede mandagstreninger følger torsdagstiden din.</div></div>'
+    +'<div class="btnrow"><button id="psave">Lagre profil</button></div>';
+  bindBack();
+  document.getElementById('psave').addEventListener('click',()=>{
+    const p=DB.profile;
+    p.navn=document.getElementById('pnavn').value.trim();
+    const h=parseFloat(document.getElementById('phoyde').value);p.hoyde=isNaN(h)?null:h;
+    const sv=parseFloat(String(document.getElementById('pstart').value).replace(',','.'));p.startvekt=isNaN(sv)?null:sv;
+    ['tir','ons','tor'].forEach(k=>{p.tider[k]=document.getElementById('t_'+k).value;});
+    if(p.startvekt!=null&&DB.weights[SEASON_START]==null)DB.weights[SEASON_START]=p.startvekt;
+    saveDB();toast('Profil lagret');
+  });
+}
+
+function renderBackup(){
+  const n=Object.keys(DB.meals).length,w=Object.keys(DB.weights).length;
+  V.innerHTML=subhead('Sikkerhetskopi og data')
+    +'<div class="card"><h2>Status</h2><div class="muted">'+n+' dager med kosthold · '+w+' veiinger · '+DB.meds.length+' medisinoppføringer · <span id="phstat">teller bilder …</span><br>Sist lagret: '+(DB.updated?new Date(DB.updated).toLocaleString('nb-NO'):'aldri')+'.<br>Lagring: '+(storageOK?'<span class="badge good">På denne enheten</span>':'<span class="badge warn">Testmodus – ikke varig</span>')+'</div></div>'
+    +'<div class="card"><h2>Sikkerhetskopi</h2><div class="muted">Dataene ligger kun på telefonen din. Ta jevnlig kopi – f.eks. hver søndag – og lagre filen i iCloud/Filer. Kopien inkluderer måltidsbildene.</div>'
+    +'<div class="btnrow"><button id="bexp">Last ned kopi (JSON)</button><label class="btn sec" style="cursor:pointer">Gjenopprett<input type="file" id="bimp" accept=".json,application/json" style="display:none"></label></div></div>'
+    +'<div class="card"><h2>Slett alt</h2><div class="muted">Fjerner alle data fra appen på denne enheten.</div><div class="btnrow"><button class="btn sm" style="background:var(--bad)" id="bwipe">Slett alle data</button></div></div>';
+  bindBack();
+  photosAll().then(ph=>{
+    const el=document.getElementById('phstat');
+    if(el)el.textContent=ph.length+' bilder ('+Math.round(ph.reduce((s,p)=>s+(p.blob&&p.blob.size||0),0)/1024)+' kB)';
+  });
+  document.getElementById('bexp').addEventListener('click',async()=>{
+    const ph=await photosAll();
+    const encoded=await Promise.all(ph.map(p=>new Promise(res=>{
+      const fr=new FileReader();
+      fr.onload=()=>res({id:p.id,date:p.date,meal:p.meal,ts:p.ts,b64:fr.result});
+      fr.onerror=()=>res(null);
+      fr.readAsDataURL(p.blob);
+    })));
+    const payload=Object.assign({},DB,{_photos:encoded.filter(Boolean)});
+    const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='camp-kalori-backup-'+dstr(today())+'.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  });
+  document.getElementById('bimp').addEventListener('change',e=>{
+    const f=e.target.files[0];if(!f)return;
+    const rd=new FileReader();
+    rd.onload=async()=>{
+      try{
+        const p=JSON.parse(rd.result);
+        if(!p||typeof p!=='object'||!p.profile)throw new Error('feil format');
+        const photos=p._photos||[];delete p._photos;
+        DB=Object.assign(defaultDB(),p);saveDB();
+        for(const ph of photos){
+          try{
+            const blob=await (await fetch(ph.b64)).blob();
+            await photoPut({id:ph.id,date:ph.date,meal:ph.meal,ts:ph.ts,blob});
+          }catch(err){/* hopp over ødelagt bilde */}
+        }
+        toast('Gjenopprettet fra kopi'+(photos.length?' ('+photos.length+' bilder)':''));render();
+      }catch(err){toast('Kunne ikke lese filen – er det en Camp Kalori-kopi?');}
+    };
+    rd.readAsText(f);
+  });
+  document.getElementById('bwipe').addEventListener('click',async()=>{
+    if(confirm('Er du sikker? Alle data slettes fra denne enheten.')&&confirm('Helt sikker? Dette kan ikke angres uten sikkerhetskopi.')){
+      DB=defaultDB();saveDB();
+      try{const ph=await photosAll();for(const p of ph)await photoDel(p.id);}catch(e){}
+      toast('Alt slettet');render();
+    }
+  });
+}
+
+function renderOm(){
+  V.innerHTML=subhead('Om appen og kontakt')
+    +'<div class="card"><h2>Camp Kalori 2026–2027</h2><div class="muted">Personlig registrerings-app for Camp Kalori-sesongen 10.08.2026–24.06.2027 hos Cardio Kickboxing &amp; Camp Kalori AS, Skullerud Aktivitetspark (Olaf Helsets vei 5, inngang K).<br><br>Appen er privat: alt lagres kun på din enhet, ingenting sendes automatisk. Rapporter sendes av deg selv, per e-post, som før.</div></div>'
+    +'<div class="card"><h2>Kontakt</h2><div class="muted">'
+    +'<b>Terje</b> (kosthold, helse, trening, fravær):<br>SMS/tlf <a href="tel:+4795066227">950 66 227</a> · <a href="mailto:'+TERJE_EPOST+'">'+TERJE_EPOST+'</a><br><br>'
+    +'<b>Kathrine Cecilie</b> (påmeldinger, faktura, endring av kontaktinfo):<br><a href="mailto:'+KATHRINE_EPOST+'">'+KATHRINE_EPOST+'</a></div></div>'
+    +'<div class="card"><h2>Nøkkeltall for sesongen</h2><div class="muted">'
+    +REPORTS.length+' innleveringer · første trening 18.08.2026 · siste dag 24.06.2027 · 6 egentreningsuker (40, 52, 53, 8, 12, 13) · totalpris kr 44.000.</div></div>'
+    +'<div class="card"><h2>Betaling</h2><div class="muted">Totalpris kr 44.000 for sesongen (bindende kontrakt, ingen angrerett/frys iht. kontrakten). Faktura kommer fra <b>noreply@mail.poweroffice.net</b> – sjekk søppelpost. Administrasjonsgebyr kr 60 per faktura. Spørsmål om faktura, betaling og påmeldinger: Kathrine på e-post.</div></div>'
+    +'<div class="small center" style="margin-top:14px">Versjon 1.4 · august 2026 · laget for Trond</div>';
+  bindBack();
+}
+
+/* ==================== demo-modus ==================== */
+const DEMO_KEY='campkalori_demo_snapshot';
+let MEM_DEMO=null;
+function demoSnap(){
+  try{const r=localStorage.getItem(DEMO_KEY);if(r)return JSON.parse(r);}catch(e){}
+  return MEM_DEMO;
+}
+function inDemo(){return !!demoSnap();}
+function demoPhotoBlob(kind){
+  const c=document.createElement('canvas');c.width=640;c.height=480;
+  const g=c.getContext('2d');
+  if(kind==='vekt'){
+    g.fillStyle='#d8d5d0';g.fillRect(0,0,640,480);
+    g.fillStyle='#f4f2ef';g.fillRect(120,60,400,360);
+    g.fillStyle='#1a1a19';g.fillRect(200,150,240,110);
+    g.fillStyle='#7ef07e';g.font='bold 64px monospace';g.textAlign='center';
+    g.fillText('92.4',320,225);
+    g.fillStyle='#52514e';g.font='bold 28px sans-serif';
+    g.fillText('DEMO-VEKT',320,330);
+    g.beginPath();g.ellipse(230,410,55,32,0,0,7);g.fillStyle='#e8b89a';g.fill();
+    g.beginPath();g.ellipse(410,410,55,32,0,0,7);g.fill();
+  }else{
+    g.fillStyle='#e2c4a4';g.fillRect(0,0,640,480);
+    g.beginPath();g.arc(320,240,190,0,7);g.fillStyle='#f6f4f0';g.fill();
+    g.beginPath();g.arc(320,240,170,0,7);g.fillStyle='#fdfcfa';g.fill();
+    g.beginPath();g.arc(250,220,70,0,7);g.fillStyle='#c2543c';g.fill();
+    g.beginPath();g.arc(390,260,60,0,7);g.fillStyle='#5f8f3e';g.fill();
+    g.beginPath();g.arc(330,320,45,0,7);g.fillStyle='#e8d27a';g.fill();
+    g.fillStyle='#8a8880';g.font='bold 22px sans-serif';g.textAlign='center';
+    g.fillText('DEMO-MÅLTID',320,455);
+  }
+  return new Promise(res=>c.toBlob(b=>res(b),'image/jpeg',0.7));
+}
+async function startDemo(){
+  if(inDemo()){toast('Du er allerede i demo-modus');return;}
+  const snap={db:DB,photoIds:(await photosAll()).map(p=>p.id)};
+  try{localStorage.setItem(DEMO_KEY,JSON.stringify(snap));}catch(e){MEM_DEMO=snap;}
+  const d=defaultDB();
+  d.profile={navn:'Demo Deltager',hoyde:180,startvekt:92.4,maalEgen:80,maalTerje:82,tider:{tir:'17',ons:'17',tor:'19'}};
+  const wts=[92.4,91.8,91.1,90.6,90.4,89.7,89.1,88.9,88.2,87.8,87.1,86.7];
+  let m=pd('2026-08-10');
+  wts.forEach(w=>{d.weights[dstr(m)]=w;m=addD(m,7);});
+  const eks=[
+    {frokost:'2 skiver grovbrød, en med egg og en med hvit ost. 1 glass lettmelk, 1 kopp svart kaffe.',lunsj:'Salat med kyllingfilet, paprika og agurk. Vann.',middag:'Ovnsbakt laks, kokte poteter og brokkoli. Vann.',kveld:'Yoghurt naturell med litt havregryn.',annet:'1 eple. 2 kopper svart kaffe. 1 kopp te på kvelden.',trening:'Gåtur 45 min.'},
+    {frokost:'Havregrøt med melk og litt kanel. Svart kaffe.',lunsj:'2 skiver grovbrød med makrell i tomat. Vann.',middag:'Kyllinggryte med ris og grønnsaker. Vann.',kveld:'Cottage cheese med agurk.',annet:'1 banan. 1 kopp kaffe med litt melk.',trening:'Camp Kalori-trening kl. 17.'},
+    {frokost:'2 egg og 1 skive grovbrød. Appelsinjuice (lite glass). Kaffe.',lunsj:'Rester av kyllinggryte. Vann.',middag:'Torsk, gulrøtter og potetmos. Vann.',kveld:'1 knekkebrød med kokt skinke.',annet:'Håndfull nøtter. 2 kopper kaffe.',trening:'Camp Kalori-trening kl. 17.'}
+  ];
+  for(let i=0;i<18;i++){
+    const ds=dstr(addD(pd('2026-08-10'),i));
+    d.meals[ds]=JSON.parse(JSON.stringify(eks[i%eks.length]));
+  }
+  d.meds=[{id:'demo1',dato:'2026-09-02',tekst:'Startet på antibiotika (7 dagers kur) for bihulebetennelse.',meldt:true}];
+  SESSIONS.filter(s=>s.date>='2026-08-18'&&s.date<='2026-09-25').forEach((s,i)=>{
+    d.attendance[s.date]=(i===7?'meldt':'deltatt');
+  });
+  d.sent['2026-08-24']=new Date().toISOString();
+  DB=d;saveDB();
+  try{
+    await photoAdd('2026-08-10','vekt',await demoPhotoBlob('vekt'));
+    await photoAdd('2026-08-10','frokost',await demoPhotoBlob('mat'));
+    await photoAdd('2026-08-12','middag',await demoPhotoBlob('mat'));
+  }catch(e){}
+  state.tab='hjem';state.merPage=null;state.trenUke=null;state.kostDate='2026-08-12';
+  toast('Demo-modus på – utforsk alle funksjonene fritt');
+  render();
+}
+async function endDemo(){
+  const snap=demoSnap();
+  if(!snap){toast('Ikke i demo-modus');return;}
+  try{
+    const keep=new Set(snap.photoIds||[]);
+    for(const p of await photosAll())if(!keep.has(p.id))await photoDel(p.id);
+  }catch(e){}
+  DB=Object.assign(defaultDB(),snap.db);saveDB();
+  try{localStorage.removeItem(DEMO_KEY);}catch(e){}
+  MEM_DEMO=null;
+  state.tab='hjem';state.merPage=null;state.trenUke=null;state.kostDate=clampSeason(dstr(today()));
+  toast('Demo avsluttet – dine egne data er tilbake');
+  render();
+}
+document.getElementById('demoexit').addEventListener('click',e=>{e.preventDefault();endDemo();});
+
+/* ==================== oppdater nedtelling + init ==================== */
+setInterval(()=>{
+  if(state.tab!=='hjem')return;
+  const el=document.getElementById('cd');if(!el)return;
+  const r=nextReport(),ms=due14(r)-new Date();
+  const dd=Math.floor(ms/86400000),hh=Math.floor(ms%86400000/3600000),mi=Math.floor(ms%3600000/60000);
+  el.textContent=ms<0?'Forfalt':(dd>0?dd+' d '+hh+' t':hh+' t '+mi+' min');
+},30000);
+
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
+  window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});
+}
+render();
+</script>
+</body>
+</html>
