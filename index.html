@@ -73,7 +73,11 @@ input[type=text],input[type=number],input[type=date],select,textarea{
   font:inherit;width:100%;border:1px solid var(--line);border-radius:10px;
   padding:10px 12px;background:#fff;color:var(--text);font-size:16px;
 }
-textarea{resize:vertical;min-height:58px;line-height:1.45}
+textarea{resize:vertical;min-height:72px;line-height:1.5}
+textarea.grow{resize:none;overflow-y:hidden;min-height:84px}
+.qadd{display:flex;gap:8px;margin-bottom:8px}
+.qadd input{flex:1}
+.qadd button{white-space:nowrap;font-variant-numeric:tabular-nums}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
 label.f{display:block;font-size:.75rem;font-weight:700;letter-spacing:.4px;color:var(--text-2);margin:12px 0 4px;text-transform:uppercase}
 label.f:first-child{margin-top:0}
@@ -162,12 +166,17 @@ label.f.klrow{display:flex;align-items:center;justify-content:space-between;gap:
 .tip{position:absolute;background:var(--text);color:#fff;font-size:.72rem;padding:5px 9px;border-radius:8px;pointer-events:none;transform:translate(-50%,-130%);white-space:nowrap;display:none;font-variant-numeric:tabular-nums;z-index:5}
 /* Måltidsbilder */
 .photorow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:7px 0 2px}
-.photorow .addph{background:#f1f0ed;color:var(--text-2);font-size:.74rem;padding:7px 10px;border-radius:8px}
+.photorow .addph{background:#f1f0ed;color:var(--text-2);font-size:.74rem;font-weight:600;padding:7px 10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;-webkit-user-select:none;user-select:none}
+.vh{position:absolute;width:1px;height:1px;opacity:0.01;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%)}
 .thumb{position:relative}
 .thumb img{width:54px;height:54px;object-fit:cover;border-radius:9px;border:1px solid var(--line);display:block}
 .thumb .rm{position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:99px;background:var(--text);color:#fff;font-size:.62rem;padding:0;line-height:1;display:flex;align-items:center;justify-content:center}
 .phgrid{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .phgrid img{width:46px;height:46px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+/* Fremgangsbilder */
+.kgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kgrid .kitem img,.cmp img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:block;cursor:pointer}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 /* Mer-siden */
 .merlist{display:flex;flex-direction:column;gap:8px}
 .merlist button{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:14px;justify-content:flex-start;font-weight:600;font-size:.92rem;display:flex;gap:10px;width:100%}
@@ -250,7 +259,7 @@ function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'
 let storageOK=true, MEMSTORE=null;
 function defaultDB(){return {
   profile:{navn:'',hoyde:null,startvekt:null,maalEgen:null,maalTerje:null,
-           tider:{tir:'17',ons:'17',tor:'17'}},
+           kroppPaaminn:'30',tider:{tir:'17',ons:'17',tor:'17'}},
   weights:{}, meals:{}, meds:[], attendance:{}, sent:{}, updated:null
 };}
 function loadDB(){
@@ -482,7 +491,7 @@ function buildReportText(r,phIdx){
 }
 function reportTextFor(r){
   return photosInRange(r.from,r.to).then(all=>{
-    const photos=all.filter(p=>p.meal!=='vekt');
+    const photos=all.filter(p=>p.meal!=='vekt'&&p.meal!=='kropp');
     let text=buildReportText(r,photoIndexOf(photos));
     if(photos.length)text+='\n\nVedlagt: '+photos.length+' bilde'+(photos.length>1?'r':'')+' av måltider.';
     return {text,photos};
@@ -539,7 +548,7 @@ function pdfWrap(s,bold,size,maxW){
   return lines;
 }
 async function buildReportPdf(r){
-  const photos=(await photosInRange(r.from,r.to)).filter(p=>p.meal!=='vekt');
+  const photos=(await photosInRange(r.from,r.to)).filter(p=>p.meal!=='vekt'&&p.meal!=='kropp');
   const imgs=[];
   for(const p of photos){
     try{
@@ -784,6 +793,8 @@ function renderHjem(){
     html+='<div class="card"><h2>Vekten din</h2><div class="muted">Ingen vekt registrert ennå. Første veiing er mandag 10. august 2026 – din egen vekt, hver mandag morgen.</div><div class="btnrow"><button data-go="vekt" class="btn sm">Registrer vekt</button></div></div>';
   }
 
+  html+='<div id="kroppRem"></div>';
+
   // Kommende hendelser
   const upcoming=EVENTS.filter(e=>e.d>=ts).slice(0,3);
   if(upcoming.length){
@@ -795,6 +806,27 @@ function renderHjem(){
   const att=V.querySelector('[data-att]');
   if(att)att.addEventListener('click',()=>{DB.attendance[ts]=DB.attendance[ts]==='deltatt'?undefined:'deltatt';if(!DB.attendance[ts])delete DB.attendance[ts];saveDB();render();});
   if(wk.length)renderChart(document.getElementById('chart'));
+  injectKroppReminder();
+}
+async function injectKroppReminder(){
+  const holder=document.getElementById('kroppRem');if(!holder)return;
+  const kp=DB.profile.kroppPaaminn||'30';
+  const ts=dstr(today());
+  if(kp==='av'||ts<SEASON_START||ts>SEASON_END)return;
+  const list=await kroppPhotos();
+  if(state.tab!=='hjem'||!document.getElementById('kroppRem'))return;
+  const last=list.reduce((m,p)=>p.date>m?p.date:m,'');
+  let txt=null;
+  if(!last)txt='Tips: ta et fremgangsbilde av deg selv – om noen måneder er det gull verdt å se tilbake på.';
+  else{
+    const diff=Math.floor((pd(ts)-pd(last))/86400000);
+    if(diff>=+kp)txt='Det er '+diff+' dager siden forrige fremgangsbilde – på tide med et nytt?';
+  }
+  if(!txt)return;
+  holder.innerHTML='<div class="banner info">'+txt+' <a href="#" id="kroppGo" style="color:inherit;font-weight:700">Ta bilde →</a> <span class="small">(kun privat – aldri med i rapporter)</span></div>';
+  document.getElementById('kroppGo').addEventListener('click',e=>{
+    e.preventDefault();state.tab='mer';state.merPage='kropp';render();
+  });
 }
 function bindGo(){
   V.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();state.tab=el.dataset.go;state.merPage=null;render();}));
@@ -901,13 +933,17 @@ function renderKosthold(){
   }
   html+='<div class="card">';
   FELT.forEach(([k,lab])=>{
-    html+='<label class="f klrow" for="f_'+k+'"><span>'+lab+'</span><button type="button" class="klbtn" data-kl="'+k+'" aria-label="Sett inn klokkeslett i '+k+'">+ kl. nå</button></label>'
-      +'<textarea id="f_'+k+'" data-f="'+k+'" placeholder="'+(k==='frokost'?'F.eks.: kl. 07:15 – 2 skiver brød, en med egg og en med hvit ost. 1 glass melk, 1 kopp svart kaffe.':k==='trening'?'F.eks.: Camp Kalori-trening kl. 17, eller egentrening/gåtur':'')+'">'+esc(m[k]||'')+'</textarea>';
+    html+='<label class="f klrow" for="f_'+k+'"><span>'+lab+'</span><button type="button" class="klbtn" data-kl="'+k+'" aria-label="Sett inn klokkeslett i '+k+'">+ kl. nå</button></label>';
+    if(k==='annet'){
+      html+='<div class="qadd"><input type="text" id="qa_annet" placeholder="F.eks. 1 kopp kaffe, 1 eple, 1 glass vann …" enterkeyhint="done" autocomplete="off">'
+        +'<button type="button" class="btn sm" id="qa_btn">+ kl. <span id="qa_time"></span></button></div>';
+    }
+    html+='<textarea class="grow" id="f_'+k+'" data-f="'+k+'" placeholder="'+(k==='frokost'?'F.eks.: kl. 07:15 – 2 skiver brød, en med egg og en med hvit ost. 1 glass melk, 1 kopp svart kaffe.':k==='annet'?'Alt mellom måltidene – legges enklest til én og én i feltet over, så sorteres de etter klokkeslett her.':k==='trening'?'F.eks.: Camp Kalori-trening kl. 17, eller egentrening/gåtur':'')+'">'+esc(m[k]||'')+'</textarea>';
     if(k!=='trening'){
-      html+='<div class="photorow" data-pr="'+k+'"><button class="addph" data-photo="'+k+'" type="button" aria-label="Legg til bilde av '+k+'">'
-        +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L17 6h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.4"/></svg>Bilde</button>'
+      html+='<div class="photorow" data-pr="'+k+'"><label class="addph" for="pf_'+k+'" aria-label="Legg til bilde av '+k+'">'
+        +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L17 6h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.4"/></svg>Bilde</label>'
         +'<span class="thumbs" data-th="'+k+'"></span>'
-        +'<input type="file" accept="image/*" multiple data-pf="'+k+'" style="display:none"></div>';
+        +'<input type="file" id="pf_'+k+'" accept="image/*" multiple data-pf="'+k+'" class="vh"></div>';
     }
   });
   html+='<div class="small" style="margin-top:10px">Skriv alt du inntar – også kaffe, te og all drikke. Ikke vei maten, ikke tell kalorier. Klokkeslett er ikke påkrevd, men fører du «live» med <b>+ kl. nå</b>-knappen får både du og Terje frem regulariteten på måltider og væskeinntak. Lagres automatisk. Bilder er valgfritt og komprimeres til et lite format.</div></div>';
@@ -930,9 +966,6 @@ function renderKosthold(){
     ta.setSelectionRange(ta.value.length,ta.value.length);
     ta.dispatchEvent(new Event('input'));
   }));
-  V.querySelectorAll('[data-photo]').forEach(b=>b.addEventListener('click',()=>{
-    const inp=V.querySelector('input[data-pf="'+b.dataset.photo+'"]');if(inp)inp.click();
-  }));
   V.querySelectorAll('input[data-pf]').forEach(inp=>inp.addEventListener('change',async()=>{
     const files=Array.from(inp.files||[]).slice(0,6);
     if(!files.length)return;
@@ -952,7 +985,9 @@ function renderKosthold(){
   }));
   loadDayPhotos(ds);
   V.querySelectorAll('textarea[data-f]').forEach(ta=>{
+    autosize(ta);
     ta.addEventListener('input',()=>{
+      autosize(ta);
       const cur=DB.meals[state.kostDate]||(DB.meals[state.kostDate]={});
       cur[ta.dataset.f]=ta.value;
       clearTimeout(ta._h);ta._h=setTimeout(()=>{saveDB();
@@ -961,8 +996,42 @@ function renderKosthold(){
       },400);
     });
   });
+  // Hurtigregistrering av drikke/mellommåltider – én og én, sortert kronologisk i Annet
+  const qaBtn=document.getElementById('qa_btn');
+  if(qaBtn){
+    const updTime=()=>{const n=new Date();const el=document.getElementById('qa_time');if(el)el.textContent=pad(n.getHours())+':'+pad(n.getMinutes());};
+    updTime();
+    const qaAdd=()=>{
+      const inp=document.getElementById('qa_annet');
+      const txt=inp.value.trim();
+      if(!txt){toast('Skriv hva du inntok først');inp.focus();return;}
+      const n=new Date();
+      const entry='kl. '+pad(n.getHours())+':'+pad(n.getMinutes())+' – '+txt;
+      const ta=document.getElementById('f_annet');
+      const tsRe=/^kl\. (\d{2}):(\d{2})/;
+      const lines=ta.value.split('\n').map(s=>s.trim()).filter(Boolean);
+      lines.push(entry);
+      const other=lines.filter(l=>!tsRe.test(l));
+      const tsLines=lines.filter(l=>tsRe.test(l));
+      tsLines.sort((a,b)=>{
+        const ka=a.match(tsRe)[1]+a.match(tsRe)[2],kb=b.match(tsRe)[1]+b.match(tsRe)[2];
+        return ka<kb?-1:ka>kb?1:0;
+      });
+      ta.value=[...other,...tsLines].join('\n');
+      autosize(ta);
+      ta.dispatchEvent(new Event('input'));
+      inp.value='';updTime();inp.focus();
+    };
+    qaBtn.addEventListener('click',qaAdd);
+    document.getElementById('qa_annet').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();qaAdd();}});
+    document.getElementById('qa_annet').addEventListener('focus',updTime);
+  }
 }
 
+function autosize(ta){
+  ta.style.height='auto';
+  ta.style.height=Math.min(Math.max(ta.scrollHeight+2,84),520)+'px';
+}
 let PHOTO_URLS=[];
 function freePhotoUrls(){PHOTO_URLS.forEach(u=>URL.revokeObjectURL(u));PHOTO_URLS=[];}
 async function loadDayPhotos(day){
@@ -1002,10 +1071,10 @@ function renderVekt(){
   html+='<div class="card" id="svcard"><h2>Startvekten – mandag 10.08.2026'
     +'<span class="mini" id="svstatus"></span></h2>'
     +'<div class="muted">Terje skal ha startvekten på e-post <b>før kl. 14:00</b> denne dagen – <b>med bilde der du står på vekten</b>, slik at føttene og vekttallet vises. Dette gjelder kun startvekten; senere veiinger trenger ikke bilde.</div>'
-    +'<div class="photorow" style="margin-top:9px"><button class="addph" id="svphoto" type="button">'
-    +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L17 6h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.4"/></svg>Bilde av vekten</button>'
+    +'<div class="photorow" style="margin-top:9px"><label class="addph" for="svfile">'
+    +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L17 6h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.4"/></svg>Bilde av vekten</label>'
     +'<span class="thumbs" id="svthumbs"></span>'
-    +'<input type="file" accept="image/*" id="svfile" style="display:none"></div>'
+    +'<input type="file" accept="image/*" id="svfile" class="vh"></div>'
     +'<div class="btnrow"><button class="btn sm" id="svshare">Del startvekt + bilde</button>'
     +'<a class="btn sec sm" id="svmail" href="#">E-post (kun tekst)</a></div>'
     +'<div class="small" style="margin-top:6px">«Del» åpner delingsarket med bildet vedlagt – velg E-post. Teksten kopieres samtidig.</div></div>';
@@ -1056,7 +1125,6 @@ function renderVekt(){
     if(confirm('Slette veiingen '+fmt(b.dataset.del)+'?')){delete DB.weights[b.dataset.del];saveDB();render();}
   }));
   // Startvekt-kortet
-  document.getElementById('svphoto').addEventListener('click',()=>document.getElementById('svfile').click());
   document.getElementById('svfile').addEventListener('change',async e=>{
     const f=e.target.files&&e.target.files[0];if(!f)return;
     try{
@@ -1247,7 +1315,7 @@ function renderPlan(){
 /* ==================== MER ==================== */
 function renderMer(){
   if(state.merPage)return renderMerPage(state.merPage);
-  const items=[['trening','Trening og oppmøte'],['medisin','Medisinlogg'],['regler','Huskeregler'],['profil','Profil og treningstider'],['backup','Sikkerhetskopi og data'],['demo','Test appen (demo-modus)'],['om','Om appen og kontakt']];
+  const items=[['kropp','Fremgangsbilder'],['trening','Trening og oppmøte'],['medisin','Medisinlogg'],['regler','Huskeregler'],['profil','Profil og treningstider'],['backup','Sikkerhetskopi og data'],['demo','Test appen (demo-modus)'],['om','Om appen og kontakt']];
   V.innerHTML='<div class="merlist">'+items.map(([k,t])=>'<button data-mp="'+k+'">'+t+'<span class="ar">›</span></button>').join('')+'</div>';
   V.querySelectorAll('[data-mp]').forEach(b=>b.addEventListener('click',()=>{state.merPage=b.dataset.mp;render();}));
 }
@@ -1255,6 +1323,7 @@ function subhead(t){return '<div class="subhead"><button id="back">‹ Mer</butt
 function bindBack(){document.getElementById('back').addEventListener('click',()=>{state.merPage=null;render();});}
 
 function renderMerPage(p){
+  if(p==='kropp')return renderKropp();
   if(p==='trening')return renderTrening();
   if(p==='medisin')return renderMedisin();
   if(p==='regler')return renderRegler();
@@ -1278,6 +1347,94 @@ function renderDemo(){
   bindBack();
   const b=document.getElementById(on?'dstop':'dstart');
   b.addEventListener('click',on?endDemo:startDemo);
+}
+
+function renderKropp(){
+  const kp=DB.profile.kroppPaaminn||'30';
+  V.innerHTML=subhead('Fremgangsbilder')
+    +'<div class="banner info" style="font-size:.8rem">Helt privat: bildene lagres kun på telefonen din og blir <b>aldri</b> med i rapporter, PDF-er eller delinger. Tips: ta bildet på samme sted, i samme lys og med samme antrekk hver gang – da ser du utviklingen best.</div>'
+    +'<div class="card"><h2>Nytt bilde</h2>'
+    +'<div class="photorow"><label class="addph" for="kfile">'
+    +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L17 6h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.4"/></svg>Ta eller velg bilde</label>'
+    +'<input type="file" id="kfile" accept="image/*" multiple class="vh"></div>'
+    +'<label class="f" style="margin-top:12px">Påminnelse på Hjem-skjermen</label>'
+    +'<select id="kpsel"><option value="av"'+(kp==='av'?' selected':'')+'>Av</option><option value="14"'+(kp==='14'?' selected':'')+'>Hver 2. uke</option><option value="30"'+(kp==='30'?' selected':'')+'>Hver måned</option></select></div>'
+    +'<div class="card hidden" id="kcmp"><h2>Sammenlign</h2><div class="grid2"><select id="cmpA" aria-label="Første bilde"></select><select id="cmpB" aria-label="Andre bilde"></select></div><div class="cmp" id="cmpview" style="margin-top:10px"></div></div>'
+    +'<div class="card"><h2>Alle bilder<span class="mini" id="kcount"></span></h2><div class="kgrid" id="kgrid"></div><div class="muted hidden" id="kempty">Ingen bilder ennå. Ett bilde i måneden er nok til å se en tydelig utvikling gjennom Camp Kalori-året.</div></div>';
+  bindBack();
+  document.getElementById('kpsel').addEventListener('change',e=>{
+    DB.profile.kroppPaaminn=e.target.value;saveDB();
+    toast('Påminnelse: '+e.target.selectedOptions[0].textContent);
+  });
+  document.getElementById('kfile').addEventListener('change',async e=>{
+    const files=Array.from(e.target.files||[]).slice(0,4);
+    if(!files.length)return;
+    let ok=0;
+    for(const f of files){
+      try{const blob=await compressImage(f,1080,0.7);await photoAdd(dstr(today()),'kropp',blob);ok++;}catch(err){}
+    }
+    toast(ok?(ok===1?'Bilde lagret':ok+' bilder lagret'):'Kunne ikke lagre bildet');
+    e.target.value='';loadKropp();
+  });
+  loadKropp();
+}
+async function kroppPhotos(){return (await photosAll()).filter(p=>p.meal==='kropp');}
+function weightNear(ds){
+  const ser=weightSeries();if(!ser.length)return null;
+  let best=null;ser.forEach(p=>{if(p.d<=ds)best=p;});
+  return best?best.v:ser[0].v;
+}
+async function loadKropp(){
+  if(state.merPage!=='kropp')return;
+  const list=await kroppPhotos();
+  if(state.merPage!=='kropp')return;
+  freePhotoUrls();
+  const grid=document.getElementById('kgrid');if(!grid)return;
+  grid.innerHTML='';
+  document.getElementById('kcount').textContent=list.length?(list.length+' stk'):'';
+  document.getElementById('kempty').classList.toggle('hidden',!!list.length);
+  [...list].reverse().forEach(p=>{
+    const u=URL.createObjectURL(p.blob);PHOTO_URLS.push(u);
+    const w=weightNear(p.date);
+    const el=document.createElement('div');el.className='kitem';
+    el.innerHTML='<img alt="Fremgangsbilde '+fmt(p.date)+'"><div class="small center" style="margin-top:3px">'+fmtShort(p.date)+(w!=null?' · '+kg(w)+' kg':'')+'</div>';
+    el.querySelector('img').src=u;
+    el.addEventListener('click',()=>viewKropp(p));
+    grid.appendChild(el);
+  });
+  const cmp=document.getElementById('kcmp');
+  if(list.length>=2){
+    cmp.classList.remove('hidden');
+    const A=document.getElementById('cmpA'),B=document.getElementById('cmpB');
+    const opts=list.map((p,i)=>{
+      const w=weightNear(p.date);
+      return '<option value="'+i+'">'+fmt(p.date)+(w!=null?' · '+kg(w)+' kg':'')+'</option>';
+    }).join('');
+    A.innerHTML=opts;B.innerHTML=opts;
+    A.value='0';B.value=String(list.length-1);
+    const draw=()=>{
+      const v=document.getElementById('cmpview');v.innerHTML='';
+      [list[+A.value],list[+B.value]].forEach(p=>{
+        const u=URL.createObjectURL(p.blob);PHOTO_URLS.push(u);
+        const w=weightNear(p.date);
+        const d=document.createElement('div');
+        d.innerHTML='<img alt="Fremgangsbilde"><div class="small center" style="margin-top:3px">'+fmt(p.date)+(w!=null?' · '+kg(w)+' kg':'')+'</div>';
+        d.querySelector('img').src=u;
+        v.appendChild(d);
+      });
+    };
+    A.onchange=draw;B.onchange=draw;draw();
+  }else cmp.classList.add('hidden');
+}
+function viewKropp(p){
+  const u=URL.createObjectURL(p.blob);PHOTO_URLS.push(u);
+  const w=weightNear(p.date);
+  openModal('<h3>'+fmtLong(p.date)+(w!=null?' · '+kg(w)+' kg':'')+'<button class="btn ghost sm" onclick="closeModal()">Lukk</button></h3>'
+    +'<img src="'+u+'" style="width:100%;border-radius:12px;border:1px solid var(--line)" alt="Fremgangsbilde">'
+    +'<div class="btnrow"><button class="btn sm" style="background:var(--bad)" id="kdel">Slett bildet</button></div>');
+  document.getElementById('kdel').addEventListener('click',async()=>{
+    if(confirm('Slette dette fremgangsbildet?')){await photoDel(p.id);closeModal();loadKropp();}
+  });
 }
 
 function renderTrening(){
@@ -1444,7 +1601,7 @@ function renderOm(){
     +'<div class="card"><h2>Nøkkeltall for sesongen</h2><div class="muted">'
     +REPORTS.length+' innleveringer · første trening 18.08.2026 · siste dag 24.06.2027 · 6 egentreningsuker (40, 52, 53, 8, 12, 13) · totalpris kr 44.000.</div></div>'
     +'<div class="card"><h2>Betaling</h2><div class="muted">Totalpris kr 44.000 for sesongen (bindende kontrakt, ingen angrerett/frys iht. kontrakten). Faktura kommer fra <b>noreply@mail.poweroffice.net</b> – sjekk søppelpost. Administrasjonsgebyr kr 60 per faktura. Spørsmål om faktura, betaling og påmeldinger: Kathrine på e-post.</div></div>'
-    +'<div class="small center" style="margin-top:14px">Versjon 1.4 · august 2026 · laget for Trond</div>';
+    +'<div class="small center" style="margin-top:14px">Versjon 1.7 · august 2026 · laget for Trond</div>';
   bindBack();
 }
 
