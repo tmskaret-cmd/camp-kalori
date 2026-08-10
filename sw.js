@@ -1,5 +1,5 @@
 /* Camp Kalori service worker – cache-first, slik at appen virker uten nett */
-const CACHE = 'campkalori-v9';
+const CACHE = 'campkalori-v10';
 const FILES = ['./', './index.html', './manifest.json', './ikon-180.png', './ikon-192.png', './ikon-512.png'];
 
 self.addEventListener('install', e => {

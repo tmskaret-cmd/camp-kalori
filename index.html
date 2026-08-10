@@ -1564,15 +1564,15 @@ function renderBackup(){
   const n=Object.keys(DB.meals).length,w=Object.keys(DB.weights).length;
   V.innerHTML=subhead('Sikkerhetskopi og data')
     +'<div class="card"><h2>Status</h2><div class="muted">'+n+' dager med kosthold · '+w+' veiinger · '+DB.meds.length+' medisinoppføringer · <span id="phstat">teller bilder …</span><br>Sist lagret: '+(DB.updated?new Date(DB.updated).toLocaleString('nb-NO'):'aldri')+'.<br>Lagring: '+(storageOK?'<span class="badge good">På denne enheten</span>':'<span class="badge warn">Testmodus – ikke varig</span>')+'</div></div>'
-    +'<div class="card"><h2>Sikkerhetskopi</h2><div class="muted">Dataene ligger kun på telefonen din. Ta jevnlig kopi – f.eks. hver søndag – og lagre filen i iCloud/Filer. Kopien inkluderer måltidsbildene.</div>'
-    +'<div class="btnrow"><button id="bexp">Last ned kopi (JSON)</button><label class="btn sec" style="cursor:pointer">Gjenopprett<input type="file" id="bimp" accept=".json,application/json" style="display:none"></label></div></div>'
+    +'<div class="card"><h2>Sikkerhetskopi og overføring til Mac</h2><div class="muted">Dataene ligger kun på denne enheten. Ta jevnlig kopi – f.eks. hver søndag. Kopien inkluderer alle bildene, og den samme filen brukes til å flytte alt til Mac-en (eller tilbake): «Del kopi» → Arkiver i Filer → iCloud Drive, og «Gjenopprett» på den andre enheten.<br><br><b>NB:</b> Enhetene synkroniseres ikke automatisk – gjenoppretting erstatter alt på enheten. Rediger derfor på én enhet om gangen, og overfør kopien når du bytter.</div>'
+    +'<div class="btnrow"><button id="bshare">Del kopi (iCloud/AirDrop)</button><button id="bexp" class="btn sec">Last ned kopi</button><label class="btn sec" style="cursor:pointer">Gjenopprett<input type="file" id="bimp" accept=".json,application/json" style="display:none"></label></div></div>'
     +'<div class="card"><h2>Slett alt</h2><div class="muted">Fjerner alle data fra appen på denne enheten.</div><div class="btnrow"><button class="btn sm" style="background:var(--bad)" id="bwipe">Slett alle data</button></div></div>';
   bindBack();
   photosAll().then(ph=>{
     const el=document.getElementById('phstat');
     if(el)el.textContent=ph.length+' bilder ('+Math.round(ph.reduce((s,p)=>s+(p.blob&&p.blob.size||0),0)/1024)+' kB)';
   });
-  document.getElementById('bexp').addEventListener('click',async()=>{
+  async function buildBackupBlob(){
     const ph=await photosAll();
     const encoded=await Promise.all(ph.map(p=>new Promise(res=>{
       const fr=new FileReader();
@@ -1581,10 +1581,25 @@ function renderBackup(){
       fr.readAsDataURL(p.blob);
     })));
     const payload=Object.assign({},DB,{_photos:encoded.filter(Boolean)});
-    const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-    a.download='camp-kalori-backup-'+dstr(today())+'.json';a.click();
-    setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    return {blob:new Blob([JSON.stringify(payload)],{type:'application/json'}),
+            name:'camp-kalori-backup-'+dstr(today())+'.json'};
+  }
+  document.getElementById('bexp').addEventListener('click',async()=>{
+    const {blob,name}=await buildBackupBlob();
+    downloadBlob(blob,name);
+  });
+  document.getElementById('bshare').addEventListener('click',async()=>{
+    const {blob,name}=await buildBackupBlob();
+    const f=new File([blob],name,{type:'application/json'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){
+      try{
+        await navigator.share({title:name,files:[f]});
+        toast('Velg «Arkiver i Filer» → iCloud Drive for å nå den fra Mac-en');
+      }catch(e){if(e&&e.name!=='AbortError'){downloadBlob(blob,name);toast('Delingen ble avbrutt – kopien er lastet ned i stedet');}}
+    }else{
+      downloadBlob(blob,name);
+      toast('Deling støttes ikke her – kopien er lastet ned');
+    }
   });
   document.getElementById('bimp').addEventListener('change',e=>{
     const f=e.target.files[0];if(!f)return;
@@ -1624,7 +1639,7 @@ function renderOm(){
     +'<div class="card"><h2>Nøkkeltall for sesongen</h2><div class="muted">'
     +REPORTS.length+' innleveringer · første trening 18.08.2026 · siste dag 24.06.2027 · 6 egentreningsuker (40, 52, 53, 8, 12, 13) · totalpris kr 44.000.</div></div>'
     +'<div class="card"><h2>Betaling</h2><div class="muted">Totalpris kr 44.000 for sesongen (bindende kontrakt, ingen angrerett/frys iht. kontrakten). Faktura kommer fra <b>noreply@mail.poweroffice.net</b> – sjekk søppelpost. Administrasjonsgebyr kr 60 per faktura. Spørsmål om faktura, betaling og påmeldinger: Kathrine på e-post.</div></div>'
-    +'<div class="small center" style="margin-top:14px">Versjon 1.8 · august 2026 · laget for Trond</div>';
+    +'<div class="small center" style="margin-top:14px">Versjon 1.9 · august 2026 · laget for Trond</div>';
   bindBack();
 }
 
