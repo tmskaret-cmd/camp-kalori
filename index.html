@@ -127,6 +127,12 @@ label.f.klrow{display:flex;align-items:center;justify-content:space-between;gap:
 .li .s{font-size:.78rem;color:var(--text-2);margin-top:2px;line-height:1.4}
 .li.dim{opacity:.55}
 .li.hl{border-color:var(--accent);background:#fffdfc}
+/* Valg av PDF-mal i rapportvinduet */
+.grafvalg{display:flex;gap:10px;align-items:flex-start;margin:12px 0 4px;padding:11px 13px;
+  border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer}
+.grafvalg input{width:20px;height:20px;margin-top:1px;flex:none;accent-color:var(--accent)}
+.grafvalg span{font-size:.88rem;font-weight:600;line-height:1.3}
+.grafvalg small{display:block;font-weight:400;font-size:.76rem;color:var(--text-3);margin-top:3px}
 /* Rapport list */
 .rep{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:9px;background:var(--card)}
 .rep .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -459,6 +465,17 @@ function daysInPeriod(r){const out=[];for(let d=pd(r.from);d<=pd(r.to);d=addD(d,
 function mealFilled(ds){const m=DB.meals[ds];return !!(m&&(m.frokost||m.lunsj||m.middag||m.kveld||m.annet||m.trening));}
 function periodProgress(r){const days=daysInPeriod(r);const done=days.filter(mealFilled).length;return {done,total:days.length};}
 function mondayOf(ds){const d=pd(ds);return dstr(addD(d,-((d.getDay()+6)%7)));}
+/* Vekten som hører til en uke måles mandag morgen UKEN ETTER (resultatet av uken som er ført). */
+function weightDateForWeek(r,days){
+  if(r.final)return '2027-06-24';
+  return dstr(addD(pd(mondayOf(days[0])),7));
+}
+function reportPeriodLine(r){
+  return userName()+' · '+fmt(r.from)+' – '+fmt(r.to)+' · leveres innen '+(r.final?'torsdag ':'mandag ')+fmt(r.due)+' kl. 14:00';
+}
+function reportTitle(r){
+  return 'Kostholdsrapport uke '+(r.weeks.length>1?r.weeks.join(' og '):r.weeks[0]);
+}
 
 /* Rapporttekst i Terjes format */
 function buildReportText(r,phIdx){
@@ -469,10 +486,12 @@ function buildReportText(r,phIdx){
     (byWeek[w]=byWeek[w]||[]).push(ds);
   });
   const weekOrder=[...new Set(daysInPeriod(r).map(ds=>isoWeek(pd(ds)).week))];
+  lines.push(reportTitle(r));
+  lines.push(reportPeriodLine(r));
+  lines.push('');
   weekOrder.forEach((w,i)=>{
     const days=byWeek[w];
-    const mw=DB.weights[mondayOf(days[0])];
-    lines.push('Kostholds rapport uke '+w+'   VEKT: '+(mw!=null?kg(mw)+' kg':''));
+    lines.push('Kostholdsrapport uke '+w);
     lines.push('');
     days.forEach(ds=>{
       const d=pd(ds), m=DB.meals[ds]||{};
@@ -485,13 +504,11 @@ function buildReportText(r,phIdx){
         lines.push('');
       });
     });
-    if(i<weekOrder.length-1)lines.push('');
+    const wd=weightDateForWeek(r,days), wv=DB.weights[wd];
+    lines.push('VEKT: '+(wv!=null?kg(wv)+' kg':'____ kg')
+      +'   (morgenvekten '+(r.final?'torsdag ':'mandag ')+fmt(wd)+' – resultatet etter uke '+w+')');
+    if(i<weekOrder.length-1){lines.push('');lines.push('');}
   });
-  if(r.final){
-    const fw=DB.weights['2027-06-24'];
-    lines.push('');
-    lines.push('MORGENVEKT torsdag 24.06.2027 (sluttvekt): '+(fw!=null?kg(fw)+' kg':''));
-  }
   return lines.join('\n').replace(/\n{4,}/g,'\n\n\n');
 }
 function reportTextFor(r){
@@ -503,8 +520,11 @@ function reportTextFor(r){
   });
 }
 function reportSubject(r){
-  const w=r.weeks.length>1?('uke '+r.weeks.join(' og ')):'uke '+r.weeks[0];
-  return 'Kostholds rapport '+w+' – '+userName();
+  return reportTitle(r)+' – '+userName();
+}
+/* Filnavnet blir emnet i e-posten når PDF-en deles, så det må være identisk med emnet. */
+function reportFileName(r){
+  return reportSubject(r).replace(/[\/\\:*?"<>|]/g,'-').replace(/[–—]/g,'-')+'.pdf';
 }
 
 /* ---------- PDF-rapport (egen generator, ingen avhengigheter) ---------- */
@@ -551,7 +571,9 @@ function pdfWrap(s,bold,size,maxW){
   });
   return lines;
 }
-async function buildReportPdf(r){
+async function buildReportPdf(r,opts){
+  opts=opts||{};
+  const medGraf=!!opts.graf;
   const photos=(await photosInRange(r.from,r.to)).filter(p=>p.meal!=='vekt'&&p.meal!=='kropp');
   const imgs=[];
   for(const p of photos){
@@ -580,7 +602,109 @@ async function buildReportPdf(r){
     o=o||{};const size=o.size||10;
     pdfWrap(s,o.bold,size,CW).forEach(l=>line(l,o));
   }
-  function rule(){ensure(8);y-=5;ops.push('q 0.88 0.88 0.86 RG 0.7 w '+ML+' '+y.toFixed(2)+' m '+(PW-MR).toFixed(2)+' '+y.toFixed(2)+' l S Q');y-=4;}
+  function rule(o){o=o||{};ensure(8);y-=(o.pad||5);ops.push('q '+(o.col||'0.88 0.88 0.86')+' RG '+(o.w||0.7)+' w '+ML+' '+y.toFixed(2)+' m '+(PW-MR).toFixed(2)+' '+y.toFixed(2)+' l S Q');y-=4;}
+  /* --- frie vektor- og tekstprimitiver (til vektboks og graf) --- */
+  function vline(x1,y1,x2,y2,col,w,dash){
+    ops.push('q '+(col||'0 0 0')+' RG '+(w||1)+' w '+(dash?'['+dash+'] 0 d ':'')
+      +x1.toFixed(2)+' '+y1.toFixed(2)+' m '+x2.toFixed(2)+' '+y2.toFixed(2)+' l S Q');
+  }
+  function vrect(x,yy,w,h,fill,stroke,lw){
+    let s='q ';
+    if(fill)s+=fill+' rg ';
+    if(stroke)s+=stroke+' RG '+(lw||0.8)+' w ';
+    s+=x.toFixed(2)+' '+yy.toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2)+' re '+(fill&&stroke?'B':fill?'f':'S')+' Q';
+    ops.push(s);
+  }
+  function vdot(x,yy,rad,col){
+    const k=0.5523*rad, F=n=>n.toFixed(2);
+    ops.push('q '+col+' rg '+F(x+rad)+' '+F(yy)+' m '
+      +F(x+rad)+' '+F(yy+k)+' '+F(x+k)+' '+F(yy+rad)+' '+F(x)+' '+F(yy+rad)+' c '
+      +F(x-k)+' '+F(yy+rad)+' '+F(x-rad)+' '+F(yy+k)+' '+F(x-rad)+' '+F(yy)+' c '
+      +F(x-rad)+' '+F(yy-k)+' '+F(x-k)+' '+F(yy-rad)+' '+F(x)+' '+F(yy-rad)+' c '
+      +F(x+k)+' '+F(yy-rad)+' '+F(x+rad)+' '+F(yy-k)+' '+F(x+rad)+' '+F(yy)+' c f Q');
+  }
+  function textAt(s,x,yy,size,bold,col){
+    ops.push('BT /'+(bold?'F2':'F1')+' '+size+' Tf '+(col||'0 0 0')+' rg '+x.toFixed(2)+' '+yy.toFixed(2)+' Td ('+pdfEsc(s)+') Tj ET');
+  }
+  function textMid(s,cx,yy,size,bold,col){textAt(s,cx-pdfStrW(s,bold,size)/2,yy,size,bold,col);}
+  function textEnd(s,rx,yy,size,bold,col){textAt(s,rx-pdfStrW(s,bold,size),yy,size,bold,col);}
+  /* Vektboks – står etter uken den hører til */
+  function weightBox(w,days){
+    const wd=weightDateForWeek(r,days), wv=DB.weights[wd], bh=42;
+    ensure(bh+16);y-=10;y-=bh;
+    vrect(ML,y,CW,bh,'0.965 0.957 0.945',null);
+    vrect(ML,y,2.6,bh,ACC,null);
+    textAt('VEKT: '+(wv!=null?kg(wv)+' kg':'____ kg'),ML+15,y+23,13,true,ACC);
+    textAt('morgenvekten '+(r.final?'torsdag ':'mandag ')+fmt(wd)+' – resultatet etter uke '+w,
+      ML+15,y+9,8.5,false,'0.45 0.44 0.42');
+    y-=6;
+  }
+  /* Vektgraf – valgfri siste side */
+  function weightChart(){
+    const GH=235;
+    ensure(GH+96);
+    y-=14;
+    line('Vektutvikling',{bold:true,size:13,col:ACC,lh:19});
+    line('Mandagsvekter gjennom sesongen, med målbane frem til '+fmt(SEASON_END),{size:8.5,col:'0.45 0.44 0.42',lh:13});
+    rule();
+    y-=GH+8;
+    const gx=ML,gy=y,gw=CW;
+    const t0=pd('2026-08-01').getTime(),t1=pd('2027-07-01').getTime();
+    const ser=weightSeries(),sw=startWeight(),gT=DB.profile.maalTerje,gE=DB.profile.maalEgen;
+    const vals=ser.map(p=>p.v);
+    if(sw!=null)vals.push(sw);if(gT!=null)vals.push(gT);if(gE!=null)vals.push(gE);
+    if(!vals.length)vals.push(100);
+    let lo=Math.min.apply(null,vals),hi=Math.max.apply(null,vals);
+    if(hi-lo<4){const m=(hi+lo)/2;lo=m-2;hi=m+2;}
+    lo=Math.floor(lo-1);hi=Math.ceil(hi+1);
+    const X=d=>gx+(pd(d).getTime()-t0)/(t1-t0)*gw;
+    const Y=v=>gy+(v-lo)/(hi-lo)*GH;
+    const step=(hi-lo)>20?5:(hi-lo)>8?2:1;
+    for(let v=Math.ceil(lo/step)*step;v<=hi;v+=step){
+      vline(gx,Y(v),gx+gw,Y(v),'0.93 0.93 0.91',0.6);
+      textEnd(String(v),gx-6,Y(v)-2.6,7.5,false,'0.55 0.54 0.52');
+    }
+    [['2026-09-01','sep'],['2026-10-01','okt'],['2026-11-01','nov'],['2026-12-01','des'],['2027-01-01','jan'],
+     ['2027-02-01','feb'],['2027-03-01','mar'],['2027-04-01','apr'],['2027-05-01','mai'],['2027-06-01','jun']].forEach(([d,l])=>{
+      vline(X(d),gy,X(d),gy+GH,'0.955 0.95 0.94',0.6);
+      textMid(l,X(d),gy-13,7,false,'0.55 0.54 0.52');
+    });
+    const gd=goalDate();
+    const GREY='0.42 0.41 0.39', BLUE='0.165 0.471 0.839';
+    function goalPath(g,col,dash){
+      if(g==null||sw==null)return;
+      vline(X(SEASON_START),Y(sw),X(gd),Y(g),col,1.4,dash);
+      if(gd<SEASON_END)vline(X(gd),Y(g),X(SEASON_END),Y(g),col,1,'2 4');
+    }
+    goalPath(gE!=null&&gE!==gT?gE:null,GREY,'2 4');
+    goalPath(gT,ACC,'5 4');
+    for(let i=1;i<ser.length;i++)vline(X(ser[i-1].d),Y(ser[i-1].v),X(ser[i].d),Y(ser[i].v),BLUE,2);
+    ser.forEach(p=>vdot(X(p.d),Y(p.v),2.8,BLUE));
+    if(ser.length){
+      const lp=ser[ser.length-1];
+      textAt(kg(lp.v)+' kg',Math.min(X(lp.d)+7,gx+gw-42),Y(lp.v)+7,8,true,BLUE);
+    }
+    vrect(gx,gy,gw,GH,null,'0.85 0.85 0.83',0.8);
+    /* Tegnforklaring under grafen – holder målbanene fri for tekst */
+    y=gy-30;
+    let lx=ML;
+    function key(col,dash,lab){
+      vline(lx,y+3,lx+17,y+3,col,dash?1.6:2,dash);
+      textAt(lab,lx+22,y,7.5,false,'0.35 0.34 0.32');
+      lx+=22+pdfStrW(lab,false,7.5)+20;
+    }
+    key(BLUE,null,'Veiinger');
+    if(gT!=null)key(ACC,'5 4','Terjes mål '+kg(gT)+' kg');
+    if(gE!=null&&gE!==gT)key(GREY,'2 4','Ditt mål '+kg(gE)+' kg');
+    y-=8;
+    const lastp=ser.length?ser[ser.length-1]:null;
+    const diff=(lastp&&sw!=null)?lastp.v-sw:null;
+    line('Startvekt '+(sw!=null?kg(sw)+' kg':'____')
+      +(lastp?'  ·  siste veiing '+fmt(lastp.d)+': '+kg(lastp.v)+' kg':'')
+      +(diff!=null?'  ·  endring '+(diff>0?'+':'')+kg(diff)+' kg':''),{size:9,lh:14});
+    line((gT!=null||gE!=null)?('Målene skal nås innen '+fmt(gd)+'.'):'Ingen mål satt ennå – settes under Vekt.',
+      {size:9,col:'0.45 0.44 0.42',lh:14});
+  }
   function imgRowFor(list){
     let i=0;
     while(i<list.length){
@@ -604,16 +728,14 @@ async function buildReportPdf(r){
   const weekOrder=[...new Set(daysInPeriod(r).map(ds=>isoWeek(pd(ds)).week))];
   const byWeek={};
   daysInPeriod(r).forEach(ds=>{const w=isoWeek(pd(ds)).week;(byWeek[w]=byWeek[w]||[]).push(ds);});
+  line(reportTitle(r),{bold:true,size:18,col:ACC,lh:24});
+  line(reportPeriodLine(r),{size:8.5,col:'0.45 0.44 0.42',lh:13});
+  rule({pad:8,col:ACC,w:1.2});
   weekOrder.forEach((w,wi)=>{
     const days=byWeek[w];
-    const mw=DB.weights[mondayOf(days[0])];
-    ensure(64);
-    y-=8;
-    line('Kostholds rapport uke '+w,{bold:true,size:14,col:ACC,lh:20});
-    rightText('VEKT: '+(mw!=null?kg(mw)+' kg':'____'),{bold:true,size:13});
-    if(wi===0){
-      line(userName()+' · '+fmt(r.from)+' – '+fmt(r.to)+' · leveres innen '+(r.final?'torsdag ':'mandag ')+fmt(r.due)+' kl. 14:00',{size:8.5,col:'0.45 0.44 0.42',lh:13});
-    }
+    ensure(70);
+    y-=(wi?12:6);
+    line('Kostholdsrapport uke '+w,{bold:true,size:13,col:ACC,lh:19});
     rule();
     days.forEach(ds=>{
       const d=pd(ds),m=DB.meals[ds]||{};
@@ -631,12 +753,9 @@ async function buildReportPdf(r){
         y-=2;
       });
     });
-    if(wi<weekOrder.length-1)y-=8;
+    weightBox(w,days);
   });
-  if(r.final){
-    ensure(30);y-=8;
-    line('MORGENVEKT torsdag 24.06.2027 (sluttvekt): '+(DB.weights['2027-06-24']!=null?kg(DB.weights['2027-06-24'])+' kg':'____'),{bold:true,size:11,lh:16});
-  }
+  if(medGraf)weightChart();
   // Bunntekst på alle sider
   const total=pages.length;
   pages.forEach((p,i)=>{
@@ -671,20 +790,23 @@ async function buildReportPdf(r){
   let xr='xref\n0 '+(nObj+1)+'\n0000000000 65535 f \n';
   for(let i=1;i<=nObj;i++)xr+=String(offs[i]).padStart(10,'0')+' 00000 n \n';
   push(xr+'trailer\n<< /Size '+(nObj+1)+' /Root 1 0 R >>\nstartxref\n'+xrefOff+'\n%%EOF');
-  return {blob:new Blob(parts,{type:'application/pdf'}),name:reportSubject(r).replace(/[\/\\:*?"<>|]/g,'-').replace(/[–—]/g,'-')+'.pdf',photoCount:nImg,pageCount:pages.length};
+  return {blob:new Blob(parts,{type:'application/pdf'}),name:reportFileName(r),photoCount:nImg,pageCount:pages.length};
 }
 function downloadBlob(blob,name){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download=name;a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
 }
-async function sharePdf(r){
-  const {blob,name}=await buildReportPdf(r);
+async function sharePdf(r,opts){
+  const {blob,name}=await buildReportPdf(r,opts);
   const f=new File([blob],name,{type:'application/pdf'});
   await copyText(TERJE_EPOST);
   if(navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){
     try{
-      await navigator.share({title:reportSubject(r),files:[f]});
+      /* Kun filen deles. Sender vi også title/text, limer E-post det inn som en linje
+         ØVERST I BRØDTEKSTEN i stedet for i emnefeltet. Med bare filen bruker E-post
+         filnavnet som emne – derfor er filnavnet identisk med emnet (reportFileName). */
+      await navigator.share({files:[f]});
       toast('Terjes adresse er kopiert – lim den inn i Til-feltet');
     }
     catch(e){if(e&&e.name!=='AbortError'){downloadBlob(blob,name);toast('Deling ble avbrutt – PDF-en er lastet ned i stedet');}}
@@ -788,7 +910,10 @@ function renderHjem(){
     const start=startWeight();
     const diff=start!=null?last.v-start:null;
     const exp=expectedToday();
-    html+='<div class="card"><h2>Vekten din<span class="mini">mål: '+(goal!=null?kg(goal)+' kg':'ikke satt')+'</span></h2>'
+    const maalTxt=[];
+    if(DB.profile.maalTerje!=null)maalTxt.push('Terje '+kg(DB.profile.maalTerje));
+    if(DB.profile.maalEgen!=null)maalTxt.push('eget '+kg(DB.profile.maalEgen));
+    html+='<div class="card"><h2>Vekten din<span class="mini">mål: '+(maalTxt.length?maalTxt.join(' · ')+' kg':'ikke satt')+'</span></h2>'
       +'<div class="statrow">'
       +'<div class="stat"><div class="v">'+kg(last.v)+'</div><div class="l">siste ('+fmtShort(last.d)+')</div></div>'
       +'<div class="stat"><div class="v '+(diff==null?'':diff<=0?'good':'bad')+'">'+(diff==null?'–':(diff>0?'+':'')+kg(diff))+'</div><div class="l">siden start</div></div>'
@@ -864,8 +989,8 @@ function renderChart(box){
   if(!box)return;
   const Wd=640,H=300,L=46,R=16,T=16,B=34;
   const t0=pd('2026-08-01').getTime(),t1=pd('2027-07-01').getTime();
-  const ser=weightSeries(),s=startWeight(),g=goalWeight();
-  const vals=ser.map(x=>x.v);if(s!=null)vals.push(s);if(g!=null)vals.push(g);
+  const ser=weightSeries(),s=startWeight(),gT=DB.profile.maalTerje,gE=DB.profile.maalEgen;
+  const vals=ser.map(x=>x.v);if(s!=null)vals.push(s);if(gT!=null)vals.push(gT);if(gE!=null)vals.push(gE);
   let lo=Math.min(...vals),hi=Math.max(...vals);
   if(hi-lo<4){const m=(hi+lo)/2;lo=m-2;hi=m+2;}
   lo=Math.floor(lo-1);hi=Math.ceil(hi+1);
@@ -881,15 +1006,18 @@ function renderChart(box){
   [['2026-08-10','aug'],['2026-09-01','sep'],['2026-10-01','okt'],['2026-11-01','nov'],['2026-12-01','des'],['2027-01-01','jan'],['2027-02-01','feb'],['2027-03-01','mar'],['2027-04-01','apr'],['2027-05-01','mai'],['2027-06-01','jun']].forEach(([d,l])=>{
     xlab+='<text x="'+X(d)+'" y="'+(H-B+16)+'" text-anchor="middle" font-size="10.5" fill="#8a8880">'+l+'</text>';
   });
+  const gd=goalDate();
   let goalLine='';
-  if(s!=null&&g!=null){
-    const gd=goalDate();
-    goalLine='<line x1="'+X(SEASON_START)+'" y1="'+Y(s)+'" x2="'+X(gd)+'" y2="'+Y(g)+'" stroke="#8a8880" stroke-width="2" stroke-dasharray="6 5" stroke-linecap="round"/>';
+  function goalPath(g,col,lab,dash){
+    if(s==null||g==null)return;
+    goalLine+='<line x1="'+X(SEASON_START)+'" y1="'+Y(s)+'" x2="'+X(gd)+'" y2="'+Y(g)+'" stroke="'+col+'" stroke-width="2" stroke-dasharray="'+dash+'" stroke-linecap="round"/>';
     if(gd<SEASON_END){
-      goalLine+='<line x1="'+X(gd)+'" y1="'+Y(g)+'" x2="'+X(SEASON_END)+'" y2="'+Y(g)+'" stroke="#c7c5c0" stroke-width="1.6" stroke-dasharray="3 5" stroke-linecap="round"/>';
+      goalLine+='<line x1="'+X(gd)+'" y1="'+Y(g)+'" x2="'+X(SEASON_END)+'" y2="'+Y(g)+'" stroke="'+col+'" stroke-width="1.4" stroke-dasharray="3 5" stroke-linecap="round" opacity="0.6"/>';
     }
-    goalLine+='<text x="'+Math.min(X(gd),Wd-R)+'" y="'+(Y(g)-7)+'" text-anchor="end" font-size="10.5" fill="#52514e">mål '+kg(g)+'</text>';
+    goalLine+='<text x="'+Math.min(X(gd),Wd-R)+'" y="'+(Y(g)-7)+'" text-anchor="end" font-size="10" font-weight="700" fill="'+col+'">'+lab+' '+kg(g)+'</text>';
   }
+  goalPath(gE!=null&&gE!==gT?gE:null,'#8a8880','Ditt mål','3 4');
+  goalPath(gT,'#8e2a23','Terjes mål','6 5');
   const ts=dstr(today());
   let todayLine='';
   if(ts>'2026-08-01'&&ts<'2027-07-01'){
@@ -1100,8 +1228,13 @@ function renderVekt(){
     +'</div>'
     +'<label class="f">Måldato – når vil du være i mål?</label>'
     +'<input type="date" id="gDato" value="'+goalDate()+'" min="'+SEASON_START+'" max="'+SEASON_END+'">'
-    +(s!=null&&g!=null?'<div class="muted" style="margin-top:10px">Startvekt <b>'+kg(s)+' kg</b> → mål <b>'+kg(g)+' kg</b> = <b>'+kg(s-g)+' kg</b> innen <b>'+fmt(goalDate())+'</b>.'
-      +(exp!=null?' Målbanen sier <b>'+kg(exp)+' kg</b> i dag.':'')+'</div>':'<div class="small" style="margin-top:10px">Målene settes i veiledningssamtalen med Terje – Terjes anbefalte mål gjelder (kan justeres underveis).</div>')
+    +(s!=null&&g!=null?'<div class="muted" style="margin-top:10px">Startvekt <b>'+kg(s)+' kg</b>'
+      +(DB.profile.maalTerje!=null?'<br>→ Terjes mål <b>'+kg(DB.profile.maalTerje)+' kg</b> = <b>'+kg(s-DB.profile.maalTerje)+' kg</b> ned':'')
+      +(DB.profile.maalEgen!=null?'<br>→ ditt mål <b>'+kg(DB.profile.maalEgen)+' kg</b> = <b>'+kg(s-DB.profile.maalEgen)+' kg</b> ned':'')
+      +'<br>innen <b>'+fmt(goalDate())+'</b>.'
+      +(exp!=null?' Målbanen (Terjes mål) sier <b>'+kg(exp)+' kg</b> i dag.':'')
+      +'</div><div class="small" style="margin-top:6px">Begge målbanene vises i grafen – Terjes i rødt, ditt i grått.</div>'
+      :'<div class="small" style="margin-top:10px">Målene settes i veiledningssamtalen med Terje – Terjes anbefalte mål gjelder (kan justeres underveis). Begge kan settes her, og begge tegnes inn i grafen.</div>')
     +(goalDate()<SEASON_END?'<div class="small" style="margin-top:6px">NB: Terjes matchvekt måles uansett på sesongens siste dag, torsdag 24.06.2027 – etter måldatoen din viser grafen en «hold vekten»-linje frem dit.</div>':'')
     +'<div class="btnrow"><button id="gsave" class="btn sec sm">Lagre mål</button></div></div>';
 
@@ -1193,11 +1326,14 @@ async function shareStartvekt(){
   const w=DB.weights[SEASON_START];
   if(w==null){toast('Registrer startvekten (10.08.2026) først');return;}
   if(!list.length){toast('Legg til bilde av vekten først – Terje krever det ved startvekten');return;}
-  const files=list.map((p,i)=>new File([p.blob],'startvekt-10.08.2026'+(list.length>1?'-'+(i+1):'')+'.jpg',{type:'image/jpeg'}));
+  /* Filnavnet blir emnet i E-post – se kommentaren i sharePdf(). */
+  const emne='Startvekt 10.08.2026 – '+userName();
+  const base=emne.replace(/[\/\\:*?"<>|]/g,'-').replace(/[–—]/g,'-');
+  const files=list.map((p,i)=>new File([p.blob],base+(list.length>1?' ('+(i+1)+')':'')+'.jpg',{type:'image/jpeg'}));
   await copyText(TERJE_EPOST);
   if(navigator.canShare&&navigator.canShare({files})&&navigator.share){
     try{
-      await navigator.share({title:'Startvekt 10.08.2026 – '+userName(),text:startvektText(),files});
+      await navigator.share({files});
       toast('Terjes adresse er kopiert – lim den inn i Til-feltet');
     }
     catch(e){if(e&&e.name!=='AbortError')toast('Delingen ble avbrutt – adressen er kopiert, legg ved bildet manuelt');}
@@ -1243,19 +1379,23 @@ function renderRapport(){
     openModal('<h3>'+esc(reportSubject(r))+'<button class="btn ghost sm" onclick="closeModal()">Lukk</button></h3>'
       +missingWarn(r)+phHtml
       +'<pre>'+esc(text)+'</pre>'
+      +'<label class="grafvalg"><input type="checkbox" id="mgraf"'+(DB.profile.pdfGraf?' checked':'')+'>'
+      +'<span>Ta med vektgraf til slutt i PDF-en<small>Viser alle veiinger så langt, med begge målbanene. Valget huskes.</small></span></label>'
       +'<div class="btnrow">'
       +'<button class="btn" id="mpdfshare">Del PDF-rapport</button>'
       +'<button class="btn sec" id="mpdfdl">Last ned PDF</button>'
       +'<button class="btn sec" id="mcopy">Kopier teksten</button>'
       +'<a class="btn sec" id="mmail" href="#">Åpne i E-post</a></div>'
-      +'<div class="small" style="margin-top:8px">«Del PDF-rapport» åpner delingsarket – velg E-post, så ligger PDF-en klar som vedlegg, og Terjes adresse legges på utklippstavlen (lim inn i Til-feltet). «Åpne i E-post» har adresse og tekst ferdig utfylt, men uten bilder.</div>');
+      +'<div class="small" style="margin-top:8px">«Del PDF-rapport» åpner delingsarket – velg E-post, så ligger PDF-en klar som vedlegg med emnet ferdig utfylt, og Terjes adresse legges på utklippstavlen (lim inn i Til-feltet). «Åpne i E-post» har adresse og tekst ferdig utfylt, men uten bilder.</div>');
     if(photos.length){
       const g=document.getElementById('mph');
       photos.forEach(p=>{const u=URL.createObjectURL(p.blob);const im=document.createElement('img');im.src=u;im.alt=photoFileName(p);g.appendChild(im);});
     }
-    document.getElementById('mpdfshare').addEventListener('click',()=>sharePdf(r));
+    const grafEl=document.getElementById('mgraf');
+    const pdfOpts=()=>{DB.profile.pdfGraf=grafEl.checked;saveDB();return {graf:grafEl.checked};};
+    document.getElementById('mpdfshare').addEventListener('click',()=>sharePdf(r,pdfOpts()));
     document.getElementById('mpdfdl').addEventListener('click',async()=>{
-      const {blob,name}=await buildReportPdf(r);downloadBlob(blob,name);
+      const {blob,name}=await buildReportPdf(r,pdfOpts());downloadBlob(blob,name);
     });
     document.getElementById('mcopy').addEventListener('click',()=>copyText(text));
     const mm=document.getElementById('mmail');
@@ -1288,8 +1428,8 @@ function missingWarn(r){
   daysInPeriod(r).forEach(ds=>{if(!mealFilled(ds))miss.push(fmt(ds).slice(0,5));});
   const mw=[];
   r.weeks.forEach((w,idx)=>{
-    const monday=dstr(addD(pd(r.from),idx*7));
-    if(DB.weights[monday]==null)mw.push(fmt(monday));
+    const wd=r.final?'2027-06-24':dstr(addD(pd(mondayOf(r.from)),(idx+1)*7));
+    if(DB.weights[wd]==null)mw.push(fmt(wd)+' (uke '+w+')');
   });
   let out='';
   if(miss.length)out+='<div class="banner warn" style="font-size:.78rem;padding:8px 12px">Mangler kosthold for: '+miss.join(', ')+'</div>';
