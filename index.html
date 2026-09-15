@@ -266,6 +266,30 @@ function kg(v){
 function userName(){return (DB.profile.navn&&DB.profile.navn.trim())?DB.profile.navn.trim():'Trond';}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+/* ---------- måltider: Måltid 1-5 (avløste frokost/lunsj/middag/kveld i v2.0) ---------- */
+const MALTIDNAVN={m1:'Måltid 1',m2:'Måltid 2',m3:'Måltid 3',m4:'Måltid 4',m5:'Måltid 5',annet:'Annet',trening:'Trening'};
+const GAMLE_MALTID={frokost:'m1',lunsj:'m2',middag:'m3',kveld:'m4'};
+/* Eldre data og eldre sikkerhetskopier flyttes over til de nye nøklene. */
+function migrerMaaltider(db){
+  if(db&&db.meals)Object.keys(db.meals).forEach(ds=>{
+    const m=db.meals[ds];if(!m)return;
+    Object.keys(GAMLE_MALTID).forEach(g=>{
+      if(!(g in m))return;
+      const ny=GAMLE_MALTID[g],tekst=String(m[g]||'');
+      if(tekst.trim()&&!String(m[ny]||'').trim())m[ny]=tekst;
+      delete m[g];
+    });
+  });
+  return db;
+}
+function migrertBildemaaltid(meal){return GAMLE_MALTID[meal]||meal;}
+async function migrerBilder(){
+  try{
+    for(const p of await photosAll())
+      if(GAMLE_MALTID[p.meal])await photoPut(Object.assign({},p,{meal:GAMLE_MALTID[p.meal]}));
+  }catch(e){}
+}
+
 /* ---------- lagring (med fallback for forhåndsvisning) ---------- */
 let storageOK=true, MEMSTORE=null;
 function defaultDB(){return {
@@ -276,7 +300,7 @@ function defaultDB(){return {
 function loadDB(){
   try{
     const r=localStorage.getItem(KEY);
-    if(r){const p=JSON.parse(r);return Object.assign(defaultDB(),p);}
+    if(r){const p=JSON.parse(r);return migrerMaaltider(Object.assign(defaultDB(),p));}
     return defaultDB();
   }catch(e){storageOK=false;MEMSTORE=MEMSTORE||defaultDB();return MEMSTORE;}
 }
@@ -334,7 +358,7 @@ function compressImage(file,maxSide,quality){
 }
 function photoFileName(p){
   const d=pd(p.date);
-  return DAGER_K[d.getDay()]+'-'+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'-'+p.meal+'.jpg';
+  return DAGER_K[d.getDay()]+'-'+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'-'+p.meal.replace(/^m([1-5])$/,'maaltid$1')+'.jpg';
 }
 function photoIndexOf(list){
   const idx={};
@@ -462,7 +486,7 @@ function nextReport(){
   return REPORTS.find(r=>now<=due14(r)&&!DB.sent[r.due])||REPORTS.find(r=>!DB.sent[r.due])||REPORTS[REPORTS.length-1];
 }
 function daysInPeriod(r){const out=[];for(let d=pd(r.from);d<=pd(r.to);d=addD(d,1))out.push(dstr(d));return out;}
-function mealFilled(ds){const m=DB.meals[ds];return !!(m&&(m.frokost||m.lunsj||m.middag||m.kveld||m.annet||m.trening));}
+function mealFilled(ds){const m=DB.meals[ds];return !!(m&&(m.m1||m.m2||m.m3||m.m4||m.m5||m.annet||m.trening));}
 function periodProgress(r){const days=daysInPeriod(r);const done=days.filter(mealFilled).length;return {done,total:days.length};}
 function mondayOf(ds){const d=pd(ds);return dstr(addD(d,-((d.getDay()+6)%7)));}
 /* Vekten som hører til en uke måles mandag morgen UKEN ETTER (resultatet av uken som er ført). */
@@ -497,7 +521,7 @@ function buildReportText(r,phIdx){
       const d=pd(ds), m=DB.meals[ds]||{};
       lines.push(DAGER[d.getDay()]+' '+fmt(d)+':');
       lines.push('');
-      [['FROKOST','frokost'],['LUNSJ','lunsj'],['MIDDAG','middag'],['KVELD','kveld'],['ANNET','annet'],['TRENING','trening']].forEach(([lab,key])=>{
+      [['MÅLTID 1','m1'],['MÅLTID 2','m2'],['MÅLTID 3','m3'],['MÅLTID 4','m4'],['MÅLTID 5','m5'],['ANNET','annet'],['TRENING','trening']].forEach(([lab,key])=>{
         const hasPh=phIdx&&phIdx[ds]&&phIdx[ds][key];
         lines.push(lab+(hasPh?' (bilde vedlagt)':'')+':');
         lines.push(m[key]?m[key].trim():'');
@@ -743,7 +767,7 @@ async function buildReportPdf(r,opts){
       y-=5;
       line(DAGER[d.getDay()]+' '+fmt(d),{bold:true,size:10.5,lh:16});
       rule();
-      [['FROKOST','frokost'],['LUNSJ','lunsj'],['MIDDAG','middag'],['KVELD','kveld'],['ANNET','annet'],['TRENING','trening']].forEach(([lab,key])=>{
+      [['MÅLTID 1','m1'],['MÅLTID 2','m2'],['MÅLTID 3','m3'],['MÅLTID 4','m4'],['MÅLTID 5','m5'],['ANNET','annet'],['TRENING','trening']].forEach(([lab,key])=>{
         line(lab,{bold:true,size:7.5,col:'0.45 0.44 0.42',lh:14});
         const v=(m[key]||'').trim();
         if(v)para(v,{size:10,lh:13.5});
@@ -1052,7 +1076,7 @@ function renderChart(box){
 }
 
 /* ==================== KOSTHOLD ==================== */
-const FELT=[['frokost','Frokost'],['lunsj','Lunsj'],['middag','Middag'],['kveld','Kveld'],['annet','Annet (alt mellom måltidene, snacks, drikke m.m.)'],['trening','Trening (hva du gjorde i dag)']];
+const FELT=[['m1','Måltid 1'],['m2','Måltid 2'],['m3','Måltid 3'],['m4','Måltid 4'],['m5','Måltid 5'],['annet','Annet (alt mellom måltidene, snacks, drikke m.m.)'],['trening','Trening (hva du gjorde i dag)']];
 function renderKosthold(){
   const ds=state.kostDate,d=pd(ds),w=isoWeek(d);
   const mon=pd(mondayOf(ds));
@@ -1076,20 +1100,20 @@ function renderKosthold(){
   }
   html+='<div class="card">';
   FELT.forEach(([k,lab])=>{
-    html+='<label class="f klrow" for="f_'+k+'"><span>'+lab+'</span><button type="button" class="klbtn" data-kl="'+k+'" aria-label="Sett inn klokkeslett i '+k+'">+ kl. nå</button></label>';
+    html+='<label class="f klrow" for="f_'+k+'"><span>'+lab+'</span><button type="button" class="klbtn" data-kl="'+k+'" aria-label="Sett inn klokkeslett i '+esc(MALTIDNAVN[k]||k)+'">+ kl. nå</button></label>';
     if(k==='annet'){
       html+='<div class="qadd"><input type="text" id="qa_annet" placeholder="F.eks. 1 kopp kaffe, 1 eple, 1 glass vann …" enterkeyhint="done" autocomplete="off">'
         +'<button type="button" class="btn sm" id="qa_btn">+ kl. <span id="qa_time"></span></button></div>';
     }
-    html+='<textarea class="grow" id="f_'+k+'" data-f="'+k+'" placeholder="'+(k==='frokost'?'F.eks.: kl. 07:15 – 2 skiver brød, en med egg og en med hvit ost. 1 glass melk, 1 kopp svart kaffe.':k==='annet'?'Alt mellom måltidene – legges enklest til én og én i feltet over, så sorteres de etter klokkeslett her.':k==='trening'?'F.eks.: Camp Kalori-trening kl. 17, eller egentrening/gåtur':'')+'">'+esc(m[k]||'')+'</textarea>';
+    html+='<textarea class="grow" id="f_'+k+'" data-f="'+k+'" placeholder="'+(k==='m1'?'F.eks.: kl. 07:15 – 2 skiver brød, en med egg og en med hvit ost. 1 glass melk, 1 kopp svart kaffe.':k==='annet'?'Alt mellom måltidene – legges enklest til én og én i feltet over, så sorteres de etter klokkeslett her.':k==='trening'?'F.eks.: Camp Kalori-trening kl. 17, eller egentrening/gåtur':'')+'">'+esc(m[k]||'')+'</textarea>';
     if(k!=='trening'){
-      html+='<div class="photorow" data-pr="'+k+'"><label class="addph" for="pf_'+k+'" aria-label="Legg til bilde av '+k+'">'
+      html+='<div class="photorow" data-pr="'+k+'"><label class="addph" for="pf_'+k+'" aria-label="Legg til bilde av '+esc(MALTIDNAVN[k]||k)+'">'
         +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L17 6h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.4"/></svg>Bilde</label>'
         +'<span class="thumbs" data-th="'+k+'"></span>'
         +'<input type="file" id="pf_'+k+'" accept="image/*" multiple data-pf="'+k+'" class="vh"></div>';
     }
   });
-  html+='<div class="small" style="margin-top:10px">Skriv alt du inntar – også kaffe, te og all drikke. Ikke vei maten, ikke tell kalorier. Klokkeslett er ikke påkrevd, men fører du «live» med <b>+ kl. nå</b>-knappen får både du og Terje frem regulariteten på måltider og væskeinntak. Lagres automatisk. Bilder er valgfritt og komprimeres til et lite format.</div></div>';
+  html+='<div class="small" style="margin-top:10px">Skriv alt du inntar – også kaffe, te og all drikke. Ikke vei maten, ikke tell kalorier. Måltid 1–5 følger dagen i tidsrekkefølge – innholdet forteller hva slags måltid det er, og du bruker bare de feltene du trenger. Klokkeslett er ikke påkrevd, men fører du «live» med <b>+ kl. nå</b>-knappen får både du og Terje frem regulariteten på måltider og væskeinntak. Lagres automatisk. Bilder er valgfritt og komprimeres til et lite format.</div></div>';
   V.innerHTML=html;
   bindGo();
   V.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{
@@ -1188,7 +1212,7 @@ async function loadDayPhotos(day){
     if(!holder)return;
     const u=URL.createObjectURL(p.blob);PHOTO_URLS.push(u);
     const el=document.createElement('span');el.className='thumb';
-    el.innerHTML='<img alt="Bilde av '+esc(p.meal)+'"><button class="rm" aria-label="Fjern bilde">✕</button>';
+    el.innerHTML='<img alt="Bilde av '+esc(MALTIDNAVN[p.meal]||p.meal)+'"><button class="rm" aria-label="Fjern bilde">✕</button>';
     el.querySelector('img').src=u;
     el.querySelector('.rm').addEventListener('click',async()=>{
       if(confirm('Fjerne dette bildet?')){await photoDel(p.id);loadDayPhotos(day);}
@@ -1749,11 +1773,11 @@ function renderBackup(){
         const p=JSON.parse(rd.result);
         if(!p||typeof p!=='object'||!p.profile)throw new Error('feil format');
         const photos=p._photos||[];delete p._photos;
-        DB=Object.assign(defaultDB(),p);saveDB();
+        DB=migrerMaaltider(Object.assign(defaultDB(),p));saveDB();
         for(const ph of photos){
           try{
             const blob=await (await fetch(ph.b64)).blob();
-            await photoPut({id:ph.id,date:ph.date,meal:ph.meal,ts:ph.ts,blob});
+            await photoPut({id:ph.id,date:ph.date,meal:migrertBildemaaltid(ph.meal),ts:ph.ts,blob});
           }catch(err){/* hopp over ødelagt bilde */}
         }
         toast('Gjenopprettet fra kopi'+(photos.length?' ('+photos.length+' bilder)':''));render();
@@ -1779,7 +1803,7 @@ function renderOm(){
     +'<div class="card"><h2>Nøkkeltall for sesongen</h2><div class="muted">'
     +REPORTS.length+' innleveringer · første trening 18.08.2026 · siste dag 24.06.2027 · 6 egentreningsuker (40, 52, 53, 8, 12, 13) · totalpris kr 44.000.</div></div>'
     +'<div class="card"><h2>Betaling</h2><div class="muted">Totalpris kr 44.000 for sesongen (bindende kontrakt, ingen angrerett/frys iht. kontrakten). Faktura kommer fra <b>noreply@mail.poweroffice.net</b> – sjekk søppelpost. Administrasjonsgebyr kr 60 per faktura. Spørsmål om faktura, betaling og påmeldinger: Kathrine på e-post.</div></div>'
-    +'<div class="small center" style="margin-top:14px">Versjon 1.9 · august 2026 · laget for Trond</div>';
+    +'<div class="small center" style="margin-top:14px">Versjon 2.0 · september 2026 · laget for Trond</div>';
   bindBack();
 }
 
@@ -1826,9 +1850,9 @@ async function startDemo(){
   let m=pd('2026-08-10');
   wts.forEach(w=>{d.weights[dstr(m)]=w;m=addD(m,7);});
   const eks=[
-    {frokost:'2 skiver grovbrød, en med egg og en med hvit ost. 1 glass lettmelk, 1 kopp svart kaffe.',lunsj:'Salat med kyllingfilet, paprika og agurk. Vann.',middag:'Ovnsbakt laks, kokte poteter og brokkoli. Vann.',kveld:'Yoghurt naturell med litt havregryn.',annet:'1 eple. 2 kopper svart kaffe. 1 kopp te på kvelden.',trening:'Gåtur 45 min.'},
-    {frokost:'Havregrøt med melk og litt kanel. Svart kaffe.',lunsj:'2 skiver grovbrød med makrell i tomat. Vann.',middag:'Kyllinggryte med ris og grønnsaker. Vann.',kveld:'Cottage cheese med agurk.',annet:'1 banan. 1 kopp kaffe med litt melk.',trening:'Camp Kalori-trening kl. 17.'},
-    {frokost:'2 egg og 1 skive grovbrød. Appelsinjuice (lite glass). Kaffe.',lunsj:'Rester av kyllinggryte. Vann.',middag:'Torsk, gulrøtter og potetmos. Vann.',kveld:'1 knekkebrød med kokt skinke.',annet:'Håndfull nøtter. 2 kopper kaffe.',trening:'Camp Kalori-trening kl. 17.'}
+    {m1:'kl. 07:15 – 2 skiver grovbrød, en med egg og en med hvit ost. 1 glass lettmelk, 1 kopp svart kaffe.',m2:'kl. 10:00 – 1 eple og en neve mandler. Vann.',m3:'kl. 12:30 – Salat med kyllingfilet, paprika og agurk. Vann.',m4:'kl. 16:30 – Ovnsbakt laks, kokte poteter og brokkoli. Vann.',m5:'kl. 20:00 – Yoghurt naturell med litt havregryn.',annet:'2 kopper svart kaffe. 1 kopp te på kvelden. Ca. 2 liter vann.',trening:'Gåtur 45 min.'},
+    {m1:'kl. 06:45 – Havregrøt med melk og litt kanel. Svart kaffe.',m2:'kl. 09:45 – 1 banan. Vann.',m3:'kl. 12:00 – 2 skiver grovbrød med makrell i tomat. Vann.',m4:'kl. 15:30 – Kyllinggryte med ris og grønnsaker. Vann.',m5:'kl. 19:30 – Cottage cheese med agurk.',annet:'1 kopp kaffe med litt melk. Ca. 2 liter vann.',trening:'Camp Kalori-trening kl. 17.'},
+    {m1:'kl. 07:00 – 2 egg og 1 skive grovbrød. Appelsinjuice (lite glass). Kaffe.',m2:'kl. 10:15 – Håndfull nøtter. Vann.',m3:'kl. 12:45 – Rester av kyllinggryte. Vann.',m4:'kl. 16:00 – Torsk, gulrøtter og potetmos. Vann.',m5:'kl. 20:15 – 1 knekkebrød med kokt skinke.',annet:'2 kopper kaffe. Ca. 1,5 liter vann.',trening:'Camp Kalori-trening kl. 17.'}
   ];
   for(let i=0;i<18;i++){
     const ds=dstr(addD(pd('2026-08-10'),i));
@@ -1842,8 +1866,8 @@ async function startDemo(){
   DB=d;saveDB();
   try{
     await photoAdd('2026-08-10','vekt',await demoPhotoBlob('vekt'));
-    await photoAdd('2026-08-10','frokost',await demoPhotoBlob('mat'));
-    await photoAdd('2026-08-12','middag',await demoPhotoBlob('mat'));
+    await photoAdd('2026-08-10','m1',await demoPhotoBlob('mat'));
+    await photoAdd('2026-08-12','m3',await demoPhotoBlob('mat'));
   }catch(e){}
   state.tab='hjem';state.merPage=null;state.trenUke=null;state.kostDate='2026-08-12';
   toast('Demo-modus på – utforsk alle funksjonene fritt');
@@ -1856,7 +1880,7 @@ async function endDemo(){
     const keep=new Set(snap.photoIds||[]);
     for(const p of await photosAll())if(!keep.has(p.id))await photoDel(p.id);
   }catch(e){}
-  DB=Object.assign(defaultDB(),snap.db);saveDB();
+  DB=migrerMaaltider(Object.assign(defaultDB(),snap.db));saveDB();
   try{localStorage.removeItem(DEMO_KEY);}catch(e){}
   MEM_DEMO=null;
   state.tab='hjem';state.merPage=null;state.trenUke=null;state.kostDate=clampSeason(dstr(today()));
@@ -1877,6 +1901,7 @@ setInterval(()=>{
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});
 }
+migrerBilder();
 render();
 </script>
 </body>
