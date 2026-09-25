@@ -210,7 +210,10 @@ nav.tabs button{position:relative}
 /* ---- v3.0: synkmerke, trening, håndbok ---- */
 nav.tabs{grid-template-columns:repeat(7,1fr)}
 nav.tabs button{font-size:.56rem}
-#synkmerke{font-size:.62rem;font-weight:600;padding:3px 8px;border-radius:99px;color:#fff;white-space:nowrap}
+.synkknapp{font:inherit;font-size:.72rem;font-weight:700;padding:6px 11px;border-radius:99px;color:#fff;white-space:nowrap;border:2px solid #fff;cursor:pointer;line-height:1.1}
+.synkknapp.gronn{background:#23994a}
+.synkknapp.rod{background:#e5392d}
+.muted .synkknapp{border-color:transparent;font-size:.68rem;padding:3px 8px}
 .hdrright{display:flex;gap:6px;align-items:center}
 .proglist{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .progkort{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:8px 12px 8px 8px;justify-content:flex-start;display:flex;gap:10px;width:100%;text-align:left}
@@ -300,7 +303,7 @@ ul.spm{margin:4px 0 0 18px;font-size:.82rem;color:var(--text-2);line-height:1.5}
 <div id="demobar" class="storage-warn hidden" style="background:#eaf2fc;border-bottom-color:#c9dcf5;color:#173e6e">DEMO-MODUS – du ser eksempeldata. Dine egne data er trygt lagret. <a href="#" id="demoexit" style="color:inherit;font-weight:700">Avslutt demo</a></div>
 <header class="app">
   <h1>Camp Kalori<span class="sub">Sesongen 2026–2027 · Skullerud Aktivitetspark</span></h1>
-  <span class="hdrright"><span id="synkmerke" class="hidden"></span><span id="hdrweek" class="badge" style="background:rgba(255,255,255,.16);color:#fff"></span></span>
+  <span class="hdrright"><button id="synkknapp" class="synkknapp hidden" type="button"></button><span id="hdrweek" class="badge" style="background:rgba(255,255,255,.16);color:#fff"></span></span>
 </header>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><marker id="pilspiss" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8e2a23"/></marker><marker id="pilspiss2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a8880"/></marker></defs></svg>
@@ -393,12 +396,12 @@ function loadDB(){
   }catch(e){storageOK=false;MEMSTORE=MEMSTORE||defaultDB();return MEMSTORE;}
 }
 let DB=loadDB();
-function saveDB(fraSynk){
+function saveDB(){
   synkStempel();
   DB.updated=new Date().toISOString();
   try{localStorage.setItem(KEY,JSON.stringify(DB));}
   catch(e){storageOK=false;MEMSTORE=DB;document.getElementById('storagewarn').classList.remove('hidden');}
-  if(!fraSynk)serverPlanlegg();
+  oppdaterSynkMerke();
 }
 if(!storageOK)document.getElementById('storagewarn').classList.remove('hidden');
 
@@ -415,9 +418,13 @@ function idb(){
   });
 }
 function photoPut(rec){return idb().then(d=>new Promise((res,rej)=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').put(rec);tx.oncomplete=()=>res(rec.id);tx.onerror=()=>rej(tx.error);}));}
-function photoAdd(date,meal,blob){return photoPut({id:date+'_'+meal+'_'+Date.now()+'_'+Math.floor(Math.random()*1e4),date,meal,blob,ts:Date.now()});}
+function photoAdd(date,meal,blob){
+  const id=date+'_'+meal+'_'+Date.now()+'_'+Math.floor(Math.random()*1e4);
+  if(!inDemo()){DB._st=DB._st||{};DB._st['bilde|'+id]=new Date().toISOString();saveDB();}
+  return photoPut({id,date,meal,blob,ts:Date.now()});
+}
 function photoDel(id,utenLogg){
-  if(!utenLogg&&!inDemo()){DB.photoDel=DB.photoDel||{};DB.photoDel[id]=new Date().toISOString();saveDB();}
+  if(!utenLogg&&!inDemo()){const n=new Date().toISOString();DB.photoDel=DB.photoDel||{};DB.photoDel[id]=n;DB._st=DB._st||{};DB._st['bilde|'+id]=n;saveDB();}
   return idb().then(d=>new Promise((res,rej)=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').delete(id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);}));}
 function photosByDate(date){return photosInRange(date,date);}
 function photosInRange(from,to){
@@ -469,7 +476,7 @@ function synkPoster(db){
   const o={};
   SYNK_SAMLINGER.forEach(k=>{const c=db[k]||{};Object.keys(c).forEach(d=>{if(c[d]!=null)o[k+'|'+d]=c[d];});});
   (db.meds||[]).forEach(m=>{o['meds|'+m.id]=m;});
-  if(db.profile&&JSON.stringify(db.profile)!==JSON.stringify(defaultDB().profile))o['profile|']=db.profile; /* urørt standardprofil teller ikke */
+  if(db.profile)o['profile|']=db.profile;
   if(db.handbok)o['handbok|']=db.handbok;
   return o;
 }
@@ -541,11 +548,10 @@ function synkLes(json){
 }
 /* Fletter inn en innlest fil. Returnerer antall poster + bilder som kom inn. */
 async function synkInn(pakke){
-  synkStempel();                                   /* stemple endringer som ennå ikke er lagret */
   const r=synkFlett(DB,pakke.db);
   DB=r.db;
   const b=await synkBilder(pakke.photos,DB.photoDel);
-  SYNK_DB=null;saveDB(true);
+  SYNK_DB=null;saveDB();
   return r.endret+b;
 }
 function redigererNå(){const a=document.activeElement;return a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&a.type!=='file'&&a.type!=='button'));}
@@ -553,85 +559,135 @@ let synkVenterRender=false;
 function synkRender(){if(redigererNå())synkVenterRender=true;else render();}
 document.addEventListener('focusout',()=>{if(synkVenterRender){synkVenterRender=false;setTimeout(()=>{if(!redigererNå())render();},50);}});
 
-/* ---- Mac: lokal server skriver rett til datafila i iCloud-mappen ---- */
-let serverTimer=null,serverOpptatt=false,serverStatus={ok:null,tid:null,feil:null};
-function serverPlanlegg(){if(!LOKAL_SERVER||inDemo())return;clearTimeout(serverTimer);serverTimer=setTimeout(serverSynk,1500);}
-async function serverSynk(){
+/* ---- Status: rød/grønn knapp øverst ----
+   Rød «Lagre»: noe er endret her siden sist det ble lagret til iCloud-fila.
+   Rød «Hent» (bare Mac): fila i iCloud har nyere data enn appen her – for eksempel fra iPhonen.
+   Grønn: alt er likt. iPhonen kan ikke se inn i iCloud på egen hånd, så der betyr grønn
+   «alt fra iPhonen er lagret»; trykk på den for å hente det som er ført på Mac-en. */
+function stempelMaks(db){let m='';const st=(db&&db._st)||{};for(const k in st)if(st[k]>m)m=st[k];return m;}
+function ulagret(){return stempelMaks(DB)>(DB.sistLagret||'');}
+let filStatus={ok:null,maks:'',feil:null};
+function innkommende(){return LOKAL_SERVER&&filStatus.ok&&filStatus.maks>(DB.sistKjentFil||'');}
+function synkTilstand(){
+  if(inDemo())return 'demo';
+  if(LOKAL_SERVER&&filStatus.ok===false)return 'feil';
+  const u=ulagret(),i=innkommende();
+  return u&&i?'begge':u?'lagre':i?'hent':'ok';
+}
+function oppdaterSynkMerke(){
+  const el=document.getElementById('synkknapp');if(!el)return;
+  const t=synkTilstand();
+  el.classList.toggle('hidden',t==='demo');
+  el.className='synkknapp '+(t==='ok'?'gronn':'rod')+(t==='demo'?' hidden':'');
+  el.textContent={ok:'✓ Synket',lagre:'Lagre til iCloud',hent:'Hent fra iCloud',begge:'Synk med iCloud',feil:'Synk: trykk her'}[t]||'';
+  el.setAttribute('aria-label',{ok:'Alt er synket med iCloud',lagre:'Endringer er ikke lagret til iCloud – trykk for å lagre',hent:'Nyere data i iCloud – trykk for å hente',begge:'Trykk for å hente og lagre',feil:'Synk virker ikke – trykk for forklaring'}[t]||'');
+}
+function merkLagret(){DB.sistLagret=stempelMaks(DB);DB.sistKjentFil=DB.sistLagret;DB.sistSynk=new Date().toISOString();saveDB();}
+
+/* ---- Mac: lokal server leser og skriver datafila i iCloud-mappen ---- */
+async function serverStatus(){
   if(!LOKAL_SERVER||inDemo())return;
-  if(serverOpptatt){serverPlanlegg();return;}
+  try{
+    const r=await fetch('/api/status',{cache:'no-store'});
+    if(r.status===404){filStatus={ok:false,maks:'',feil:'gammel'};oppdaterSynkMerke();return;}
+    const j=await r.json();
+    filStatus=j.feil?{ok:false,maks:'',feil:j.feil}:{ok:true,maks:j.maks||'',feil:null};
+  }catch(e){filStatus={ok:false,maks:'',feil:'tjeneste'};}
+  oppdaterSynkMerke();
+}
+let serverOpptatt=false;
+async function serverSynk(){
+  if(!LOKAL_SERVER||inDemo()||serverOpptatt)return false;
   serverOpptatt=true;
   try{
     const r=await fetch('/api/data',{cache:'no-store'});
-    if(!r.ok)throw new Error('HTTP '+r.status);
     const svar=await r.json();
+    if(!r.ok||svar.feil){filStatus={ok:false,maks:'',feil:svar.feil||'tjeneste'};return false;}
     let endret=0;const arkiver=[];
     for(const f of [svar.main,...(svar.extras||[]).map(x=>x.data)]){if(f)endret+=await synkInn(synkLes(f));}
     (svar.extras||[]).forEach(x=>arkiver.push(x.name));
-    DB.sistSynk=new Date().toISOString();SYNK_DB=null;saveDB(true);
     const pk=await synkPakke();
     const w=await fetch('/api/data',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:pk,archive:arkiver})});
-    if(!w.ok)throw new Error('HTTP '+w.status);
-    serverStatus={ok:true,tid:new Date(),feil:null};
-    if(endret)synkRender();
-  }catch(e){serverStatus={ok:false,tid:new Date(),feil:String(e.message||e)};}
+    if(!w.ok){const j=await w.json().catch(()=>({}));filStatus={ok:false,maks:'',feil:j.feil||'skriv'};return false;}
+    merkLagret();
+    filStatus={ok:true,maks:DB.sistKjentFil,feil:null};
+    if(endret)render();
+    return true;
+  }catch(e){filStatus={ok:false,maks:'',feil:'tjeneste'};return false;}
   finally{serverOpptatt=false;oppdaterSynkMerke();}
 }
-function oppdaterSynkMerke(){
-  const el=document.getElementById('synkmerke');if(!el)return;
-  if(!LOKAL_SERVER){el.classList.add('hidden');return;}
-  el.classList.remove('hidden');
-  el.textContent=serverStatus.ok===false?'iCloud-fil: feil':serverStatus.ok?'Lagret i iCloud '+pad(serverStatus.tid.getHours())+':'+pad(serverStatus.tid.getMinutes()):'Kobler til …';
-  el.style.background=serverStatus.ok===false?'rgba(255,200,200,.35)':'rgba(255,255,255,.16)';
-}
+const FEILTEKST={
+  gammel:'Terminal-vinduet «Åpne Camp Kalori» kjører en eldre versjon. Lukk det vinduet, og dobbeltklikk <b>Åpne Camp Kalori.command</b> på nytt.',
+  tjeneste:'Mac-tjenesten svarer ikke. Terminal-vinduet «Åpne Camp Kalori» er trolig lukket. Dobbeltklikk <b>Åpne Camp Kalori.command</b> i Camp Kalori-mappen, og la vinduet stå åpent.',
+  icloud:'Fila ligger bare i iCloud og er ikke lastet ned til Mac-en ennå. Mac-en er bedt om å hente den – vent et øyeblikk og trykk igjen.',
+  leser:'Fila var ikke ferdig overført fra iCloud da Mac-en prøvde å lese den. Vent et øyeblikk og trykk igjen.',
+  skriv:'Mac-en fikk ikke skrevet fila. Sjekk at det er plass på disken og at Camp Kalori/Data finnes.'
+};
 if(LOKAL_SERVER){
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)serverSynk();});
-  window.addEventListener('focus',()=>serverSynk());
-  setInterval(()=>{if(!document.hidden)serverSynk();},60000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)serverStatus();});
+  window.addEventListener('focus',()=>serverStatus());
+  setInterval(()=>{if(!document.hidden)serverStatus();},20000);
 }
 
 /* ---- iPhone: hent og lagre samme fil via Filer/iCloud Drive ---- */
 async function synkHentFil(fil){
-  const txt=await fil.text();
-  const n=await synkInn(synkLes(txt));
-  DB.sistHentet=new Date().toISOString();saveDB(true);
+  const varUlagret=ulagret();
+  const n=await synkInn(synkLes(await fil.text()));
+  DB.sistHentet=new Date().toISOString();
+  if(!varUlagret)DB.sistLagret=stempelMaks(DB);          /* det som kom inn, ligger allerede i fila */
+  saveDB();oppdaterSynkMerke();
   return n;
 }
 async function synkLagreFil(){
-  DB.sistSynk=new Date().toISOString();saveDB(true);
   const pk=await synkPakke();
   const blob=new Blob([JSON.stringify(pk)],{type:'application/json'});
   const f=new File([blob],SYNK_FIL,{type:'application/json'});
   if(navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){
-    try{await navigator.share({files:[f]});toast('Velg «Arkiver i Filer» → Camp Kalori/Data → Erstatt');return true;}
+    try{await navigator.share({files:[f]});merkLagret();oppdaterSynkMerke();toast('Lagret. Husk: Arkiver i Filer → Camp Kalori/Data → Erstatt');return true;}
     catch(e){if(e&&e.name==='AbortError')return false;}
   }
-  downloadBlob(blob,SYNK_FIL);toast('Filen er lastet ned – flytt den til Camp Kalori/Data');return true;
+  downloadBlob(blob,SYNK_FIL);merkLagret();oppdaterSynkMerke();toast('Filen er lastet ned – flytt den til Camp Kalori/Data');return true;
+}
+function hentVelger(){
+  return '<label class="btn" style="cursor:pointer">Hent fra iCloud<input type="file" class="shent" accept=".json,application/json" style="display:none"></label>';
+}
+function bindHentVelger(rot){
+  rot.querySelectorAll('input.shent').forEach(inp=>inp.addEventListener('change',async e=>{
+    const f=e.target.files[0];if(!f)return;
+    try{const n=await synkHentFil(f);closeModal();toast(n?n+' endringer hentet':'Ingen nye endringer i fila');render();}
+    catch(err){toast('Kunne ikke lese fila – er det '+SYNK_FIL+'?');}
+  }));
+}
+/* Trykk på knappen øverst */
+async function synkKnappTrykk(){
+  const t=synkTilstand();
+  if(LOKAL_SERVER){
+    await serverStatus();
+    const ok=filStatus.ok!==false&&await serverSynk();
+    if(ok){toast('Synket med iCloud');return;}
+    openModal('<h3>Synk virker ikke<button class="btn ghost sm" id="mlukk">Lukk</button></h3><div class="muted">'+(FEILTEKST[filStatus.feil]||FEILTEKST.tjeneste)+'</div><div class="btnrow"><button id="mprov">Prøv igjen</button></div>');
+    document.getElementById('mlukk').addEventListener('click',closeModal);
+    document.getElementById('mprov').addEventListener('click',()=>{closeModal();synkKnappTrykk();});
+    return;
+  }
+  if(t==='lagre'){await synkLagreFil();return;}
+  const sh=DB.sistHentet?new Date(DB.sistHentet).toLocaleString('nb-NO'):'aldri';
+  openModal('<h3>Alt fra iPhonen er lagret<button class="btn ghost sm" id="mlukk">Lukk</button></h3>'
+    +'<div class="muted">Har du ført noe på Mac-en siden sist? Da henter du det her. Velg <b>'+SYNK_FIL+'</b> i iCloud Drive → Dokumenter → Claude → Projects → Privat → Camp Kalori → Data.</div>'
+    +'<div class="btnrow">'+hentVelger()+'</div><div class="small" style="margin-top:8px">Sist hentet: '+sh+'. iPhonen kan ikke selv se når fila i iCloud endres, så den blir ikke rød av det som føres på Mac-en.</div>');
+  document.getElementById('mlukk').addEventListener('click',closeModal);
+  bindHentVelger(modalEl);
 }
 function renderSynk(){
-  const sh=DB.sistHentet?new Date(DB.sistHentet).toLocaleString('nb-NO'):'aldri',ss=DB.sistSynk?new Date(DB.sistSynk).toLocaleString('nb-NO'):'aldri';
   let html=subhead('Synk med iCloud');
-  if(LOKAL_SERVER){
-    html+='<div class="card"><h2>Mac – automatisk</h2><div class="muted">Appen kjører fra Mac-en og leser og skriver datafila <b>'+SYNK_FIL+'</b> i Camp Kalori/Data automatisk: når du åpner den, når du bytter tilbake til vinduet, hvert minutt og etter hver endring.</div>'
-      +'<div class="small" style="margin-top:8px">Status: '+(serverStatus.ok===false?'<span class="badge bad">Feil: '+esc(serverStatus.feil)+'</span>':serverStatus.ok?'<span class="badge good">Synket '+serverStatus.tid.toLocaleTimeString('nb-NO')+'</span>':'<span class="badge neutral">venter</span>')+'</div>'
-      +'<div class="btnrow"><button id="snå" class="btn sm">Synk nå</button></div></div>';
-  }else{
-    html+='<div class="card"><h2>1 · Hent fra iCloud</h2><div class="muted">Velg <b>'+SYNK_FIL+'</b> i iCloud Drive → Dokumenter → Claude → Projects → Privat → Camp Kalori → Data. Innholdet flettes inn: det som er nyest av hver dag, veiing og notat vinner. Ingenting du har ført her, går tapt.</div>'
-      +'<div class="btnrow"><label class="btn" style="cursor:pointer">Hent og flett inn<input type="file" id="shent" accept=".json,application/json" style="display:none"></label></div>'
-      +'<div class="small" style="margin-top:6px">Sist hentet: '+sh+'</div></div>'
-      +'<div class="card"><h2>2 · Lagre tilbake til iCloud</h2><div class="muted">Lagrer alt som ligger i appen nå. Velg <b>Arkiver i Filer</b>, gå til samme Data-mappe og trykk <b>Erstatt</b>.</div>'
-      +'<div class="btnrow"><button id="slagre" class="btn">Lagre til iCloud</button></div>'
-      +'<div class="small" style="margin-top:6px">Sist lagret: '+ss+'</div></div>'
-      +'<div class="banner info" style="font-size:.8rem">Hent alltid først, så lagre. Da har fila både det du har ført på telefonen og det som er ført på Mac-en.</div>';
-  }
-  html+='<div class="small">Sikkerhetskopi (full kopi til gjenoppretting) finner du under Mer → Sikkerhetskopi og data.</div>';
-  V.innerHTML=html;bindBack();
-  const sn=document.getElementById('snå');if(sn)sn.addEventListener('click',async()=>{await serverSynk();render();toast(serverStatus.ok?'Synket med iCloud-fila':'Synk feilet');});
-  const sh2=document.getElementById('shent');
-  if(sh2)sh2.addEventListener('change',async e=>{
-    const f=e.target.files[0];if(!f)return;
-    try{const n=await synkHentFil(f);toast(n?n+' endringer flettet inn':'Ingen nye endringer i fila');render();}
-    catch(err){toast('Kunne ikke lese fila – er det '+SYNK_FIL+'?');}
-  });
+  html+='<div class="card"><h2>Knappen øverst</h2><div class="muted"><span class="synkknapp gronn" style="pointer-events:none">✓ Synket</span> Alt er likt.<br><br>'
+    +'<span class="synkknapp rod" style="pointer-events:none">Lagre til iCloud</span> Du har endret noe her. Trykk for å lagre det til fila i iCloud.'
+    +(LOKAL_SERVER?'<br><br><span class="synkknapp rod" style="pointer-events:none">Hent fra iCloud</span> Fila har nyere data, for eksempel fra iPhonen. Trykk for å hente dem.':'<br><br>På iPhonen: trykk på den grønne knappen for å hente det du har ført på Mac-en.')
+    +'</div></div>';
+  if(!LOKAL_SERVER)html+='<div class="card"><h2>Lagre fra iPhonen</h2><div class="muted">Velg <b>Arkiver i Filer</b>, gå til Camp Kalori → Data og trykk <b>Erstatt</b>. Første gang må du bla deg fram: iCloud Drive → Dokumenter → Claude → Projects → Privat → Camp Kalori → Data. Etterpå husker Filer mappen.</div>'
+    +'<div class="btnrow"><button id="slagre" class="btn sec sm">Lagre til iCloud nå</button>'+hentVelger().replace('class="btn"','class="btn sec sm"')+'</div></div>';
+  html+='<div class="small">Sist lagret: '+(DB.sistSynk?new Date(DB.sistSynk).toLocaleString('nb-NO'):'aldri')+(DB.sistHentet?' · sist hentet: '+new Date(DB.sistHentet).toLocaleString('nb-NO'):'')+'.<br>Sikkerhetskopi (full kopi til gjenoppretting) finner du under Mer → Sikkerhetskopi og data.</div>';
+  V.innerHTML=html;bindBack();bindHentVelger(V);
   const sl=document.getElementById('slagre');if(sl)sl.addEventListener('click',async()=>{if(await synkLagreFil())render();});
 }
 
@@ -2482,7 +2538,10 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
 }
 migrerBilder();
 render();
-if(LOKAL_SERVER)serverSynk();
+if(DB.sistLagret==null&&DB.sistSynk){DB.sistLagret=DB.sistSynk;saveDB();}
+document.getElementById('synkknapp').addEventListener('click',synkKnappTrykk);
+oppdaterSynkMerke();
+if(LOKAL_SERVER)serverStatus();
 </script>
 </body>
 </html>
