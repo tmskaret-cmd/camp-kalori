@@ -1,5 +1,5 @@
 /* Camp Kalori service worker – cache-first, slik at appen virker uten nett */
-const CACHE = 'campkalori-v12';
+const CACHE = 'campkalori-v13';
 const FILES = ['./', './index.html', './manifest.json', './ikon-180.png', './ikon-192.png', './ikon-512.png'];
 
 self.addEventListener('install', e => {
@@ -13,6 +13,7 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  if (new URL(e.request.url).pathname.startsWith('/api/')) return;  // datafila på Mac-en skal aldri caches
   e.respondWith(
     caches.match(e.request, { ignoreSearch: true }).then(hit => {
       const net = fetch(e.request).then(res => {

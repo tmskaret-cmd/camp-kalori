@@ -207,6 +207,92 @@ nav.tabs button{position:relative}
 .center{text-align:center}
 .storage-warn{background:var(--warn-soft);color:#5c3d00;font-size:.75rem;padding:8px 14px;text-align:center;border-bottom:1px solid #ecd9b0}
 @media(min-width:640px){ body{padding-bottom:calc(var(--nav-h) + 24px)} }
+/* ---- v3.0: synkmerke, trening, håndbok ---- */
+nav.tabs{grid-template-columns:repeat(7,1fr)}
+nav.tabs button{font-size:.56rem}
+#synkmerke{font-size:.62rem;font-weight:600;padding:3px 8px;border-radius:99px;color:#fff;white-space:nowrap}
+.hdrright{display:flex;gap:6px;align-items:center}
+.proglist{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.progkort{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:8px 12px 8px 8px;justify-content:flex-start;display:flex;gap:10px;width:100%;text-align:left}
+.progkort .figbox{width:58px;margin:0;padding:0;border:0;background:#faf9f7;border-radius:9px}
+.progkort .pk-tekst{display:flex;flex-direction:column;gap:2px}
+.progkort .pk-navn{font-weight:700;font-size:.9rem}
+.progkort .pk-sub{font-weight:400;font-size:.75rem;color:var(--text-3)}
+.progkort .ar{margin-left:auto;color:var(--text-3);font-size:1.2rem}
+.figrad{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin:4px 0 10px}
+.figbox{margin:0;background:#faf9f7;border:1px solid var(--line);border-radius:10px;padding:4px 4px 6px;text-align:center}
+.figbox.bred{margin:4px 0 10px;padding:6px}
+.figbox figcaption{font-size:.7rem;color:var(--text-2);line-height:1.25;padding:0 2px}
+svg.fig{display:block;width:100%;height:auto}
+.fg-kropp{fill:none;stroke:var(--text);stroke-width:4.2;stroke-linecap:round;stroke-linejoin:round}
+.fg-hode{fill:var(--text)}
+.fg-fist{fill:var(--accent)}
+.fg-fist-l{stroke:var(--accent);stroke-width:5;stroke-linecap:round}
+.fg-bakke{stroke:var(--text-3);stroke-width:1.5;fill:none}
+.fg-pil{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linecap:round}
+.fg-pil2{fill:none;stroke:var(--text-3);stroke-width:2;stroke-dasharray:5 4;stroke-linecap:round}
+.fg-txt{fill:var(--accent);font-size:11px;font-weight:700}
+.fg-txt2{fill:var(--text-3);font-size:10px}
+.fg-søyle{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2}
+.fg-mark{fill:var(--accent)}
+.tlinje{display:flex;gap:2px;height:12px;margin-top:12px;border-radius:6px;overflow:hidden}
+.tlinje i{display:block;min-width:2px}
+.t-o{background:#e8b56a}.t-j{background:var(--accent)}.t-p{background:#d9d7d2}
+.tforklar{display:flex;gap:12px;flex-wrap:wrap;font-size:.7rem;color:var(--text-3);margin-top:6px}
+.tforklar span{display:inline-flex;align-items:center;gap:4px}
+.tforklar i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.tforklar .tsum{margin-left:auto;font-weight:700;color:var(--text-2)}
+.card.del.d-o{border-left:4px solid #e8b56a}.card.del.d-j{border-left:4px solid var(--accent)}
+.prog-tekst p{font-size:.88rem;line-height:1.5;margin-bottom:8px}
+.prog-tekst p:last-child{margin-bottom:0}
+.tabell{overflow-x:auto;margin-bottom:10px}
+.tabell table,.hb table{border-collapse:collapse;width:100%;font-size:.82rem}
+.tabell th,.tabell td,.hb th,.hb td{text-align:left;vertical-align:top;padding:7px 8px;border-bottom:1px solid var(--line)}
+.tabell th,.hb th{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3)}
+.merk{margin-top:10px;font-size:.8rem;background:var(--warn-soft);color:#5c3d00;border-radius:9px;padding:8px 10px;line-height:1.4}
+.pauselinje{text-align:center;font-size:.75rem;color:var(--text-3);margin:-4px 0 8px;font-weight:600}
+ul.spm{margin:4px 0 0 18px;font-size:.82rem;color:var(--text-2);line-height:1.5}
+/* Håndbok */
+.hbnav{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px;scrollbar-width:none}
+.hbnav button{background:#f1f0ed;color:var(--text-2);font-size:.76rem;padding:7px 12px;border-radius:99px;white-space:nowrap;flex:none}
+.hbnav button.on{background:var(--accent);color:#fff}
+.hb{font-size:.9rem;line-height:1.55}
+.hb section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.hb h2{font-size:1.2rem;line-height:1.25;margin:0 0 6px}
+.hb h3{font-size:1rem;margin:22px 0 6px;line-height:1.3}
+.hb h4{font-size:.9rem;margin:14px 0 4px}
+.hb p{margin:0 0 10px}
+.hb ul,.hb ol{margin:0 0 12px;padding-left:1.2em}
+.hb li{margin-bottom:5px}
+.hb a{color:var(--accent)}
+.hb .lede{color:var(--text-2)}
+.hb .stamp{font-size:.7rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;margin:0 0 4px}
+.hb small,.hb .note{font-size:.78rem;color:var(--text-3)}
+.hb .tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 14px}
+.hb .tile{background:#faf9f7;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.hb .tile .k{font-size:.66rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em}
+.hb .tile .v{font-size:1.25rem;font-weight:700;font-variant-numeric:tabular-nums}
+.hb .tile .s{font-size:.74rem;color:var(--text-2)}
+.hb figure{margin:0 0 16px;border:1px solid var(--line);border-radius:10px;padding:12px}
+.hb figure h3{margin:0 0 2px;font-size:.95rem}
+.hb figure .sub{font-size:.78rem;color:var(--text-2);margin:0 0 6px}
+.hb .scroll{overflow-x:auto;margin:0 0 14px;border:1px solid var(--line);border-radius:10px}
+.hb td.num,.hb th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hb .box{border-radius:10px;padding:12px 14px;margin:0 0 14px;border:1px solid var(--line)}
+.hb .box>:last-child{margin-bottom:0}
+.hb .box.viktig{background:var(--bad-soft);border-color:transparent}
+.hb .box.obs{background:var(--warn-soft);border-color:transparent}
+.hb .box.bra{background:var(--good-soft);border-color:transparent}
+.hb .tag{display:inline-block;font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:99px;margin-right:6px;color:#fff}
+.hb .tag.viktig{background:var(--bad)}.hb .tag.obs{background:var(--warn)}.hb .tag.bra{background:var(--good)}
+.hb .rett{border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}
+.hb .rett h3{margin-top:0}
+.hb .rett .fakta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--text-2);margin:0 0 10px;padding:0;list-style:none}
+.hb blockquote.rapport{margin:10px 0 0;padding:9px 12px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:.88rem}
+.hb blockquote.rapport .k{display:block;font-size:.64rem;text-transform:uppercase;letter-spacing:.07em;color:var(--accent-dark);margin-bottom:2px;font-weight:700}
+.hb .tom,.tom{border:1px dashed var(--line);border-radius:10px;padding:14px;color:var(--text-3);font-size:.88rem}
+.notat-tekst{white-space:pre-wrap;max-height:9.5em;overflow:hidden}
+@media(min-width:900px){.wrap{max-width:820px}}
 </style>
 </head>
 <body>
@@ -214,9 +300,10 @@ nav.tabs button{position:relative}
 <div id="demobar" class="storage-warn hidden" style="background:#eaf2fc;border-bottom-color:#c9dcf5;color:#173e6e">DEMO-MODUS – du ser eksempeldata. Dine egne data er trygt lagret. <a href="#" id="demoexit" style="color:inherit;font-weight:700">Avslutt demo</a></div>
 <header class="app">
   <h1>Camp Kalori<span class="sub">Sesongen 2026–2027 · Skullerud Aktivitetspark</span></h1>
-  <span id="hdrweek" class="badge" style="background:rgba(255,255,255,.16);color:#fff"></span>
+  <span class="hdrright"><span id="synkmerke" class="hidden"></span><span id="hdrweek" class="badge" style="background:rgba(255,255,255,.16);color:#fff"></span></span>
 </header>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><marker id="pilspiss" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8e2a23"/></marker><marker id="pilspiss2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a8880"/></marker></defs></svg>
 <main id="view" class="wrap" aria-live="polite"></main>
 
 <nav class="tabs" id="tabs">
@@ -224,7 +311,8 @@ nav.tabs button{position:relative}
   <button data-tab="kosthold" aria-label="Kosthold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 3v7a2 2 0 002 2h0a2 2 0 002-2V3M6 3v18M15 3c-1.5 1.5-2 3.5-2 6 0 2 .5 3 2 3v9M15 3c1.5 1.5 2 3.5 2 6 0 2-.5 3-2 3"/></svg>Kosthold</button>
   <button data-tab="vekt" aria-label="Vekt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 3a9 9 0 00-7 4l3 2a5 5 0 018 0l3-2a9 9 0 00-7-4z" fill="currentColor" stroke="none" opacity=".25"/><path d="M12 13l2.5-3.5"/></svg>Vekt</button>
   <button data-tab="rapport" aria-label="Rapport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M3 7l9 6 9-6"/></svg>Rapport</button>
-  <button data-tab="plan" aria-label="Plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Plan</button>
+  <button data-tab="trening" aria-label="Trening"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg>Trening</button>
+  <button data-tab="handbok" aria-label="Håndbok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4.5A1.5 1.5 0 015.5 3H20v16H5.5A1.5 1.5 0 004 20.5z"/><path d="M4 20.5A1.5 1.5 0 005.5 22H20v-3"/><path d="M8 7h8M8 11h6"/></svg>Håndbok</button>
   <button data-tab="mer" aria-label="Mer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>Mer</button>
 </nav>
 
@@ -305,10 +393,12 @@ function loadDB(){
   }catch(e){storageOK=false;MEMSTORE=MEMSTORE||defaultDB();return MEMSTORE;}
 }
 let DB=loadDB();
-function saveDB(){
+function saveDB(fraSynk){
+  synkStempel();
   DB.updated=new Date().toISOString();
   try{localStorage.setItem(KEY,JSON.stringify(DB));}
   catch(e){storageOK=false;MEMSTORE=DB;document.getElementById('storagewarn').classList.remove('hidden');}
+  if(!fraSynk)serverPlanlegg();
 }
 if(!storageOK)document.getElementById('storagewarn').classList.remove('hidden');
 
@@ -326,7 +416,9 @@ function idb(){
 }
 function photoPut(rec){return idb().then(d=>new Promise((res,rej)=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').put(rec);tx.oncomplete=()=>res(rec.id);tx.onerror=()=>rej(tx.error);}));}
 function photoAdd(date,meal,blob){return photoPut({id:date+'_'+meal+'_'+Date.now()+'_'+Math.floor(Math.random()*1e4),date,meal,blob,ts:Date.now()});}
-function photoDel(id){return idb().then(d=>new Promise((res,rej)=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').delete(id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);}));}
+function photoDel(id,utenLogg){
+  if(!utenLogg&&!inDemo()){DB.photoDel=DB.photoDel||{};DB.photoDel[id]=new Date().toISOString();saveDB();}
+  return idb().then(d=>new Promise((res,rej)=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').delete(id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);}));}
 function photosByDate(date){return photosInRange(date,date);}
 function photosInRange(from,to){
   return idb().then(d=>new Promise((res,rej)=>{
@@ -364,6 +456,183 @@ function photoIndexOf(list){
   const idx={};
   list.forEach(p=>{(idx[p.date]=idx[p.date]||{})[p.meal]=true;});
   return idx;
+}
+
+/* ==================== SYNK (v3.0): én datafil i iCloud, fletting i begge retninger ==================== */
+/* Hver post (en dags kosthold, en veiing, et oppmøte, en medisinoppføring, profilen, håndboka, et notat)
+   får et tidsstempel i DB._st når den endres. Ved fletting vinner den nyeste versjonen av hver post,
+   så ingenting overskrives blindt – uansett rekkefølge på iPhone, Mac og Claude. */
+const SYNK_FIL='camp-kalori-data.json';
+const SYNK_SAMLINGER=['weights','meals','attendance','sent','notater'];
+const LOKAL_SERVER=/^(127\.0\.0\.1|localhost)$/.test(location.hostname)&&location.protocol==='http:';
+function synkPoster(db){
+  const o={};
+  SYNK_SAMLINGER.forEach(k=>{const c=db[k]||{};Object.keys(c).forEach(d=>{if(c[d]!=null)o[k+'|'+d]=c[d];});});
+  (db.meds||[]).forEach(m=>{o['meds|'+m.id]=m;});
+  if(db.profile&&JSON.stringify(db.profile)!==JSON.stringify(defaultDB().profile))o['profile|']=db.profile; /* urørt standardprofil teller ikke */
+  if(db.handbok)o['handbok|']=db.handbok;
+  return o;
+}
+function synkSett(db,nøkkel,verdi){
+  const i=nøkkel.indexOf('|'),k=nøkkel.slice(0,i),d=nøkkel.slice(i+1);
+  if(k==='profile'){if(verdi!==undefined)db.profile=verdi;return;}
+  if(k==='handbok'){if(verdi===undefined)delete db.handbok;else db.handbok=verdi;return;}
+  if(k==='meds'){db.meds=(db.meds||[]).filter(m=>m.id!==d);if(verdi!==undefined)db.meds.push(verdi);return;}
+  db[k]=db[k]||{};
+  if(verdi===undefined)delete db[k][d];else db[k][d]=verdi;
+}
+function synkAvtrykk(db){const o=synkPoster(db),r={};Object.keys(o).forEach(k=>{r[k]=JSON.stringify(o[k]);});return r;}
+let SYNK_FORRIGE=null,SYNK_DB=null;
+/* Kalles fra saveDB: stempler poster som er endret, lagt til eller slettet siden forrige lagring. */
+function synkStempel(){
+  if(!SYNK_FORRIGE||SYNK_DB!==DB){SYNK_FORRIGE=synkAvtrykk(DB);SYNK_DB=DB;return;}
+  const nå=new Date().toISOString(),ny=synkAvtrykk(DB);
+  DB._st=DB._st||{};
+  Object.keys(ny).forEach(k=>{if(ny[k]!==SYNK_FORRIGE[k])DB._st[k]=nå;});
+  Object.keys(SYNK_FORRIGE).forEach(k=>{if(!(k in ny))DB._st[k]=nå;});
+  SYNK_FORRIGE=ny;
+}
+/* Fletter b inn i a og returnerer {db, endret} – endret = antall poster som kom fra b. */
+function synkFlett(a,b){
+  const pa=synkPoster(a),pb=synkPoster(b),sa=a._st||{},sb=b._st||{};
+  const ut=JSON.parse(JSON.stringify(a));ut._st=Object.assign({},sa);
+  let endret=0;
+  new Set([...Object.keys(pa),...Object.keys(pb),...Object.keys(sa),...Object.keys(sb)]).forEach(k=>{
+    const ta=sa[k]||'',tb=sb[k]||'';
+    let fraB;
+    if(ta===tb){
+      if(ta)return;                                    /* samme versjon */
+      if(!(k in pb))return;
+      if(!(k in pa))fraB=true;                         /* bare b har posten (gamle, ustemplede data) */
+      else fraB=(b.updated||'')>(a.updated||'')&&JSON.stringify(pa[k])!==JSON.stringify(pb[k]);
+    }else fraB=tb>ta;
+    if(!fraB)return;
+    const va=k in pa?JSON.stringify(pa[k]):null,vb=k in pb?JSON.stringify(pb[k]):null;
+    if(va!==vb){synkSett(ut,k,k in pb?JSON.parse(vb):undefined);endret++;}
+    if(tb)ut._st[k]=tb;
+  });
+  ut.photoDel=Object.assign({},a.photoDel||{},b.photoDel||{});
+  ut.sistSynk=[a.sistSynk||'',b.sistSynk||''].sort().pop()||null;
+  return {db:ut,endret};
+}
+/* Bilder: union på id, minus slettede. */
+async function synkBilder(eksterne,slettet){
+  let inn=0;
+  const har=new Set((await photosAll()).map(p=>p.id));
+  for(const id of Object.keys(slettet||{}))if(har.has(id)){try{await photoDel(id,true);}catch(e){}}
+  for(const ph of eksterne||[]){
+    if(har.has(ph.id)||(slettet&&slettet[ph.id]))continue;
+    try{const blob=await (await fetch(ph.b64)).blob();await photoPut({id:ph.id,date:ph.date,meal:migrertBildemaaltid(ph.meal),ts:ph.ts,blob});inn++;}catch(e){}
+  }
+  return inn;
+}
+async function synkPakke(){
+  const ph=await photosAll();
+  const bilder=await Promise.all(ph.map(p=>new Promise(res=>{
+    const fr=new FileReader();fr.onload=()=>res({id:p.id,date:p.date,meal:p.meal,ts:p.ts,b64:fr.result});fr.onerror=()=>res(null);fr.readAsDataURL(p.blob);
+  })));
+  return {format:'camp-kalori-data',versjon:1,lagret:new Date().toISOString(),db:DB,photos:bilder.filter(Boolean)};
+}
+function synkLes(json){
+  const p=typeof json==='string'?JSON.parse(json):json;
+  if(p&&p.format==='camp-kalori-data'&&p.db)return {db:migrerMaaltider(Object.assign(defaultDB(),p.db)),photos:p.photos||[]};
+  if(p&&p.profile){const ph=p._photos||[];const d=Object.assign({},p);delete d._photos;return {db:migrerMaaltider(Object.assign(defaultDB(),d)),photos:ph};}
+  throw new Error('Ukjent format');
+}
+/* Fletter inn en innlest fil. Returnerer antall poster + bilder som kom inn. */
+async function synkInn(pakke){
+  synkStempel();                                   /* stemple endringer som ennå ikke er lagret */
+  const r=synkFlett(DB,pakke.db);
+  DB=r.db;
+  const b=await synkBilder(pakke.photos,DB.photoDel);
+  SYNK_DB=null;saveDB(true);
+  return r.endret+b;
+}
+function redigererNå(){const a=document.activeElement;return a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&a.type!=='file'&&a.type!=='button'));}
+let synkVenterRender=false;
+function synkRender(){if(redigererNå())synkVenterRender=true;else render();}
+document.addEventListener('focusout',()=>{if(synkVenterRender){synkVenterRender=false;setTimeout(()=>{if(!redigererNå())render();},50);}});
+
+/* ---- Mac: lokal server skriver rett til datafila i iCloud-mappen ---- */
+let serverTimer=null,serverOpptatt=false,serverStatus={ok:null,tid:null,feil:null};
+function serverPlanlegg(){if(!LOKAL_SERVER||inDemo())return;clearTimeout(serverTimer);serverTimer=setTimeout(serverSynk,1500);}
+async function serverSynk(){
+  if(!LOKAL_SERVER||inDemo())return;
+  if(serverOpptatt){serverPlanlegg();return;}
+  serverOpptatt=true;
+  try{
+    const r=await fetch('/api/data',{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const svar=await r.json();
+    let endret=0;const arkiver=[];
+    for(const f of [svar.main,...(svar.extras||[]).map(x=>x.data)]){if(f)endret+=await synkInn(synkLes(f));}
+    (svar.extras||[]).forEach(x=>arkiver.push(x.name));
+    DB.sistSynk=new Date().toISOString();SYNK_DB=null;saveDB(true);
+    const pk=await synkPakke();
+    const w=await fetch('/api/data',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:pk,archive:arkiver})});
+    if(!w.ok)throw new Error('HTTP '+w.status);
+    serverStatus={ok:true,tid:new Date(),feil:null};
+    if(endret)synkRender();
+  }catch(e){serverStatus={ok:false,tid:new Date(),feil:String(e.message||e)};}
+  finally{serverOpptatt=false;oppdaterSynkMerke();}
+}
+function oppdaterSynkMerke(){
+  const el=document.getElementById('synkmerke');if(!el)return;
+  if(!LOKAL_SERVER){el.classList.add('hidden');return;}
+  el.classList.remove('hidden');
+  el.textContent=serverStatus.ok===false?'iCloud-fil: feil':serverStatus.ok?'Lagret i iCloud '+pad(serverStatus.tid.getHours())+':'+pad(serverStatus.tid.getMinutes()):'Kobler til …';
+  el.style.background=serverStatus.ok===false?'rgba(255,200,200,.35)':'rgba(255,255,255,.16)';
+}
+if(LOKAL_SERVER){
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)serverSynk();});
+  window.addEventListener('focus',()=>serverSynk());
+  setInterval(()=>{if(!document.hidden)serverSynk();},60000);
+}
+
+/* ---- iPhone: hent og lagre samme fil via Filer/iCloud Drive ---- */
+async function synkHentFil(fil){
+  const txt=await fil.text();
+  const n=await synkInn(synkLes(txt));
+  DB.sistHentet=new Date().toISOString();saveDB(true);
+  return n;
+}
+async function synkLagreFil(){
+  DB.sistSynk=new Date().toISOString();saveDB(true);
+  const pk=await synkPakke();
+  const blob=new Blob([JSON.stringify(pk)],{type:'application/json'});
+  const f=new File([blob],SYNK_FIL,{type:'application/json'});
+  if(navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){
+    try{await navigator.share({files:[f]});toast('Velg «Arkiver i Filer» → Camp Kalori/Data → Erstatt');return true;}
+    catch(e){if(e&&e.name==='AbortError')return false;}
+  }
+  downloadBlob(blob,SYNK_FIL);toast('Filen er lastet ned – flytt den til Camp Kalori/Data');return true;
+}
+function renderSynk(){
+  const sh=DB.sistHentet?new Date(DB.sistHentet).toLocaleString('nb-NO'):'aldri',ss=DB.sistSynk?new Date(DB.sistSynk).toLocaleString('nb-NO'):'aldri';
+  let html=subhead('Synk med iCloud');
+  if(LOKAL_SERVER){
+    html+='<div class="card"><h2>Mac – automatisk</h2><div class="muted">Appen kjører fra Mac-en og leser og skriver datafila <b>'+SYNK_FIL+'</b> i Camp Kalori/Data automatisk: når du åpner den, når du bytter tilbake til vinduet, hvert minutt og etter hver endring.</div>'
+      +'<div class="small" style="margin-top:8px">Status: '+(serverStatus.ok===false?'<span class="badge bad">Feil: '+esc(serverStatus.feil)+'</span>':serverStatus.ok?'<span class="badge good">Synket '+serverStatus.tid.toLocaleTimeString('nb-NO')+'</span>':'<span class="badge neutral">venter</span>')+'</div>'
+      +'<div class="btnrow"><button id="snå" class="btn sm">Synk nå</button></div></div>';
+  }else{
+    html+='<div class="card"><h2>1 · Hent fra iCloud</h2><div class="muted">Velg <b>'+SYNK_FIL+'</b> i iCloud Drive → Dokumenter → Claude → Projects → Privat → Camp Kalori → Data. Innholdet flettes inn: det som er nyest av hver dag, veiing og notat vinner. Ingenting du har ført her, går tapt.</div>'
+      +'<div class="btnrow"><label class="btn" style="cursor:pointer">Hent og flett inn<input type="file" id="shent" accept=".json,application/json" style="display:none"></label></div>'
+      +'<div class="small" style="margin-top:6px">Sist hentet: '+sh+'</div></div>'
+      +'<div class="card"><h2>2 · Lagre tilbake til iCloud</h2><div class="muted">Lagrer alt som ligger i appen nå. Velg <b>Arkiver i Filer</b>, gå til samme Data-mappe og trykk <b>Erstatt</b>.</div>'
+      +'<div class="btnrow"><button id="slagre" class="btn">Lagre til iCloud</button></div>'
+      +'<div class="small" style="margin-top:6px">Sist lagret: '+ss+'</div></div>'
+      +'<div class="banner info" style="font-size:.8rem">Hent alltid først, så lagre. Da har fila både det du har ført på telefonen og det som er ført på Mac-en.</div>';
+  }
+  html+='<div class="small">Sikkerhetskopi (full kopi til gjenoppretting) finner du under Mer → Sikkerhetskopi og data.</div>';
+  V.innerHTML=html;bindBack();
+  const sn=document.getElementById('snå');if(sn)sn.addEventListener('click',async()=>{await serverSynk();render();toast(serverStatus.ok?'Synket med iCloud-fila':'Synk feilet');});
+  const sh2=document.getElementById('shent');
+  if(sh2)sh2.addEventListener('change',async e=>{
+    const f=e.target.files[0];if(!f)return;
+    try{const n=await synkHentFil(f);toast(n?n+' endringer flettet inn':'Ingen nye endringer i fila');render();}
+    catch(err){toast('Kunne ikke lese fila – er det '+SYNK_FIL+'?');}
+  });
+  const sl=document.getElementById('slagre');if(sl)sl.addEventListener('click',async()=>{if(await synkLagreFil())render();});
 }
 
 /* ---------- sesongdata ---------- */
@@ -839,12 +1108,13 @@ async function sharePdf(r,opts){
     toast('Deling støttes ikke her – PDF-en er lastet ned. Adressen er kopiert.');
   }
 }
+synkStempel();
 </script>
 <script>
 'use strict';
 /* ==================== visninger ==================== */
 const V=document.getElementById('view');
-const state={tab:'hjem',kostDate:clampSeason(dstr(today())),merPage:null,trenUke:null,planFilter:'alle'};
+const state={tab:'hjem',trenProg:null,hbSek:null,kostDate:clampSeason(dstr(today())),merPage:null,trenUke:null,planFilter:'alle'};
 function clampSeason(ds){if(ds<SEASON_START)return SEASON_START;if(ds>SEASON_END)return SEASON_END;return ds;}
 
 function render(){
@@ -852,10 +1122,11 @@ function render(){
   document.getElementById('hdrweek').textContent='Uke '+w.week;
   try{document.getElementById('demobar').classList.toggle('hidden',!inDemo());}catch(e){}
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===state.tab));
-  ({hjem:renderHjem,kosthold:renderKosthold,vekt:renderVekt,rapport:renderRapport,plan:renderPlan,mer:renderMer})[state.tab]();
+  ({hjem:renderHjem,kosthold:renderKosthold,vekt:renderVekt,rapport:renderRapport,plan:renderPlan,mer:renderMer,trening:renderTreningFane,handbok:renderHandbok})[state.tab]();
+  oppdaterSynkMerke();
   window.scrollTo(0,0);
 }
-document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{state.tab=b.dataset.tab;state.merPage=null;render();}));
+document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{state.tab=b.dataset.tab;state.merPage=null;state.trenProg=null;render();}));
 
 /* ---------- modal ---------- */
 const modalBg=document.getElementById('modalbg'),modalEl=document.getElementById('modal');
@@ -923,7 +1194,7 @@ function renderHjem(){
   }else if(inEgentrening(ts)&&ts>=SEASON_START){
     html+='<div class="card"><h2>Egentreningsuke</h2><div class="muted">'
       +esc((EGENTRENING.find(x=>ts>=x[0]&&ts<=x[1])||[])[2]||'')
-      +' – følg egentreningsprogrammet fra Terje. Kosthold og vekt leveres som normalt.</div></div>';
+      +' – følg egentreningsprogrammet fra Terje. Kosthold og vekt leveres som normalt.</div><div class="btnrow"><button class="btn sm" data-go="trening">Se programmene</button></div></div>';
   }
 
   // Vektstatus
@@ -1502,9 +1773,9 @@ function renderPlan(){
 /* ==================== MER ==================== */
 function renderMer(){
   if(state.merPage)return renderMerPage(state.merPage);
-  const items=[['kropp','Fremgangsbilder'],['trening','Trening og oppmøte'],['medisin','Medisinlogg'],['regler','Huskeregler'],['profil','Profil og treningstider'],['backup','Sikkerhetskopi og data'],['demo','Test appen (demo-modus)'],['om','Om appen og kontakt']];
+  const items=[['plan','Sesongplan og frister'],['synk','Synk med iCloud'],['kropp','Fremgangsbilder'],['trening','Trening og oppmøte'],['medisin','Medisinlogg'],['regler','Huskeregler'],['profil','Profil og treningstider'],['backup','Sikkerhetskopi og data'],['demo','Test appen (demo-modus)'],['om','Om appen og kontakt']];
   V.innerHTML='<div class="merlist">'+items.map(([k,t])=>'<button data-mp="'+k+'">'+t+'<span class="ar">›</span></button>').join('')+'</div>';
-  V.querySelectorAll('[data-mp]').forEach(b=>b.addEventListener('click',()=>{state.merPage=b.dataset.mp;render();}));
+  V.querySelectorAll('[data-mp]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.mp==='plan'){state.tab='plan';state.merPage=null;}else state.merPage=b.dataset.mp;render();}));
 }
 function subhead(t){return '<div class="subhead"><button id="back">‹ Mer</button><h2>'+t+'</h2></div>';}
 function bindBack(){document.getElementById('back').addEventListener('click',()=>{state.merPage=null;render();});}
@@ -1516,6 +1787,7 @@ function renderMerPage(p){
   if(p==='regler')return renderRegler();
   if(p==='profil')return renderProfil();
   if(p==='backup')return renderBackup();
+  if(p==='synk')return renderSynk();
   if(p==='demo')return renderDemo();
   if(p==='om')return renderOm();
 }
@@ -1788,7 +2060,7 @@ function renderBackup(){
   document.getElementById('bwipe').addEventListener('click',async()=>{
     if(confirm('Er du sikker? Alle data slettes fra denne enheten.')&&confirm('Helt sikker? Dette kan ikke angres uten sikkerhetskopi.')){
       DB=defaultDB();saveDB();
-      try{const ph=await photosAll();for(const p of ph)await photoDel(p.id);}catch(e){}
+      try{const ph=await photosAll();for(const p of ph)await photoDel(p.id,true);}catch(e){}
       toast('Alt slettet');render();
     }
   });
@@ -1803,7 +2075,7 @@ function renderOm(){
     +'<div class="card"><h2>Nøkkeltall for sesongen</h2><div class="muted">'
     +REPORTS.length+' innleveringer · første trening 18.08.2026 · siste dag 24.06.2027 · 6 egentreningsuker (40, 52, 53, 8, 12, 13) · totalpris kr 44.000.</div></div>'
     +'<div class="card"><h2>Betaling</h2><div class="muted">Totalpris kr 44.000 for sesongen (bindende kontrakt, ingen angrerett/frys iht. kontrakten). Faktura kommer fra <b>noreply@mail.poweroffice.net</b> – sjekk søppelpost. Administrasjonsgebyr kr 60 per faktura. Spørsmål om faktura, betaling og påmeldinger: Kathrine på e-post.</div></div>'
-    +'<div class="small center" style="margin-top:14px">Versjon 2.0 · september 2026 · laget for Trond</div>';
+    +'<div class="small center" style="margin-top:14px">Versjon 3.0 · september 2026 · laget for Trond</div>';
   bindBack();
 }
 
@@ -1889,6 +2161,313 @@ async function endDemo(){
 }
 document.getElementById('demoexit').addEventListener('click',e=>{e.preventDefault();endDemo();});
 
+/* ==================== TRENING: egentreningsprogrammer (v3.0) ==================== */
+/* Terjes tre egentreningsprogrammer, skrevet om til økter med tidslinje og figurer.
+   Innholdet er Terjes; «Merk»-linjene er presiseringer. Personlige hensyn ligger i håndboka (datafila), ikke her. */
+const FIG={
+  /* stikkfigurer: h=hode, n=nakke, p=hofte, a=armer [skulder,albue,hånd], l=bein [hofte,kne,fot] */
+  stå:{h:[50,15],n:[50,24],p:[50,54],a:[[[50,27],[45,41],[43,54]],[[50,27],[55,41],[57,54]]],l:[[[50,54],[47,73],[46,91]],[[50,54],[53,73],[54,91]]]},
+  guard:{h:[47,15],n:[47,24],p:[45,54],a:[[[48,27],[57,36],[56,24]],[[46,27],[49,39],[52,26]]],l:[[[45,54],[55,72],[60,91]],[[45,54],[37,72],[31,91]]]},
+  jab:{h:[49,15],n:[48,24],p:[45,54],a:[[[49,27],[65,27],[81,26]],[[47,27],[49,39],[52,26]]],l:[[[45,54],[55,72],[60,91]],[[45,54],[37,72],[31,91]]],fist:[81,26],pil:[[60,20],[80,20]]},
+  hook:{h:[48,15],n:[47,24],p:[45,54],a:[[[48,27],[62,25],[70,32]],[[46,27],[49,39],[52,26]]],l:[[[45,54],[55,72],[60,91]],[[45,54],[37,72],[31,91]]],fist:[70,32],bue:[[52,14],[78,20],[74,38]]},
+  upper:{h:[47,16],n:[47,25],p:[45,55],a:[[[48,28],[57,36],[56,24]],[[46,29],[60,44],[64,28]]],l:[[[45,55],[55,73],[60,91]],[[45,55],[37,73],[31,91]]],fist:[64,28],pil:[[72,48],[72,26]]},
+  forkick:{h:[38,16],n:[40,25],p:[46,54],a:[[[41,28],[47,37],[47,26]],[[39,28],[34,38],[40,30]]],l:[[[46,54],[43,73],[41,91]],[[46,54],[64,57],[83,50]]],pil:[[60,44],[84,40]]},
+  sidekick:{h:[26,26],n:[33,31],p:[46,52],a:[[[34,33],[28,41],[32,35]],[[33,33],[40,42],[37,36]]],l:[[[46,52],[42,72],[40,91]],[[46,52],[66,49],[86,45]]],blad:[[86,39],[87,51]],pil:[[62,40],[86,36]]},
+  rundkick:{h:[30,22],n:[35,29],p:[46,53],a:[[[36,31],[30,40],[34,34]],[[35,31],[42,40],[40,34]]],l:[[[46,53],[43,72],[41,91]],[[46,53],[64,44],[82,40]]],bue:[[62,70],[86,58],[84,32]]},
+  bSquat:{h:[68,54],n:[61,59],p:[42,64],a:[[[61,60],[62,76],[63,91]],[[60,60],[60,76],[60,91]]],l:[[[42,64],[56,70],[47,91]],[[42,64],[53,72],[44,91]]]},
+  planke:{h:[81,60],n:[74,65],p:[46,72],a:[[[74,66],[75,79],[76,91]],[[73,66],[73,79],[73,91]]],l:[[[46,72],[30,80],[14,90]],[[46,72],[30,81],[15,91]]]},
+  pushNed:{h:[82,74],n:[75,78],p:[46,81],a:[[[75,79],[64,84],[73,91]],[[74,79],[63,85],[71,91]]],l:[[[46,81],[30,85],[14,90]],[[46,81],[30,86],[15,91]]],vinkel:[64,84]},
+  hopp:{h:[50,11],n:[50,20],p:[50,50],a:[[[50,23],[38,15],[31,4]],[[50,23],[62,15],[69,4]]],l:[[[50,50],[47,68],[47,84]],[[50,50],[53,68],[53,84]]],pil:[[70,70],[70,48]]},
+  kne:{h:[50,15],n:[50,24],p:[50,54],a:[[[51,27],[60,36],[58,24]],[[49,27],[46,38],[50,25]]],l:[[[50,54],[50,73],[50,91]],[[50,54],[64,56],[62,74]]],pil:[[76,72],[76,52]]},
+  armhold:{h:[50,15],n:[50,24],p:[50,54],a:[[[50,27],[32,28],[13,26]],[[50,27],[68,28],[87,26]]],l:[[[50,54],[46,73],[45,91]],[[50,54],[54,73],[55,91]]],front:1},
+  crunch:{h:[71,73],n:[64,78],p:[40,88],a:[[[64,79],[54,64],[44,50]],[[63,79],[53,65],[43,51]]],l:[[[40,88],[40,67],[40,45]],[[40,88],[42,67],[42,45]]],liggende:1},
+  jogg:{h:[52,15],n:[50,24],p:[46,53],a:[[[50,27],[58,36],[64,30]],[[49,27],[42,37],[36,33]]],l:[[[46,53],[58,64],[54,80]],[[46,53],[40,72],[28,82]]]}
+};
+function figSvg(key,lab){
+  const f=FIG[key];if(!f)return '';
+  const P=pts=>pts.map(p=>p.join(',')).join(' ');
+  let s='<svg viewBox="0 0 100 100" class="fig" role="img" aria-label="'+esc(lab||key)+'">';
+  s+='<line x1="4" y1="92" x2="96" y2="92" class="fg-bakke"/>';
+  if(f.bue)s+='<path d="M'+f.bue[0]+' Q'+f.bue[1]+' '+f.bue[2]+'" class="fg-pil" marker-end="url(#pilspiss)"/>';
+  if(f.pil)s+='<line x1="'+f.pil[0][0]+'" y1="'+f.pil[0][1]+'" x2="'+f.pil[1][0]+'" y2="'+f.pil[1][1]+'" class="fg-pil" marker-end="url(#pilspiss)"/>';
+  s+='<polyline points="'+P([f.n,f.p])+'" class="fg-kropp"/>';
+  f.l.forEach(l=>{s+='<polyline points="'+P(l)+'" class="fg-kropp"/>';});
+  f.a.forEach(a=>{s+='<polyline points="'+P(a)+'" class="fg-kropp"/>';});
+  if(f.fist)s+='<circle cx="'+f.fist[0]+'" cy="'+f.fist[1]+'" r="3.4" class="fg-fist"/>';
+  if(f.blad)s+='<line x1="'+f.blad[0][0]+'" y1="'+f.blad[0][1]+'" x2="'+f.blad[1][0]+'" y2="'+f.blad[1][1]+'" class="fg-fist-l"/>';
+  if(f.vinkel)s+='<path d="M'+(f.vinkel[0]+5)+','+(f.vinkel[1]-2)+' A6,6 0 0 1 '+(f.vinkel[0]+3)+','+(f.vinkel[1]+5)+'" class="fg-pil"/><text x="'+(f.vinkel[0]-12)+'" y="'+(f.vinkel[1]-6)+'" class="fg-txt">90°</text>';
+  if(f.front)s+='<circle cx="13" cy="26" r="3" class="fg-fist"/><circle cx="87" cy="26" r="3" class="fg-fist"/>';
+  s+='<circle cx="'+f.h[0]+'" cy="'+f.h[1]+'" r="7" class="fg-hode"/></svg>';
+  return '<figure class="figbox">'+s+(lab?'<figcaption>'+esc(lab)+'</figcaption>':'')+'</figure>';
+}
+function figRad(list){return '<div class="figrad">'+list.map(([k,l])=>figSvg(k,l)).join('')+'</div>';}
+function bakkeSvg(runder,tekstOpp){
+  let s='<svg viewBox="0 0 320 120" class="fig bred" role="img" aria-label="Bakkeintervall: '+runder+'">';
+  s+='<path d="M10,108 L300,24 L310,24" class="fg-bakke" style="stroke-width:2.5"/>';
+  s+='<path d="M40,92 L250,31" class="fg-pil" marker-end="url(#pilspiss)" style="stroke-width:3"/>';
+  s+='<path d="M244,45 L52,101" class="fg-pil2" marker-end="url(#pilspiss2)"/>';
+  s+='<text x="112" y="50" class="fg-txt" transform="rotate(-16 112 50)">'+esc(tekstOpp)+'</text>';
+  s+='<text x="150" y="98" class="fg-txt2" transform="rotate(-16 150 98)">snu – jogg lett ned</text>';
+  s+='<text x="14" y="20" class="fg-txt">'+esc(runder)+'</text></svg>';
+  return '<figure class="figbox bred">'+s+'</figure>';
+}
+function pyramideSvg(hoved,markør){
+  let s='<svg viewBox="0 0 320 110" class="fig bred" role="img" aria-label="Pyramide: '+esc(hoved)+' 2, 4, 6, 8 … med '+esc(markør)+' mellom hvert trinn">';
+  [2,4,6,8,10].forEach((n,i)=>{
+    const x=16+i*60,h=n*7.5;
+    s+='<rect x="'+x+'" y="'+(92-h)+'" width="34" height="'+h+'" rx="4" class="fg-søyle"/>';
+    s+='<text x="'+(x+17)+'" y="'+(86-h)+'" text-anchor="middle" class="fg-txt">'+n+'</text>';
+    if(i<4)s+='<circle cx="'+(x+47)+'" cy="86" r="5" class="fg-mark"/>';
+  });
+  s+='<text x="16" y="106" class="fg-txt2">søyle = '+esc(hoved)+' · prikk = '+esc(markør)+' · fortsett oppover i 3 min</text></svg>';
+  return '<figure class="figbox bred">'+s+'</figure>';
+}
+/* type: o=oppvarming, j=arbeid, p=pause. min brukes bare til tidslinjen. */
+const PROGRAMMER=[
+  {id:'kropp',logg:'Kroppsstyrke (Terjes program, ca. 40 min)',navn:'Kroppsstyrke',kilde:'Egentrening - Kroppsstyrke.pdf',tid:'ca. 40 min',utstyr:'Gulvplass, gjerne en matte, og en klokke',
+   ingress:'Oppvarming, så fem øvelser med egen vekt: burpees, knehopp, push-ups, armhold og crunch. Tell og skriv ned – neste gang skal du slå deg selv.',
+   deler:[
+    {navn:'Oppvarming',tid:'10 min',type:'o',min:10,fig:[['guard','Skyggeboksing'],['hopp','Hopp og sprett']],
+     tekst:'<p>Skyggeboksing og «hopp og sprett» i 10 minutter. Legg inn 3–4 drag på minst 10 sekunder med høyere puls.</p>'},
+    {navn:'Burpees',tid:'4 × 3 min · 1 min pause',type:'j',min:15,serie:[['j',3],['p',1],['j',3],['p',1],['j',3],['p',1],['j',3]],
+     fig:[['stå','1 Stå'],['bSquat','2 Hender i gulvet'],['planke','3 Spark ut til planke'],['hopp','4 Tilbake og hopp']],
+     tekst:'<p>Fire runder à 3 minutter burpees, med 1 minutt pause mellom rundene.</p><p>Første runde: gå hardt ut og ta så mange du klarer. Prøv å klare like mange i de tre neste.</p>',
+     merk:'Tell antallet i hver runde og skriv det i treningsfeltet, f.eks. «Burpees 14–12–12–11».'},
+    {navn:'Pause',tid:'1 min',type:'p',min:1},
+    {navn:'Høye knehopp med guard',tid:'3 × 20 · 15 s pause',type:'j',min:2,serie:[['j',.5],['p',.25],['j',.5],['p',.25],['j',.5]],
+     fig:[['kne','Kneet høyt, hendene oppe']],
+     tekst:'<p>20 høye knehopp, tre ganger. Hold guarden oppe (hendene ved haken). 15 sekunder pause mellom rundene.</p>'},
+    {navn:'Pause',tid:'1 min',type:'p',min:1},
+    {navn:'Push-ups',tid:'3 min',type:'j',min:3,
+     fig:[['planke','Strak kropp'],['pushNed','Ned til 90° i albuen']],
+     tekst:'<p>Push-ups i 3 minutter. Kroppen strak som en planke, og ned til 90 grader i albueleddet.</p>',
+     merk:'Terje skriver «med 1 minutt pause imellom», men ikke hvor mange runder. Tidslinjen viser én runde til han har svart.'},
+    {navn:'Pause',tid:'1 min',type:'p',min:1},
+    {navn:'Armhold',tid:'1 runde · så lenge du klarer',type:'j',min:3,
+     fig:[['armhold','Armene ut i skulderhøyde']],
+     tekst:'<p>Armene rett ut til siden i skulderhøyde, med en liten knekk i albuene og lillefingerknoken øverst. Hold skuldrene senket hele tiden.</p><p>Én runde, så lenge du klarer. Ta tiden – klarer du tre minutter?</p>'},
+    {navn:'Pause',tid:'1 min',type:'p',min:1},
+    {navn:'Crunch',tid:'2 × 1 min · 30 s pause',type:'j',min:2.5,serie:[['j',1],['p',.5],['j',1]],
+     fig:[['crunch','Beina rett opp, strekk mot tærne']],
+     tekst:'<p>Ligg på ryggen med beina rett opp. Strekk armene mot tærne og ta på dem.</p><p>Skuldrene skal ikke ned i gulvet mellom hver crunch – bare korsryggen og setet ligger i gulvet.</p><p>To runder à 1 minutt, med 30 sekunder pause.</p>'}
+   ]},
+  {id:'kick1',logg:'Kickboxing dag 1, pyramider (ca. 57 min)',navn:'Kickboxing dag 1 – pyramider',kilde:'Egentrening - Kickboxing.pdf',tid:'ca. 57 min',utstyr:'Stor pute (boksesekk), hansker og en rundeklokke',
+   ingress:'Seks runder à 3 minutter der antallet slag eller spark stiger 2, 4, 6, 8 … Hele serien tas to ganger.',
+   deler:[
+    {navn:'Oppvarming',tid:'10 min',type:'o',min:10,fig:[['jogg','Jogg på stedet'],['jab','Rett slag'],['forkick','Spark i lufta']],
+     tekst:'<p>Lett jogging, gjerne på stedet. Kast med armene så skuldrene blir varme. Legg inn 3–4 drag på minst 10 sekunder med høyere puls.</p><p>Slå og spark i lufta: rette slag, hook, uppercut, forkick, sidekick og rundkick.</p>'},
+    {navn:'Seks pyramiderunder – to ganger',tid:'12 × 3 min · 1 min pause',type:'j',min:47,
+     serie:Array.from({length:23},(_,i)=>i%2?['p',1]:['j',3]),
+     tekst:'<div class="tabell"><table><thead><tr><th>Runde</th><th>Innhold</th></tr></thead><tbody>'
+      +'<tr><td>1, 3, 5</td><td><b>Slag-pyramide:</b> 2 slag, forkick – 4 slag, forkick – 6 slag, forkick … så høyt du kommer på 3 min.</td></tr>'
+      +'<tr><td>2</td><td><b>Forkick-pyramide:</b> 2 forkick (fremre og bakre bein), jab – 4 forkick, jab – 6 … </td></tr>'
+      +'<tr><td>4</td><td>Som runde 2, men med <b>sidekick</b>.</td></tr>'
+      +'<tr><td>6</td><td>Som runde 2, men med <b>rundkick</b>.</td></tr>'
+      +'</tbody></table></div>'
+      +'<p>Forkicket med fremre bein (i slagrundene) og jabben (i sparkerundene) markerer hvert trinn, så ikke alt går i ett.</p><p>Etter runde 6 tar du hele serien én gang til. Pause 1 minutt mellom alle rundene.</p>',
+     ekstra:()=>pyramideSvg('slag','forkick')+figRad([['jab','Rett slag (jab)'],['forkick','Forkick'],['sidekick','Sidekick'],['rundkick','Rundkick']])}
+   ]},
+  {id:'kick2',logg:'Kickboxing dag 2, 10 runder (ca. 49 min)',navn:'Kickboxing dag 2 – runder',kilde:'Egentrening - Kickboxing.pdf',tid:'ca. 49 min',utstyr:'Stor pute (boksesekk), hansker og en rundeklokke',
+   ingress:'Ti runder à 3 minutter: først bare slag, så bare spark, til slutt fritt. Aldri mer enn 5 sekunder stillstand.',
+   deler:[
+    {navn:'Oppvarming',tid:'10 min',type:'o',min:10,fig:[['jogg','Jogg på stedet'],['hook','Hook'],['upper','Uppercut']],
+     tekst:'<p>Samme oppvarming som dag 1: lett jogging, armsving, 3–4 drag på minst 10 sekunder, og slag og spark i lufta.</p>'},
+    {navn:'Ti runder på puten',tid:'10 × 3 min · 1 min pause',type:'j',min:39,
+     serie:Array.from({length:19},(_,i)=>i%2?['p',1]:['j',3]),
+     tekst:'<div class="tabell"><table><thead><tr><th>Runde</th><th>Innhold</th></tr></thead><tbody>'
+      +'<tr><td>1, 3, 5</td><td><b>Bare slag.</b> Kombinasjoner på minst 4 og høyst 10 slag. Enkeltslag bare med jabben (venstre hånd hvis du er høyrehendt), så du kan bevege deg rundt puten.</td></tr>'
+      +'<tr><td>2, 4, 6</td><td><b>Bare spark.</b> Enten bare forkick med fremre (venstre) bein, eller kombinasjoner på 4 spark der begge bein er i bruk.</td></tr>'
+      +'<tr><td>7–10</td><td><b>Slag og spark.</b> Du velger selv om du slår eller sparker først, og hvor mange det er i hver kombinasjon.</td></tr>'
+      +'</tbody></table></div><p>Husk: høyst 5 sekunder før du «kommer med noe».</p>',
+     ekstra:()=>figRad([['jab','Jab'],['hook','Hook'],['upper','Uppercut'],['forkick','Forkick']])}
+   ]},
+  {id:'bakke1',logg:'Bakkeintervall 4 × 4 min (ca. 40 min)',navn:'Bakkeintervall 1 – 4 × 4 min',kilde:'Egentrening - Bakkeintervall.pdf',tid:'ca. 40 min',utstyr:'En lang bakke og en klokke',
+   ingress:'Fire drag à 4 minutter oppover. Snu, jogg lett ned, og start neste drag med en gang.',
+   deler:[
+    {navn:'Oppvarming',tid:'10 min',type:'o',min:10,fig:[['jogg','Rolig jogg']],
+     tekst:'<p>10 minutter jogging med 3–4 drag på minst 10 sekunder med høy puls.</p>'},
+    {navn:'4 × 4 minutter oppover',tid:'4 runder · jogg ned',type:'j',min:28,serie:[['j',4],['p',3],['j',4],['p',3],['j',4],['p',3],['j',4],['p',3]],
+     tekst:'<p>Løp 4 minutter oppover så langt du kommer. Snu etter 4 minutter, jogg lett eller gå raskt ned igjen, og start neste runde med en gang du er nede.</p>',
+     merk:'Merk deg hvor du snudde (en stolpe, et tre). Da ser du om du holder farten i alle fire rundene.',
+     ekstra:()=>bakkeSvg('× 4','4 min oppover')}
+   ]},
+  {id:'bakke2',logg:'Bakkeintervall 30 sekunder',navn:'Bakkeintervall 2 – 30 sekunder',kilde:'Egentrening - Bakkeintervall.pdf',tid:'10 min + så mange runder du klarer',utstyr:'En bakke og en klokke',
+   ingress:'Korte drag på 30 sekunder. Hvor mange runder klarer du – og kommer du like langt hver gang?',
+   deler:[
+    {navn:'Oppvarming',tid:'10 min',type:'o',min:10,fig:[['jogg','Rolig jogg']],
+     tekst:'<p>10 minutter jogging med 3–4 drag på minst 10 sekunder med høy puls.</p>'},
+    {navn:'30 sekunder oppover, om og om igjen',tid:'så mange du klarer',type:'j',min:20,serie:Array.from({length:16},(_,i)=>i%2?['p',.9]:['j',.5]),
+     tekst:'<p>Løp 30 sekunder oppover. Snu, jogg lett eller gå raskt ned igjen, og start på nytt med en gang.</p><p>Hvor mange runder klarer du, og kommer du like langt opp hver gang?</p>',
+     merk:'Terje oppgir ikke hvor lenge økten varer. Tidslinjen er bare et eksempel på ca. 20 minutter.',
+     ekstra:()=>bakkeSvg('om og om igjen','30 s oppover')}
+   ]}
+];
+const TRENING_SPØRSMÅL=[
+  'Push-ups: hvor mange runder à 3 minutter, med 1 minutt pause mellom?',
+  'Bakkeintervall 2: hvor lenge skal økten vare, eller hvor mange runder er målet?',
+  'Hvilke økter på hvilke dager i egentreningsuka – og hva gjør den som ikke har boksesekk hjemme?'
+];
+function tidslinje(p){
+  const seg=[];
+  p.deler.forEach(d=>{if(d.serie)d.serie.forEach(([t,m])=>seg.push([t,m]));else seg.push([d.type,d.min]);});
+  const tot=seg.reduce((s,x)=>s+x[1],0);
+  return '<div class="tlinje" aria-hidden="true">'+seg.map(([t,m])=>'<i class="t-'+t+'" style="flex:'+m+'"></i>').join('')+'</div>'
+    +'<div class="tforklar"><span><i class="t-o"></i>oppvarming</span><span><i class="t-j"></i>arbeid</span><span><i class="t-p"></i>pause / rolig</span><span class="tsum">ca. '+Math.round(tot)+' min</span></div>';
+}
+function egentreningsukeNå(){
+  const ts=dstr(today());
+  return EGENTRENING.find(x=>ts<=x[1])||null;
+}
+function renderProgram(id){
+  const p=PROGRAMMER.find(x=>x.id===id);if(!p){state.trenProg=null;return renderTreningFane();}
+  let html='<div class="subhead"><button id="pback">‹ Trening</button><h2>'+esc(p.navn)+'</h2></div>'
+    +'<div class="card"><div class="muted">'+esc(p.ingress)+'</div>'
+    +'<div class="small" style="margin-top:8px"><b>Tid:</b> '+esc(p.tid)+' · <b>Utstyr:</b> '+esc(p.utstyr)+'</div>'
+    +tidslinje(p)+'</div>'
+    +'<div class="banner info" style="font-size:.8rem">Stopp og si fra hvis du får trykk eller smerter i brystet, blir uvanlig tungpustet eller svimmel. <a href="#" data-hbgo="trening" style="color:inherit;font-weight:700">Dine egne hensyn →</a></div>';
+  p.deler.forEach((d,i)=>{
+    if(d.type==='p'&&!d.tekst){html+='<div class="pauselinje">Pause '+esc(d.tid)+'</div>';return;}
+    html+='<div class="card del d-'+d.type+'"><h2>'+esc(d.navn)+'<span class="mini">'+esc(d.tid)+'</span></h2>'
+      +(d.fig?figRad(d.fig):'')+(d.ekstra?d.ekstra():'')
+      +'<div class="prog-tekst">'+(d.tekst||'')+'</div>'
+      +(d.merk?'<div class="merk"><b>Merk:</b> '+esc(d.merk)+'</div>':'')+'</div>';
+  });
+  html+='<div class="card"><h2>Registrer økten</h2>'
+    +'<label class="f">Dato</label><input type="date" id="rdato" value="'+clampSeason(dstr(today()))+'" min="'+SEASON_START+'" max="'+SEASON_END+'">'
+    +'<label class="f">Resultat og kommentar (valgfritt)</label><textarea id="rnotat" placeholder="F.eks.: Burpees 14–12–12–11. Armhold 1:45."></textarea>'
+    +'<div class="btnrow"><button id="rlagre">Legg i treningsfeltet for dagen</button></div>'
+    +'<div class="small" style="margin-top:6px">Teksten legges til i «Trening» under Kosthold den dagen, og kommer med i rapporten til Terje.</div></div>'
+    +'<div class="small center" style="margin:6px 0 14px">Kilde: Terjes «'+esc(p.kilde)+'», skrevet om for appen.</div>';
+  V.innerHTML=html;
+  document.getElementById('pback').addEventListener('click',()=>{state.trenProg=null;render();});
+  V.querySelectorAll('[data-hbgo]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();state.tab='handbok';state.hbSek=a.dataset.hbgo;render();}));
+  document.getElementById('rlagre').addEventListener('click',()=>{
+    const ds=document.getElementById('rdato').value,nt=document.getElementById('rnotat').value.trim();
+    if(!ds){toast('Velg dato');return;}
+    const linje='Egentrening: '+p.logg+'.'+(nt?' '+nt:'');
+    const cur=DB.meals[ds]||(DB.meals[ds]={});
+    cur.trening=cur.trening&&cur.trening.trim()?cur.trening.replace(/\s+$/,'')+'\n'+linje:linje;
+    saveDB();toast('Lagt til i treningsfeltet '+fmt(ds));
+    document.getElementById('rnotat').value='';
+  });
+}
+function renderTreningFane(){
+  if(state.trenProg)return renderProgram(state.trenProg);
+  const ts=dstr(today()),eg=egentreningsukeNå();
+  const nå=eg&&ts>=eg[0];
+  let html='<div class="card"><h2>Egentrening</h2><div class="muted">'
+    +(eg?(nå?'<b>Nå er det egentreningsuke ('+esc(eg[2])+')</b> – ingen fellestreninger. Ta tre økter fra programmene under.':'Neste egentreningsuke: <b>'+esc(eg[2])+'</b>, '+fmt(eg[0])+'–'+fmt(eg[1])+'.'):'Ingen flere egentreningsuker denne sesongen.')
+    +'</div><div class="small" style="margin-top:6px">Alle: '+EGENTRENING.map(x=>esc(x[2].replace(/ \(.*\)/,''))).join(' · ')+'</div></div>';
+  html+='<div class="proglist">';
+  PROGRAMMER.forEach(p=>{
+    const f={kropp:'pushNed',kick1:'forkick',kick2:'hook'}[p.id]||'jogg';
+    html+='<button class="progkort" data-prog="'+p.id+'">'+figSvg(f,'')+'<span class="pk-tekst"><span class="pk-navn">'+esc(p.navn)+'</span><span class="pk-sub">'+esc(p.tid)+'</span></span><span class="ar">›</span></button>';
+  });
+  html+='</div>';
+  html+='<div class="card"><h2>Ukas økter</h2><div class="muted">Terje sier ikke hvilken økt som skal tas hvilken dag. Et naturlig oppsett er å bruke de faste treningsdagene: <b>tirsdag</b> Kroppsstyrke, <b>onsdag</b> Kickboxing, <b>torsdag</b> Bakkeintervall.</div>'
+    +'<div class="small" style="margin-top:8px"><b>Spør Terje om:</b></div><ul class="spm">'+TRENING_SPØRSMÅL.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul></div>';
+  html+='<div class="card"><h2>Fellestrening og oppmøte</h2><div class="muted">Registrer oppmøte og se ukas økter.</div><div class="btnrow"><button class="btn sec sm" id="gOppm">Åpne oppmøte</button></div></div>';
+  V.innerHTML=html;
+  V.querySelectorAll('[data-prog]').forEach(b=>b.addEventListener('click',()=>{state.trenProg=b.dataset.prog;render();}));
+  document.getElementById('gOppm').addEventListener('click',()=>{state.tab='mer';state.merPage='trening';render();});
+}
+
+/* ==================== HÅNDBOK (v3.0) ==================== */
+/* Innholdet ligger i datafila (DB.handbok.html), ikke i appens kode – appen er offentlig på GitHub,
+   håndboka inneholder helseopplysninger. Claude oppdaterer den i Camp Kalori/Data/handbok.html. */
+function hbSeksjoner(html){
+  const t=document.createElement('div');t.innerHTML=html;
+  return Array.from(t.querySelectorAll('section[id]')).map(s=>{
+    const h=s.querySelector('h2');
+    return {id:s.id,navn:h?h.textContent.trim():s.id,html:s.outerHTML};
+  });
+}
+function hbFyllInn(rot){
+  const ser=weightSeries();
+  rot.querySelectorAll('[data-hb="vekttiles"]').forEach(el=>{
+    if(!ser.length){el.innerHTML='<div class="tom">Ingen veiinger ført ennå.</div>';return;}
+    const siste=ser[ser.length-1],topp=ser.reduce((m,x)=>x.v>m.v?x:m,ser[0]);
+    const mål=DB.profile.maalTerje!=null?DB.profile.maalTerje:80;
+    const uker=Math.max(1,Math.round((pd(SEASON_END)-pd(siste.d))/604800000));
+    const per=(siste.v-mål)/uker;
+    el.innerHTML='<div class="tiles">'
+      +'<div class="tile"><div class="k">Siste vekt</div><div class="v">'+kg(siste.v)+' kg</div><div class="s">'+fmtLong(siste.d)+'</div></div>'
+      +'<div class="tile"><div class="k">Siden toppen '+fmtShort(topp.d)+'</div><div class="v">'+(siste.v-topp.v<=0?'−':'+')+kg(Math.abs(siste.v-topp.v))+' kg</div><div class="s">'+Math.round((pd(siste.d)-pd(topp.d))/604800000)+' uker</div></div>'
+      +'<div class="tile"><div class="k">Terjes mål</div><div class="v">&lt; '+kg(mål)+' kg</div><div class="s">innen '+fmt(SEASON_END)+'</div></div>'
+      +'<div class="tile"><div class="k">Krever</div><div class="v">ca. '+kg(Math.round(per*10)/10)+' kg</div><div class="s">per uke i '+uker+' uker</div></div></div>';
+  });
+  rot.querySelectorAll('[data-hb="vektgraf"]').forEach(el=>{
+    el.classList.add('chartbox');el.innerHTML='';
+    if(ser.length)renderChart(el);else el.innerHTML='<div class="tom">Grafen vises når vekten er ført.</div>';
+  });
+}
+function renderHandbok(){
+  const hb=DB.handbok;
+  if(!hb||!hb.html){
+    V.innerHTML='<div class="card"><h2>Håndboka</h2><div class="muted">Håndboka ligger i datafila i iCloud, ikke i selve appen – den inneholder helseopplysninger, og appen ligger åpent på nettet.</div>'
+      +'<div class="muted" style="margin-top:8px">Hent den med <b>Mer → Synk med iCloud → Hent og flett inn</b>.</div>'
+      +'<div class="btnrow"><button class="btn sm" data-go-mer="synk">Gå til synk</button></div></div>'+notaterHtml();
+    bindGo();bindNotater();return;
+  }
+  const sek=hbSeksjoner(hb.html);
+  if(!state.hbSek||(state.hbSek!=='notater'&&!sek.some(s=>s.id===state.hbSek)))state.hbSek=sek.length?sek[0].id:'notater';
+  let html='<div class="hbnav" role="tablist">'+sek.map(s=>'<button data-hbs="'+s.id+'" class="'+(s.id===state.hbSek?'on':'')+'">'+esc(s.navn)+'</button>').join('')
+    +'<button data-hbs="notater" class="'+(state.hbSek==='notater'?'on':'')+'">Notater</button></div>';
+  if(state.hbSek==='notater')html+=notaterHtml();
+  else html+='<div class="hb">'+sek.find(s=>s.id===state.hbSek).html+'</div>'
+    +'<div class="small center" style="margin:10px 0 16px">Håndboka sist oppdatert '+esc(hb.oppdatert||'–')+'</div>';
+  V.innerHTML=html;
+  const aktiv=V.querySelector('.hbnav .on');if(aktiv)aktiv.scrollIntoView({block:'nearest',inline:'center'});
+  V.querySelectorAll('[data-hbs]').forEach(b=>b.addEventListener('click',()=>{state.hbSek=b.dataset.hbs;render();}));
+  if(state.hbSek==='notater'){bindNotater();return;}
+  const rot=V.querySelector('.hb');
+  hbFyllInn(rot);
+  rot.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+    e.preventDefault();
+    const id=a.getAttribute('href').slice(1);
+    const s=sek.find(x=>x.id===id)||sek.find(x=>x.html.indexOf('id="'+id+'"')>=0);
+    if(!s)return;
+    state.hbSek=s.id;render();
+    if(s.id!==id){const m=document.getElementById(id);if(m)setTimeout(()=>m.scrollIntoView({block:'start'}),30);}
+  }));
+  rot.querySelectorAll('a[href^="http"]').forEach(a=>{a.target='_blank';a.rel='noopener';});
+}
+/* ---- notater: fritekst som synkes, lett å kopiere til og fra Claude ---- */
+function notaterHtml(){
+  const n=DB.notater||{};
+  const ids=Object.keys(n).sort((a,b)=>(n[b].endret||'')>(n[a].endret||'')?1:-1);
+  return '<div class="card"><h2>Notater<span class="mini">synkes med iCloud</span></h2><div class="muted">Lim inn tekster, spørsmål til Terje, svar fra Claude – alt du vil ha for hånden. Notatene ligger i datafila, så Claude kan lese dem.</div>'
+    +'<div class="btnrow"><button class="btn sm" id="nnytt">Nytt notat</button></div></div>'
+    +(ids.length?'<div class="list">'+ids.map(id=>'<div class="li"><div class="bod"><div class="t">'+esc(n[id].tittel||'Uten tittel')+'</div>'
+      +'<div class="s notat-tekst">'+esc(n[id].tekst||'')+'</div><div class="small" style="margin-top:4px">Endret '+(n[id].endret?new Date(n[id].endret).toLocaleString('nb-NO'):'–')+'</div>'
+      +'<div class="btnrow" style="margin-top:6px"><button class="btn sec sm" data-nred="'+id+'">Rediger</button><button class="btn ghost sm" data-nkop="'+id+'">Kopier</button><button class="btn ghost sm" data-nslett="'+id+'">Slett</button></div></div></div>').join('')+'</div>'
+      :'<div class="small center">Ingen notater ennå.</div>');
+}
+function notatSkjema(id){
+  const n=(DB.notater||{})[id]||{tittel:'',tekst:''};
+  openModal('<h3>'+(id?'Rediger notat':'Nytt notat')+'<button class="btn ghost sm" id="nlukk">Lukk</button></h3>'
+    +'<label class="f">Tittel</label><input type="text" id="ntittel" value="'+esc(n.tittel)+'">'
+    +'<label class="f">Tekst</label><textarea id="ntekst" style="min-height:220px">'+esc(n.tekst)+'</textarea>'
+    +'<div class="btnrow"><button id="nlagre">Lagre</button></div>');
+  document.getElementById('nlukk').addEventListener('click',closeModal);
+  document.getElementById('nlagre').addEventListener('click',()=>{
+    const t=document.getElementById('ntittel').value.trim(),x=document.getElementById('ntekst').value;
+    if(!t&&!x.trim()){toast('Notatet er tomt');return;}
+    DB.notater=DB.notater||{};
+    const nid=id||('n'+Date.now()+Math.floor(Math.random()*1e4));
+    DB.notater[nid]={tittel:t,tekst:x,endret:new Date().toISOString()};
+    saveDB();closeModal();render();toast('Notat lagret');
+  });
+}
+function bindNotater(){
+  const b=document.getElementById('nnytt');if(b)b.addEventListener('click',()=>notatSkjema(null));
+  V.querySelectorAll('[data-nred]').forEach(x=>x.addEventListener('click',()=>notatSkjema(x.dataset.nred)));
+  V.querySelectorAll('[data-nkop]').forEach(x=>x.addEventListener('click',()=>{const n=DB.notater[x.dataset.nkop];copyText((n.tittel?n.tittel+'\n\n':'')+n.tekst);}));
+  V.querySelectorAll('[data-nslett]').forEach(x=>x.addEventListener('click',()=>{
+    if(confirm('Slette notatet?')){delete DB.notater[x.dataset.nslett];saveDB();render();}
+  }));
+}
+
 /* ==================== oppdater nedtelling + init ==================== */
 setInterval(()=>{
   if(state.tab!=='hjem')return;
@@ -1903,6 +2482,7 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
 }
 migrerBilder();
 render();
+if(LOKAL_SERVER)serverSynk();
 </script>
 </body>
 </html>
