@@ -621,7 +621,8 @@ const FEILTEKST={
   tjeneste:'Mac-tjenesten svarer ikke. Terminal-vinduet «Åpne Camp Kalori» er trolig lukket. Dobbeltklikk <b>Åpne Camp Kalori.command</b> i Camp Kalori-mappen, og la vinduet stå åpent.',
   icloud:'Fila ligger bare i iCloud og er ikke lastet ned til Mac-en ennå. Mac-en er bedt om å hente den – vent et øyeblikk og trykk igjen.',
   leser:'Fila var ikke ferdig overført fra iCloud da Mac-en prøvde å lese den. Vent et øyeblikk og trykk igjen.',
-  skriv:'Mac-en fikk ikke skrevet fila. Sjekk at det er plass på disken og at Camp Kalori/Data finnes.'
+  skriv:'Mac-en fikk ikke skrevet fila. Sjekk at det er plass på disken.',
+  tilgang:'Terminal har ikke lov til å lese iCloud Drive. Åpne Systeminnstillinger → Personvern og sikkerhet → Filer og mapper → Terminal, og slå på iCloud Drive. Lukk så Terminal-vinduet og dobbeltklikk Åpne Camp Kalori.command igjen.'
 };
 if(LOKAL_SERVER){
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)serverStatus();});
@@ -643,10 +644,10 @@ async function synkLagreFil(){
   const blob=new Blob([JSON.stringify(pk)],{type:'application/json'});
   const f=new File([blob],SYNK_FIL,{type:'application/json'});
   if(navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){
-    try{await navigator.share({files:[f]});merkLagret();oppdaterSynkMerke();toast('Lagret. Husk: Arkiver i Filer → Camp Kalori/Data → Erstatt');return true;}
+    try{await navigator.share({files:[f]});merkLagret();oppdaterSynkMerke();toast('Lagret. Husk: Arkiver i Filer → iCloud Drive → Erstatt');return true;}
     catch(e){if(e&&e.name==='AbortError')return false;}
   }
-  downloadBlob(blob,SYNK_FIL);merkLagret();oppdaterSynkMerke();toast('Filen er lastet ned – flytt den til Camp Kalori/Data');return true;
+  downloadBlob(blob,SYNK_FIL);merkLagret();oppdaterSynkMerke();toast('Filen er lastet ned – flytt den til iCloud Drive');return true;
 }
 function hentVelger(){
   return '<label class="btn" style="cursor:pointer">Hent fra iCloud<input type="file" class="shent" accept=".json,application/json" style="display:none"></label>';
@@ -673,7 +674,7 @@ async function synkKnappTrykk(){
   if(t==='lagre'){await synkLagreFil();return;}
   const sh=DB.sistHentet?new Date(DB.sistHentet).toLocaleString('nb-NO'):'aldri';
   openModal('<h3>Alt fra iPhonen er lagret<button class="btn ghost sm" id="mlukk">Lukk</button></h3>'
-    +'<div class="muted">Har du ført noe på Mac-en siden sist? Da henter du det her. Velg <b>'+SYNK_FIL+'</b> i iCloud Drive → Dokumenter → Claude → Projects → Privat → Camp Kalori → Data.</div>'
+    +'<div class="muted">Har du ført noe på Mac-en siden sist? Da henter du det her. Velg <b>'+SYNK_FIL+'</b> øverst i iCloud Drive.</div>'
     +'<div class="btnrow">'+hentVelger()+'</div><div class="small" style="margin-top:8px">Sist hentet: '+sh+'. iPhonen kan ikke selv se når fila i iCloud endres, så den blir ikke rød av det som føres på Mac-en.</div>');
   document.getElementById('mlukk').addEventListener('click',closeModal);
   bindHentVelger(modalEl);
@@ -684,7 +685,7 @@ function renderSynk(){
     +'<span class="synkknapp rod" style="pointer-events:none">Lagre til iCloud</span> Du har endret noe her. Trykk for å lagre det til fila i iCloud.'
     +(LOKAL_SERVER?'<br><br><span class="synkknapp rod" style="pointer-events:none">Hent fra iCloud</span> Fila har nyere data, for eksempel fra iPhonen. Trykk for å hente dem.':'<br><br>På iPhonen: trykk på den grønne knappen for å hente det du har ført på Mac-en.')
     +'</div></div>';
-  if(!LOKAL_SERVER)html+='<div class="card"><h2>Lagre fra iPhonen</h2><div class="muted">Velg <b>Arkiver i Filer</b>, gå til Camp Kalori → Data og trykk <b>Erstatt</b>. Første gang må du bla deg fram: iCloud Drive → Dokumenter → Claude → Projects → Privat → Camp Kalori → Data. Etterpå husker Filer mappen.</div>'
+  if(!LOKAL_SERVER)html+='<div class="card"><h2>Lagre fra iPhonen</h2><div class="muted">Velg <b>Arkiver i Filer</b> → <b>iCloud Drive</b> → <b>Arkiver</b> → <b>Erstatt</b>. Fila <b>'+SYNK_FIL+'</b> ligger rett i iCloud Drive, ikke i en undermappe.</div>'
     +'<div class="btnrow"><button id="slagre" class="btn sec sm">Lagre til iCloud nå</button>'+hentVelger().replace('class="btn"','class="btn sec sm"')+'</div></div>';
   html+='<div class="small">Sist lagret: '+(DB.sistSynk?new Date(DB.sistSynk).toLocaleString('nb-NO'):'aldri')+(DB.sistHentet?' · sist hentet: '+new Date(DB.sistHentet).toLocaleString('nb-NO'):'')+'.<br>Sikkerhetskopi (full kopi til gjenoppretting) finner du under Mer → Sikkerhetskopi og data.</div>';
   V.innerHTML=html;bindBack();bindHentVelger(V);
