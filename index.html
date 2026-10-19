@@ -281,7 +281,12 @@ ul.spm{margin:4px 0 0 18px;font-size:.82rem;color:var(--text-2);line-height:1.5}
 .hb figure{margin:0 0 16px;border:1px solid var(--line);border-radius:10px;padding:12px}
 .hb figure h3{margin:0 0 2px;font-size:.95rem}
 .hb figure .sub{font-size:.78rem;color:var(--text-2);margin:0 0 6px}
-.hb .scroll{overflow-x:auto;margin:0 0 14px;border:1px solid var(--line);border-radius:10px}
+.hb .scroll{overflow-x:auto;margin:0 0 14px;border:1px solid var(--line);border-radius:10px;
+  /* skygge i kanten når tabellen kan sveipes; forsvinner når man har sveipet helt ut */
+  background:linear-gradient(to right,var(--surface) 30%,rgba(252,252,251,0)) left/36px 100% no-repeat local,
+    linear-gradient(to left,var(--surface) 30%,rgba(252,252,251,0)) right/36px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%,rgba(0,0,0,.16),transparent) left/12px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%,rgba(0,0,0,.16),transparent) right/12px 100% no-repeat scroll}
 .hb td.num,.hb th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .hb .box{border-radius:10px;padding:12px 14px;margin:0 0 14px;border:1px solid var(--line)}
 .hb .box>:last-child{margin-bottom:0}
@@ -663,7 +668,7 @@ async function skyBilderOpp(fjerne){
    Rød «Synk nå»: noe er endret her, eller lageret har fått noe nytt fra den andre enheten eller fra Claude.
    Ett trykk henter, fletter og lagrer. */
 function stempelMaks(db){let m='';const st=(db&&db._st)||{};for(const k in st)if(st[k]>m)m=st[k];return m;}
-function skyUlagret(){if(!inDemo()&&!SKY.ulagret){SKY.ulagret=true;skyLagre();}}
+function skyUlagret(){if(inDemo())return;if(!SKY.ulagret){SKY.ulagret=true;skyLagre();}skySnart(30000);}
 function ulagret(){return !!SKY.ulagret||stempelMaks(DB)>(SKY.lagretMaks||'');}
 let skyOpptatt=false,skyNytt=false,skyFeil=null;
 function synkTilstand(){
@@ -768,14 +773,24 @@ async function synkKnappTrykk(){
   if(skyFeil==='nokkel')skyOppsett('Nøkkelen virker ikke lenger, eller har mistet tilgangen til lageret.');
   else toast('Får ikke kontakt med GitHub nå. Det du har ført ligger trygt her – prøv igjen når du har nett.');
 }
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)skySjekk();});
-window.addEventListener('focus',()=>skySjekk());
-setInterval(()=>{if(!document.hidden)skySjekk();},60000);
+/* Synker av seg selv: når appen åpnes eller hentes fram, når lageret har fått noe nytt (sjekkes hvert minutt),
+   og et halvt minutt etter at noe er ført her. Knappen viser status, og et trykk synker med en gang. */
+let skyTimer=null;
+function skySnart(ms){if(SKY.token&&!inDemo()){clearTimeout(skyTimer);skyTimer=setTimeout(skyAuto,ms);}}
+async function skyAuto(){
+  if(!SKY.token||inDemo()||skyFeil==='nokkel'||skyOpptatt)return;
+  const inn=await skySynk();
+  if(inn>0){toast(inn===1?'1 ny post hentet':inn+' nye poster hentet');synkRender();}
+}
+async function skySjekkOgHent(){await skySjekk();if(skyNytt||ulagret())skyAuto();}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(ulagret())skyAuto();}else skySjekkOgHent();});
+window.addEventListener('focus',()=>skySjekkOgHent());
+setInterval(()=>{if(!document.hidden)skySjekkOgHent();},60000);
 
 function renderSynk(){
   let html=subhead('Synk');
   html+='<div class="card"><h2>Knappen øverst</h2><div class="muted"><span class="synkknapp gronn" style="pointer-events:none">✓ Synket</span> iPhone og Mac har det samme.<br><br>'
-    +'<span class="synkknapp rod" style="pointer-events:none">Synk nå</span> Noe er nytt, her eller på den andre enheten. Ett trykk henter og lagrer.</div></div>';
+    +'<span class="synkknapp rod" style="pointer-events:none">Synk nå</span> Noe venter på å bli synket. Appen gjør det selv innen et minutt, og når den åpnes. Trykk hvis du vil ha det med en gang.</div></div>';
   html+='<div class="card"><h2>Tilkobling</h2><div class="muted">'
     +(SKY.token?'Koblet til det private lageret <b>'+esc(SKY.eier)+'/'+SKY_LAGER+'</b> på GitHub.<br>Sist synket: '+(SKY.sistSynk?new Date(SKY.sistSynk).toLocaleString('nb-NO'):'aldri')+'.':'Denne enheten er ikke koblet til ennå.')
     +'</div><div class="btnrow">'+(SKY.token?'<button id="ssynk" class="btn sm">Synk nå</button><button id="sbytt" class="btn sec sm">Bytt nøkkel</button>':'<button id="sbytt" class="btn sm">Koble til</button>')+'</div></div>';
@@ -3102,7 +3117,7 @@ try{if(sessionStorage.getItem('ck_oppdatert')){sessionStorage.removeItem('ck_opp
 if(!inDemo()&&!profilTom(DB.profile)&&!(DB._st||{})['profile|']){DB._st=DB._st||{};DB._st['profile|']=PROFIL_STEMPEL;saveDB();}
 document.getElementById('synkknapp').addEventListener('click',synkKnappTrykk);
 oppdaterSynkMerke();
-skySjekk();
+skyAuto();
 </script>
 </body>
 </html>
