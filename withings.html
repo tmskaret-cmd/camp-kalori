@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Camp Kalori – Withings</title>
+<!-- camp-kalori-withings: mottaksside for innloggingen hos Withings.
+     Sender svaret straks videre til «Koble til Withings» på Mac-en (http://127.0.0.1:8743). Lagrer ingenting. -->
+<style>
+  body{font:17px/1.5 -apple-system,system-ui,sans-serif;max-width:34rem;margin:3rem auto;padding:0 16px;color:#1d1d1f;background:#fff}
+  code{display:block;word-break:break-all;background:#f2f2f2;padding:8px;border-radius:6px;font-size:14px}
+  @media (prefers-color-scheme:dark){body{color:#f5f5f7;background:#000}code{background:#1c1c1e}}
+</style>
+</head>
+<body>
+<h1>Camp Kalori og Withings</h1>
+<p id="t">Denne siden brukes bare når Camp Kalori kobler seg til Withings. Start «Koble til Withings» på Mac-en.</p>
+<script>
+(function () {
+  var q = location.search;
+  if (q.indexOf('code=') < 0 && q.indexOf('error=') < 0) return;
+  var t = document.getElementById('t');
+  t.textContent = 'Sender svaret videre til Mac-en … Skjer det ingenting, kopier adressen under, lim den inn i Terminal-vinduet og trykk Enter (innen 30 sekunder).';
+  var c = document.createElement('code');
+  c.textContent = location.href;
+  t.parentNode.appendChild(c);
+  location.replace('http://127.0.0.1:8743/withings' + q);
+})();
+</script>
+</body>
+</html>
