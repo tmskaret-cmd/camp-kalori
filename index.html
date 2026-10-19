@@ -69,7 +69,7 @@ button,.btn{
 .btn:active{opacity:.85}
 .btn[disabled]{opacity:.45;pointer-events:none}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-input[type=text],input[type=number],input[type=date],select,textarea{
+input[type=text],input[type=number],input[type=date],input[type=password],select,textarea{
   font:inherit;width:100%;border:1px solid var(--line);border-radius:10px;
   padding:10px 12px;background:#fff;color:var(--text);font-size:16px;
 }
@@ -213,6 +213,7 @@ nav.tabs button{font-size:.56rem}
 .synkknapp{font:inherit;font-size:.72rem;font-weight:700;padding:6px 11px;border-radius:99px;color:#fff;white-space:nowrap;border:2px solid #fff;cursor:pointer;line-height:1.1}
 .synkknapp.gronn{background:#23994a}
 .synkknapp.rod{background:#e5392d}
+.synkknapp.graa{background:#8a8880}
 .muted .synkknapp{border-color:transparent;font-size:.68rem;padding:3px 8px}
 .hdrright{display:flex;gap:6px;align-items:center}
 .proglist{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
@@ -256,9 +257,10 @@ svg.fig{display:block;width:100%;height:auto}
 .pauselinje{text-align:center;font-size:.75rem;color:var(--text-3);margin:-4px 0 8px;font-weight:600}
 ul.spm{margin:4px 0 0 18px;font-size:.82rem;color:var(--text-2);line-height:1.5}
 /* Håndbok */
-.hbnav{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px;scrollbar-width:none}
-.hbnav button{background:#f1f0ed;color:var(--text-2);font-size:.76rem;padding:7px 12px;border-radius:99px;white-space:nowrap;flex:none}
-.hbnav button.on{background:var(--accent);color:#fff}
+.hbnav{display:flex;gap:6px;align-items:center;position:sticky;z-index:20;background:var(--surface);padding:8px 0;margin-bottom:6px}
+.hbnav select{flex:1;min-width:0;font-weight:600}
+.hbnav button{flex:none;background:#f1f0ed;color:var(--text);padding:9px 14px;font-size:1rem}
+.hbnav button[disabled]{opacity:.35;pointer-events:none}
 .hb{font-size:.9rem;line-height:1.55}
 .hb section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
 .hb h2{font-size:1.2rem;line-height:1.25;margin:0 0 6px}
@@ -296,6 +298,51 @@ ul.spm{margin:4px 0 0 18px;font-size:.82rem;color:var(--text-2);line-height:1.5}
 .hb .tom,.tom{border:1px dashed var(--line);border-radius:10px;padding:14px;color:var(--text-3);font-size:.88rem}
 .notat-tekst{white-space:pre-wrap;max-height:9.5em;overflow:hidden}
 @media(min-width:900px){.wrap{max-width:820px}}
+/* v4.1: teller, dagssjekk og hurtigvalg */
+.teller{padding:12px}
+.tlhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;font-size:.85rem}
+.piller{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.pille{background:#faf9f7;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:5px 6px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:0;font-weight:600;text-align:left;min-width:0}
+.pille .pn{font-size:.6rem;color:var(--text-3);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.pille .pv{font-size:.88rem;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.pille .pv small{font-size:.62rem;color:var(--text-3);font-weight:500}
+details.tld{margin-top:10px}
+details.tld summary{font-size:.82rem;cursor:pointer;padding:4px 0;list-style:none}
+details.tld summary::-webkit-details-marker{display:none}
+details.tld summary::before{content:'▸ ';color:var(--text-3)}
+details.tld[open] summary::before{content:'▾ '}
+details.tld[open] summary{margin-bottom:6px}
+.pille.ok{background:var(--good-soft);border-color:#c4e2c4}
+.pille.ok .pv{color:var(--good)}
+.pille.over{background:var(--bad-soft);border-color:#efc7c6}
+.pille.over .pv{color:var(--bad)}
+ul.sjekk{list-style:none;display:flex;flex-direction:column;gap:5px}
+ul.sjekk li{display:flex;align-items:center;gap:8px;font-size:.8rem;line-height:1.35;background:#faf9f7;border-radius:9px;padding:6px 8px}
+ul.sjekk li .tx{flex:1}
+ul.sjekk li .ik{flex:none;width:20px;height:20px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:800;background:#ecebe7;color:var(--text-2)}
+ul.sjekk li.feil .ik{background:var(--bad-soft);color:var(--bad)}
+ul.sjekk li.terje .ik,ul.sjekk li.uklart .ik{background:var(--warn-soft);color:var(--warn)}
+ul.sjekk li.mine .ik{background:#eaf2fc;color:#173e6e}
+.daystrip button .dot.warn{background:var(--warn)}
+.klgrp{display:inline-flex;gap:6px}
+.klbtn.hv{background:var(--accent-soft);color:var(--accent)}
+.justrad{display:flex;align-items:center;justify-content:center;gap:18px;margin:16px 0}
+.justrad .jv{font-size:1.6rem;font-weight:800;min-width:60px;text-align:center;font-variant-numeric:tabular-nums}
+.justrad .btn{font-size:1.3rem;padding:8px 20px}
+.mrad{display:flex;gap:10px;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.mrad select{width:auto;flex:none;font-size:15px;padding:7px 8px}
+.pmdager{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.hvhead{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;margin-bottom:6px}
+.faste{display:flex;flex-direction:column;gap:6px}
+.fast{display:flex;gap:6px;align-items:stretch}
+.fastbtn{flex:1;background:#fff;color:var(--text);border:1px solid var(--line);font-weight:500;font-size:.85rem;text-align:left;justify-content:flex-start;line-height:1.35;padding:10px 12px}
+.fastbtn:active{background:var(--accent-soft)}
+.hvforh{background:#fff;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:.88rem;min-height:44px;line-height:1.4}
+.klgr{font-size:.7rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--text-2);margin:12px 0 5px}
+.klosser{display:flex;flex-wrap:wrap;gap:6px}
+.kloss{background:#f1f0ed;color:var(--text);font-weight:500;font-size:.82rem;padding:8px 11px;border-radius:99px}
+.kloss.on{background:var(--accent);color:#fff}
+.hvbunn{position:sticky;bottom:calc(-16px - env(safe-area-inset-bottom,0px));background:var(--surface);margin:14px -16px 0;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);box-shadow:0 -4px 12px rgba(0,0,0,.05)}
 </style>
 </head>
 <body>
@@ -420,11 +467,11 @@ function idb(){
 function photoPut(rec){return idb().then(d=>new Promise((res,rej)=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').put(rec);tx.oncomplete=()=>res(rec.id);tx.onerror=()=>rej(tx.error);}));}
 function photoAdd(date,meal,blob){
   const id=date+'_'+meal+'_'+Date.now()+'_'+Math.floor(Math.random()*1e4);
-  if(!inDemo()){DB._st=DB._st||{};DB._st['bilde|'+id]=new Date().toISOString();saveDB();}
+  if(!inDemo()){DB._st=DB._st||{};DB._st['bilde|'+id]=new Date().toISOString();skyUlagret();saveDB();}
   return photoPut({id,date,meal,blob,ts:Date.now()});
 }
 function photoDel(id,utenLogg){
-  if(!utenLogg&&!inDemo()){const n=new Date().toISOString();DB.photoDel=DB.photoDel||{};DB.photoDel[id]=n;DB._st=DB._st||{};DB._st['bilde|'+id]=n;saveDB();}
+  if(!utenLogg&&!inDemo()){const n=new Date().toISOString();DB.photoDel=DB.photoDel||{};DB.photoDel[id]=n;DB._st=DB._st||{};DB._st['bilde|'+id]=n;skyUlagret();saveDB();}
   return idb().then(d=>new Promise((res,rej)=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').delete(id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);}));}
 function photosByDate(date){return photosInRange(date,date);}
 function photosInRange(from,to){
@@ -465,13 +512,19 @@ function photoIndexOf(list){
   return idx;
 }
 
-/* ==================== SYNK (v3.0): én datafil i iCloud, fletting i begge retninger ==================== */
+/* ==================== SYNK (v4.0): privat lager på GitHub, ett trykk, fletting per post ==================== */
 /* Hver post (en dags kosthold, en veiing, et oppmøte, en medisinoppføring, profilen, håndboka, et notat)
    får et tidsstempel i DB._st når den endres. Ved fletting vinner den nyeste versjonen av hver post,
-   så ingenting overskrives blindt – uansett rekkefølge på iPhone, Mac og Claude. */
+   så ingenting overskrives blindt – uansett rekkefølge på iPhone, Mac og Claude.
+   Datafila ligger i det private lageret «camp-kalori-data» på GitHub, måltidsbildene som egne filer i bilder/.
+   De samme reglene står i App/server/sky.py – endres det ene stedet, må det andre følge med. */
 const SYNK_FIL='camp-kalori-data.json';
 const SYNK_SAMLINGER=['weights','meals','attendance','sent','notater'];
-const LOKAL_SERVER=/^(127\.0\.0\.1|localhost)$/.test(location.hostname)&&location.protocol==='http:';
+const SKY_API='https://api.github.com',SKY_LAGER='camp-kalori-data',SKY_BILDER='bilder/',SKY_KEY='campkalori_sky';
+/* Tilkoblingen (nøkkel, eier, hva som sist ble synket) hører til enheten og ligger utenfor DB, så den aldri synkes. */
+let SKY={};
+try{SKY=JSON.parse(localStorage.getItem(SKY_KEY))||{};}catch(e){}
+function skyLagre(){try{localStorage.setItem(SKY_KEY,JSON.stringify(SKY));}catch(e){}}
 function synkPoster(db){
   const o={};
   SYNK_SAMLINGER.forEach(k=>{const c=db[k]||{};Object.keys(c).forEach(d=>{if(c[d]!=null)o[k+'|'+d]=c[d];});});
@@ -495,10 +548,16 @@ function synkStempel(){
   if(!SYNK_FORRIGE||SYNK_DB!==DB){SYNK_FORRIGE=synkAvtrykk(DB);SYNK_DB=DB;return;}
   const nå=new Date().toISOString(),ny=synkAvtrykk(DB);
   DB._st=DB._st||{};
-  Object.keys(ny).forEach(k=>{if(ny[k]!==SYNK_FORRIGE[k])DB._st[k]=nå;});
-  Object.keys(SYNK_FORRIGE).forEach(k=>{if(!(k in ny))DB._st[k]=nå;});
+  let endret=false;
+  Object.keys(ny).forEach(k=>{if(ny[k]!==SYNK_FORRIGE[k]){DB._st[k]=nå;endret=true;}});
+  Object.keys(SYNK_FORRIGE).forEach(k=>{if(!(k in ny)){DB._st[k]=nå;endret=true;}});
   SYNK_FORRIGE=ny;
+  if(endret)skyUlagret();
 }
+/* Profilen (startvekt og mål) ble lagt inn før postene fikk tidsstempel. En utfylt profil skal aldri
+   tape mot en tom, og får derfor et fast, tidlig stempel – enhver senere endring vinner over det. */
+const PROFIL_STEMPEL='2026-08-10T00:00:00.000Z';
+function profilTom(p){return !p||(p.startvekt==null&&p.maalEgen==null&&p.maalTerje==null&&!String(p.navn||'').trim());}
 /* Fletter b inn i a og returnerer {db, endret} – endret = antall poster som kom fra b. */
 function synkFlett(a,b){
   const pa=synkPoster(a),pb=synkPoster(b),sa=a._st||{},sb=b._st||{};
@@ -511,6 +570,7 @@ function synkFlett(a,b){
       if(ta)return;                                    /* samme versjon */
       if(!(k in pb))return;
       if(!(k in pa))fraB=true;                         /* bare b har posten (gamle, ustemplede data) */
+      else if(k==='profile|'&&profilTom(pa[k])!==profilTom(pb[k]))fraB=profilTom(pa[k]);
       else fraB=(b.updated||'')>(a.updated||'')&&JSON.stringify(pa[k])!==JSON.stringify(pb[k]);
     }else fraB=tb>ta;
     if(!fraB)return;
@@ -519,26 +579,26 @@ function synkFlett(a,b){
     if(tb)ut._st[k]=tb;
   });
   ut.photoDel=Object.assign({},a.photoDel||{},b.photoDel||{});
-  ut.sistSynk=[a.sistSynk||'',b.sistSynk||''].sort().pop()||null;
   return {db:ut,endret};
 }
-/* Bilder: union på id, minus slettede. */
+/* Bilder: union på id, minus slettede. Bilder uten b64 ligger som egne filer i lageret. */
 async function synkBilder(eksterne,slettet){
   let inn=0;
   const har=new Set((await photosAll()).map(p=>p.id));
   for(const id of Object.keys(slettet||{}))if(har.has(id)){try{await photoDel(id,true);}catch(e){}}
   for(const ph of eksterne||[]){
     if(har.has(ph.id)||(slettet&&slettet[ph.id]))continue;
-    try{const blob=await (await fetch(ph.b64)).blob();await photoPut({id:ph.id,date:ph.date,meal:migrertBildemaaltid(ph.meal),ts:ph.ts,blob});inn++;}catch(e){}
+    try{
+      const blob=ph.b64?await (await fetch(ph.b64)).blob():await skyBildeNed(ph.id);
+      await photoPut({id:ph.id,date:ph.date,meal:migrertBildemaaltid(ph.meal),ts:ph.ts,blob});inn++;
+    }catch(e){}                                        /* prøves igjen ved neste synk */
   }
   return inn;
 }
+/* Fremgangsbildene (kropp) synkes ikke – de blir på enheten, slik det står under Mer → Fremgangsbilder. */
 async function synkPakke(){
-  const ph=await photosAll();
-  const bilder=await Promise.all(ph.map(p=>new Promise(res=>{
-    const fr=new FileReader();fr.onload=()=>res({id:p.id,date:p.date,meal:p.meal,ts:p.ts,b64:fr.result});fr.onerror=()=>res(null);fr.readAsDataURL(p.blob);
-  })));
-  return {format:'camp-kalori-data',versjon:1,lagret:new Date().toISOString(),db:DB,photos:bilder.filter(Boolean)};
+  const bilder=(await photosAll()).filter(p=>p.meal!=='kropp').map(p=>({id:p.id,date:p.date,meal:p.meal,ts:p.ts}));
+  return {format:'camp-kalori-data',versjon:2,lagret:new Date().toISOString(),db:DB,photos:bilder};
 }
 function synkLes(json){
   const p=typeof json==='string'?JSON.parse(json):json;
@@ -546,7 +606,7 @@ function synkLes(json){
   if(p&&p.profile){const ph=p._photos||[];const d=Object.assign({},p);delete d._photos;return {db:migrerMaaltider(Object.assign(defaultDB(),d)),photos:ph};}
   throw new Error('Ukjent format');
 }
-/* Fletter inn en innlest fil. Returnerer antall poster + bilder som kom inn. */
+/* Fletter inn en innlest pakke. Returnerer antall poster + bilder som kom inn. */
 async function synkInn(pakke){
   const r=synkFlett(DB,pakke.db);
   DB=r.db;
@@ -559,137 +619,170 @@ let synkVenterRender=false;
 function synkRender(){if(redigererNå())synkVenterRender=true;else render();}
 document.addEventListener('focusout',()=>{if(synkVenterRender){synkVenterRender=false;setTimeout(()=>{if(!redigererNå())render();},50);}});
 
-/* ---- Status: rød/grønn knapp øverst ----
-   Rød «Lagre»: noe er endret her siden sist det ble lagret til iCloud-fila.
-   Rød «Hent» (bare Mac): fila i iCloud har nyere data enn appen her – for eksempel fra iPhonen.
-   Grønn: alt er likt. iPhonen kan ikke se inn i iCloud på egen hånd, så der betyr grønn
-   «alt fra iPhonen er lagret»; trykk på den for å hente det som er ført på Mac-en. */
+/* ---- GitHub: lese og skrive det private lageret ---- */
+function gh(sti,opt){
+  opt=opt||{};
+  return fetch((SKY.api||SKY_API)+sti,{method:opt.method||'GET',cache:'no-store',
+    headers:Object.assign({'Authorization':'Bearer '+SKY.token,'Accept':'application/vnd.github+json'},opt.headers||{}),
+    body:opt.body?JSON.stringify(opt.body):undefined});
+}
+function skySti(fil){return '/repos/'+SKY.eier+'/'+SKY_LAGER+'/contents/'+fil;}
+function b64Tekst(b64){const s=atob(b64.replace(/\s/g,''));const u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return new TextDecoder().decode(u);}
+function tekstB64(t){const u=new TextEncoder().encode(t);let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s);}
+function blobB64(blob){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]);fr.onerror=()=>rej(fr.error);fr.readAsDataURL(blob);});}
+/* Henter datafila: {pakke, sha}. Finnes den ikke ennå, er pakke null. */
+async function skyHent(){
+  const r=await gh(skySti(SYNK_FIL));
+  if(r.status===404)return {pakke:null,sha:null};
+  if(!r.ok)throw {status:r.status};
+  const j=await r.json();
+  let b64=j.content;
+  if(!b64){                                            /* over 1 MB: innholdet må hentes som blob */
+    const b=await gh('/repos/'+SKY.eier+'/'+SKY_LAGER+'/git/blobs/'+j.sha);
+    if(!b.ok)throw {status:b.status};
+    b64=(await b.json()).content;
+  }
+  return {pakke:JSON.parse(b64Tekst(b64)),sha:j.sha};
+}
+async function skyBildeNed(id){
+  const r=await gh(skySti(SKY_BILDER+encodeURIComponent(id)+'.jpg'),{headers:{'Accept':'application/vnd.github.raw+json'}});
+  if(!r.ok)throw {status:r.status};
+  return new Blob([await r.arrayBuffer()],{type:'image/jpeg'});
+}
+async function skyBilderOpp(fjerne){
+  const der=new Set((fjerne||[]).filter(p=>!p.b64).map(p=>p.id));
+  for(const p of await photosAll()){
+    if(p.meal==='kropp'||der.has(p.id))continue;
+    const r=await gh(skySti(SKY_BILDER+encodeURIComponent(p.id)+'.jpg'),{method:'PUT',body:{message:'Bilde '+p.id,content:await blobB64(p.blob)}});
+    if(!r.ok&&r.status!==422)throw {status:r.status};  /* 422: bildet ligger der allerede */
+  }
+}
+
+/* ---- Status: én knapp øverst ----
+   Grønn «✓ Synket»: denne enheten og lageret er like.
+   Rød «Synk nå»: noe er endret her, eller lageret har fått noe nytt fra den andre enheten eller fra Claude.
+   Ett trykk henter, fletter og lagrer. */
 function stempelMaks(db){let m='';const st=(db&&db._st)||{};for(const k in st)if(st[k]>m)m=st[k];return m;}
-function ulagret(){return stempelMaks(DB)>(DB.sistLagret||'');}
-let filStatus={ok:null,maks:'',feil:null};
-function innkommende(){return LOKAL_SERVER&&filStatus.ok&&filStatus.maks>(DB.sistKjentFil||'');}
+function skyUlagret(){if(!inDemo()&&!SKY.ulagret){SKY.ulagret=true;skyLagre();}}
+function ulagret(){return !!SKY.ulagret||stempelMaks(DB)>(SKY.lagretMaks||'');}
+let skyOpptatt=false,skyNytt=false,skyFeil=null;
 function synkTilstand(){
   if(inDemo())return 'demo';
-  if(LOKAL_SERVER&&filStatus.ok===false)return 'feil';
-  const u=ulagret(),i=innkommende();
-  return u&&i?'begge':u?'lagre':i?'hent':'ok';
+  if(!SKY.token)return 'kobl';
+  if(skyOpptatt)return 'jobber';
+  if(skyFeil==='nokkel')return 'feil';
+  return ulagret()||skyNytt?'synk':'ok';
 }
 function oppdaterSynkMerke(){
   const el=document.getElementById('synkknapp');if(!el)return;
   const t=synkTilstand();
-  el.classList.toggle('hidden',t==='demo');
-  el.className='synkknapp '+(t==='ok'?'gronn':'rod')+(t==='demo'?' hidden':'');
-  el.textContent={ok:'✓ Synket',lagre:'Lagre til iCloud',hent:'Hent fra iCloud',begge:'Synk med iCloud',feil:'Synk: trykk her'}[t]||'';
-  el.setAttribute('aria-label',{ok:'Alt er synket med iCloud',lagre:'Endringer er ikke lagret til iCloud – trykk for å lagre',hent:'Nyere data i iCloud – trykk for å hente',begge:'Trykk for å hente og lagre',feil:'Synk virker ikke – trykk for forklaring'}[t]||'');
+  el.className='synkknapp '+({ok:'gronn',jobber:'graa'}[t]||'rod')+(t==='demo'?' hidden':'');
+  el.textContent={ok:'✓ Synket',synk:'Synk nå',jobber:'Synker …',kobl:'Koble til synk',feil:'Synk: trykk her'}[t]||'';
+  el.setAttribute('aria-label',{ok:'Alt er synket',synk:'Noe er nytt – trykk for å hente og lagre',jobber:'Synker',kobl:'Synken er ikke koblet til – trykk for å koble til',feil:'Synken virker ikke – trykk for forklaring'}[t]||'');
 }
-function merkLagret(){DB.sistLagret=stempelMaks(DB);DB.sistKjentFil=DB.sistLagret;DB.sistSynk=new Date().toISOString();saveDB();}
-
-/* ---- Mac: lokal server leser og skriver datafila i iCloud-mappen ---- */
-async function serverStatus(){
-  if(!LOKAL_SERVER||inDemo())return;
+/* Spør lageret om datafila er endret siden sist. Uendret svarer GitHub med 304, som ikke koster noe. */
+async function skySjekk(){
+  if(!SKY.token||inDemo()||skyOpptatt||skyNytt)return;
   try{
-    const r=await fetch('/api/status',{cache:'no-store'});
-    if(r.status===404){filStatus={ok:false,maks:'',feil:'gammel'};oppdaterSynkMerke();return;}
-    const j=await r.json();
-    filStatus=j.feil?{ok:false,maks:'',feil:j.feil}:{ok:true,maks:j.maks||'',feil:null};
-  }catch(e){filStatus={ok:false,maks:'',feil:'tjeneste'};}
+    const r=await gh(skySti(SYNK_FIL),SKY.etag?{headers:{'If-None-Match':SKY.etag}}:null);
+    if(r.status===401||r.status===403)skyFeil='nokkel';
+    else if(r.ok){
+      const j=await r.json();
+      SKY.etag=r.headers.get('ETag');skyLagre();
+      skyNytt=j.sha!==SKY.sha;skyFeil=null;
+    }else if(r.status===304||r.status===404)skyFeil=null;
+  }catch(e){}                                          /* uten nett: behold det vi sist visste */
   oppdaterSynkMerke();
 }
-let serverOpptatt=false;
-async function serverSynk(){
-  if(!LOKAL_SERVER||inDemo()||serverOpptatt)return false;
-  serverOpptatt=true;
+/* Henter, fletter og lagrer. Returnerer antall poster som kom inn, eller -1 hvis det ikke gikk. */
+async function skySynk(){
+  if(skyOpptatt||!SKY.token||inDemo())return -1;
+  skyOpptatt=true;oppdaterSynkMerke();
   try{
-    const r=await fetch('/api/data',{cache:'no-store'});
-    const svar=await r.json();
-    if(!r.ok||svar.feil){filStatus={ok:false,maks:'',feil:svar.feil||'tjeneste'};return false;}
-    let endret=0;const arkiver=[];
-    for(const f of [svar.main,...(svar.extras||[]).map(x=>x.data)]){if(f)endret+=await synkInn(synkLes(f));}
-    (svar.extras||[]).forEach(x=>arkiver.push(x.name));
-    const pk=await synkPakke();
-    const w=await fetch('/api/data',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:pk,archive:arkiver})});
-    if(!w.ok){const j=await w.json().catch(()=>({}));filStatus={ok:false,maks:'',feil:j.feil||'skriv'};return false;}
-    merkLagret();
-    filStatus={ok:true,maks:DB.sistKjentFil,feil:null};
-    if(endret)render();
-    return true;
-  }catch(e){filStatus={ok:false,maks:'',feil:'tjeneste'};return false;}
-  finally{serverOpptatt=false;oppdaterSynkMerke();}
+    let inn=0;
+    for(let forsøk=0;;forsøk++){
+      const skrive=ulagret()||!SKY.lagretMaks;         /* avgjøres før fletting – den hever stemplene */
+      const f=await skyHent();
+      if(f.pakke)inn+=await synkInn(synkLes(f.pakke));
+      SKY.sha=f.sha;
+      if(!skrive&&f.pakke)break;
+      await skyBilderOpp(f.pakke?f.pakke.photos:[]);
+      const pk=await synkPakke();
+      const w=await gh(skySti(SYNK_FIL),{method:'PUT',body:Object.assign({message:'Synk '+pk.lagret,content:tekstB64(JSON.stringify(pk))},f.sha?{sha:f.sha}:{})});
+      if((w.status===409||w.status===422)&&forsøk<3)continue;   /* noen andre lagret i mellomtiden: hent og flett på nytt */
+      if(!w.ok)throw {status:w.status};
+      SKY.sha=(await w.json()).content.sha;
+      break;
+    }
+    SKY.ulagret=false;SKY.lagretMaks=stempelMaks(DB);SKY.sistSynk=new Date().toISOString();SKY.etag=null;skyLagre();
+    skyNytt=false;skyFeil=null;
+    return inn;
+  }catch(e){
+    skyFeil=e&&(e.status===401||e.status===403||e.status===404)?'nokkel':'nett';
+    return -1;
+  }finally{skyOpptatt=false;oppdaterSynkMerke();}
 }
-const FEILTEKST={
-  gammel:'Terminal-vinduet «Åpne Camp Kalori» kjører en eldre versjon. Lukk det vinduet, og dobbeltklikk <b>Åpne Camp Kalori.command</b> på nytt.',
-  tjeneste:'Mac-tjenesten svarer ikke. Terminal-vinduet «Åpne Camp Kalori» er trolig lukket. Dobbeltklikk <b>Åpne Camp Kalori.command</b> i Camp Kalori-mappen, og la vinduet stå åpent.',
-  icloud:'Fila ligger bare i iCloud og er ikke lastet ned til Mac-en ennå. Mac-en er bedt om å hente den – vent et øyeblikk og trykk igjen.',
-  leser:'Fila var ikke ferdig overført fra iCloud da Mac-en prøvde å lese den. Vent et øyeblikk og trykk igjen.',
-  skriv:'Mac-en fikk ikke skrevet fila. Sjekk at det er plass på disken.',
-  tilgang:'Terminal har ikke lov til å lese iCloud Drive. Åpne Systeminnstillinger → Personvern og sikkerhet → Filer og mapper → Terminal, og slå på iCloud Drive. Lukk så Terminal-vinduet og dobbeltklikk Åpne Camp Kalori.command igjen.'
-};
-if(LOKAL_SERVER){
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)serverStatus();});
-  window.addEventListener('focus',()=>serverStatus());
-  setInterval(()=>{if(!document.hidden)serverStatus();},20000);
+/* Kobler enheten til lageret. Returnerer null når det gikk, ellers en forklaring. */
+async function skyKobleTil(token){
+  const gammel=SKY;
+  SKY={token:token.trim(),api:gammel.api};
+  let feil=null;
+  try{
+    const u=await gh('/user');
+    if(u.status===401)feil='GitHub godtok ikke nøkkelen. Sjekk at hele nøkkelen kom med.';
+    else if(!u.ok)feil='GitHub svarte med feil '+u.status+'. Prøv igjen om litt.';
+    else{
+      SKY.eier=(await u.json()).login;
+      const l=await gh('/repos/'+SKY.eier+'/'+SKY_LAGER);
+      if(l.status===404)feil='Nøkkelen har ikke tilgang til lageret «'+SKY_LAGER+'». Kjør «Sett opp Camp Kalori» på Mac-en først.';
+      else if(!l.ok)feil='GitHub svarte med feil '+l.status+'. Prøv igjen om litt.';
+      else if((await l.json()).private!==true)feil='Lageret «'+SKY_LAGER+'» er ikke privat. Appen lagrer ikke helsedata i et åpent lager.';
+    }
+  }catch(e){feil='Får ikke kontakt med GitHub. Sjekk nettet og prøv igjen.';}
+  if(feil)SKY=gammel;else skyLagre();
+  return feil;
 }
-
-/* ---- iPhone: hent og lagre samme fil via Filer/iCloud Drive ---- */
-async function synkHentFil(fil){
-  const varUlagret=ulagret();
-  const n=await synkInn(synkLes(await fil.text()));
-  DB.sistHentet=new Date().toISOString();
-  if(!varUlagret)DB.sistLagret=stempelMaks(DB);          /* det som kom inn, ligger allerede i fila */
-  saveDB();oppdaterSynkMerke();
-  return n;
-}
-async function synkLagreFil(){
-  const pk=await synkPakke();
-  const blob=new Blob([JSON.stringify(pk)],{type:'application/json'});
-  const f=new File([blob],SYNK_FIL,{type:'application/json'});
-  if(navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){
-    try{await navigator.share({files:[f]});merkLagret();oppdaterSynkMerke();toast('Lagret. Husk: Arkiver i Filer → iCloud Drive → Erstatt');return true;}
-    catch(e){if(e&&e.name==='AbortError')return false;}
-  }
-  downloadBlob(blob,SYNK_FIL);merkLagret();oppdaterSynkMerke();toast('Filen er lastet ned – flytt den til iCloud Drive');return true;
-}
-function hentVelger(){
-  return '<label class="btn" style="cursor:pointer">Hent fra iCloud<input type="file" class="shent" accept=".json,application/json" style="display:none"></label>';
-}
-function bindHentVelger(rot){
-  rot.querySelectorAll('input.shent').forEach(inp=>inp.addEventListener('change',async e=>{
-    const f=e.target.files[0];if(!f)return;
-    try{const n=await synkHentFil(f);closeModal();toast(n?n+' endringer hentet':'Ingen nye endringer i fila');render();}
-    catch(err){toast('Kunne ikke lese fila – er det '+SYNK_FIL+'?');}
-  }));
+function skyOppsett(melding){
+  openModal('<h3>Koble til synk<button class="btn ghost sm" id="mlukk">Lukk</button></h3>'
+    +'<div class="muted">'+(melding?'<b>'+melding+'</b><br><br>':'')+'Lim inn tilgangsnøkkelen din fra GitHub. Det gjør du én gang på hver enhet. Nøkkelen fikk du da du kjørte <b>Sett opp Camp Kalori</b> på Mac-en.</div>'
+    +'<label class="f">Tilgangsnøkkel</label><input type="password" id="skynokkel" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_…">'
+    +'<div class="small" id="skymeld" style="margin-top:8px;color:var(--bad)"></div>'
+    +'<div class="btnrow"><button id="skykobl">Koble til</button></div>');
+  document.getElementById('mlukk').addEventListener('click',closeModal);
+  document.getElementById('skykobl').addEventListener('click',async e=>{
+    const v=document.getElementById('skynokkel').value,meld=document.getElementById('skymeld');
+    if(!v.trim()){meld.textContent='Lim inn nøkkelen først.';return;}
+    e.target.disabled=true;meld.textContent='';
+    const feil=await skyKobleTil(v);
+    if(feil){e.target.disabled=false;meld.textContent=feil;return;}
+    skyFeil=null;closeModal();toast('Koblet til. Synker …');
+    await synkKnappTrykk();if(state.tab==='mer'&&state.merPage==='synk')render();
+  });
 }
 /* Trykk på knappen øverst */
 async function synkKnappTrykk(){
-  const t=synkTilstand();
-  if(LOKAL_SERVER){
-    await serverStatus();
-    const ok=filStatus.ok!==false&&await serverSynk();
-    if(ok){toast('Synket med iCloud');return;}
-    openModal('<h3>Synk virker ikke<button class="btn ghost sm" id="mlukk">Lukk</button></h3><div class="muted">'+(FEILTEKST[filStatus.feil]||FEILTEKST.tjeneste)+'</div><div class="btnrow"><button id="mprov">Prøv igjen</button></div>');
-    document.getElementById('mlukk').addEventListener('click',closeModal);
-    document.getElementById('mprov').addEventListener('click',()=>{closeModal();synkKnappTrykk();});
-    return;
-  }
-  if(t==='lagre'){await synkLagreFil();return;}
-  const sh=DB.sistHentet?new Date(DB.sistHentet).toLocaleString('nb-NO'):'aldri';
-  openModal('<h3>Alt fra iPhonen er lagret<button class="btn ghost sm" id="mlukk">Lukk</button></h3>'
-    +'<div class="muted">Har du ført noe på Mac-en siden sist? Da henter du det her. Velg <b>'+SYNK_FIL+'</b> øverst i iCloud Drive.</div>'
-    +'<div class="btnrow">'+hentVelger()+'</div><div class="small" style="margin-top:8px">Sist hentet: '+sh+'. iPhonen kan ikke selv se når fila i iCloud endres, så den blir ikke rød av det som føres på Mac-en.</div>');
-  document.getElementById('mlukk').addEventListener('click',closeModal);
-  bindHentVelger(modalEl);
+  if(!SKY.token){skyOppsett();return;}
+  if(skyOpptatt)return;
+  const inn=await skySynk();
+  if(inn>=0){toast(inn?'Synket – '+inn+(inn===1?' ny post hentet':' nye poster hentet'):'Synket');if(inn)synkRender();return;}
+  if(skyFeil==='nokkel')skyOppsett('Nøkkelen virker ikke lenger, eller har mistet tilgangen til lageret.');
+  else toast('Får ikke kontakt med GitHub nå. Det du har ført ligger trygt her – prøv igjen når du har nett.');
 }
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)skySjekk();});
+window.addEventListener('focus',()=>skySjekk());
+setInterval(()=>{if(!document.hidden)skySjekk();},60000);
+
 function renderSynk(){
-  let html=subhead('Synk med iCloud');
-  html+='<div class="card"><h2>Knappen øverst</h2><div class="muted"><span class="synkknapp gronn" style="pointer-events:none">✓ Synket</span> Alt er likt.<br><br>'
-    +'<span class="synkknapp rod" style="pointer-events:none">Lagre til iCloud</span> Du har endret noe her. Trykk for å lagre det til fila i iCloud.'
-    +(LOKAL_SERVER?'<br><br><span class="synkknapp rod" style="pointer-events:none">Hent fra iCloud</span> Fila har nyere data, for eksempel fra iPhonen. Trykk for å hente dem.':'<br><br>På iPhonen: trykk på den grønne knappen for å hente det du har ført på Mac-en.')
-    +'</div></div>';
-  if(!LOKAL_SERVER)html+='<div class="card"><h2>Lagre fra iPhonen</h2><div class="muted">Velg <b>Arkiver i Filer</b> → <b>iCloud Drive</b> → <b>Arkiver</b> → <b>Erstatt</b>. Fila <b>'+SYNK_FIL+'</b> ligger rett i iCloud Drive, ikke i en undermappe.</div>'
-    +'<div class="btnrow"><button id="slagre" class="btn sec sm">Lagre til iCloud nå</button>'+hentVelger().replace('class="btn"','class="btn sec sm"')+'</div></div>';
-  html+='<div class="small">Sist lagret: '+(DB.sistSynk?new Date(DB.sistSynk).toLocaleString('nb-NO'):'aldri')+(DB.sistHentet?' · sist hentet: '+new Date(DB.sistHentet).toLocaleString('nb-NO'):'')+'.<br>Sikkerhetskopi (full kopi til gjenoppretting) finner du under Mer → Sikkerhetskopi og data.</div>';
-  V.innerHTML=html;bindBack();bindHentVelger(V);
-  const sl=document.getElementById('slagre');if(sl)sl.addEventListener('click',async()=>{if(await synkLagreFil())render();});
+  let html=subhead('Synk');
+  html+='<div class="card"><h2>Knappen øverst</h2><div class="muted"><span class="synkknapp gronn" style="pointer-events:none">✓ Synket</span> iPhone og Mac har det samme.<br><br>'
+    +'<span class="synkknapp rod" style="pointer-events:none">Synk nå</span> Noe er nytt, her eller på den andre enheten. Ett trykk henter og lagrer.</div></div>';
+  html+='<div class="card"><h2>Tilkobling</h2><div class="muted">'
+    +(SKY.token?'Koblet til det private lageret <b>'+esc(SKY.eier)+'/'+SKY_LAGER+'</b> på GitHub.<br>Sist synket: '+(SKY.sistSynk?new Date(SKY.sistSynk).toLocaleString('nb-NO'):'aldri')+'.':'Denne enheten er ikke koblet til ennå.')
+    +'</div><div class="btnrow">'+(SKY.token?'<button id="ssynk" class="btn sm">Synk nå</button><button id="sbytt" class="btn sec sm">Bytt nøkkel</button>':'<button id="sbytt" class="btn sm">Koble til</button>')+'</div></div>';
+  html+='<div class="small">Fremgangsbildene synkes ikke. De blir på enheten de er tatt på. En full kopi med alt finner du under Mer → Sikkerhetskopi og data.</div>';
+  V.innerHTML=html;bindBack();
+  const s=document.getElementById('ssynk');if(s)s.addEventListener('click',async()=>{await synkKnappTrykk();if(state.merPage==='synk')render();});
+  document.getElementById('sbytt').addEventListener('click',()=>skyOppsett());
 }
 
 /* ---------- sesongdata ---------- */
@@ -849,10 +942,13 @@ function buildReportText(r,phIdx){
       lines.push('');
       [['MÅLTID 1','m1'],['MÅLTID 2','m2'],['MÅLTID 3','m3'],['MÅLTID 4','m4'],['MÅLTID 5','m5'],['ANNET','annet'],['TRENING','trening']].forEach(([lab,key])=>{
         const hasPh=phIdx&&phIdx[ds]&&phIdx[ds][key];
+        const v=m[key]?m[key].trim():'';
+        if(!v&&!hasPh)return; // v4.1: tomme felt tas ikke med
         lines.push(lab+(hasPh?' (bilde vedlagt)':'')+':');
-        lines.push(m[key]?m[key].trim():'');
+        lines.push(v);
         lines.push('');
       });
+      if(!mealFilled(ds)){lines.push('Ikke ført.');lines.push('');}
     });
     const wd=weightDateForWeek(r,days), wv=DB.weights[wd];
     lines.push('VEKT: '+(wv!=null?kg(wv)+' kg':'____ kg')
@@ -1094,14 +1190,15 @@ async function buildReportPdf(r,opts){
       line(DAGER[d.getDay()]+' '+fmt(d),{bold:true,size:10.5,lh:16});
       rule();
       [['MÅLTID 1','m1'],['MÅLTID 2','m2'],['MÅLTID 3','m3'],['MÅLTID 4','m4'],['MÅLTID 5','m5'],['ANNET','annet'],['TRENING','trening']].forEach(([lab,key])=>{
-        line(lab,{bold:true,size:7.5,col:'0.45 0.44 0.42',lh:14});
         const v=(m[key]||'').trim();
-        if(v)para(v,{size:10,lh:13.5});
-        else line('–',{size:10,col:'0.7 0.7 0.68',lh:13.5});
         const ph=imgs.filter(im=>im.date===ds&&im.meal===key);
+        if(!v&&!ph.length)return; // v4.1: tomme felt tas ikke med
+        line(lab,{bold:true,size:7.5,col:'0.45 0.44 0.42',lh:14});
+        if(v)para(v,{size:10,lh:13.5});
         if(ph.length)imgRowFor(ph);
         y-=2;
       });
+      if(!mealFilled(ds))line('Ikke ført.',{size:10,col:'0.6 0.6 0.58',lh:13.5});
     });
     weightBox(w,days);
   });
@@ -1331,18 +1428,31 @@ function goalDate(){
   const d=DB.profile.maalDato;
   return (d&&d>=SEASON_START&&d<=SEASON_END)?d:SEASON_END;
 }
-function expectedToday(){
-  const s=startWeight(),g=goalWeight();if(s==null||g==null)return null;
-  const t0=pd(SEASON_START),t1=pd(goalDate()),n=today();
+/* Grafvalg (per enhet): 'lineaer' = like mange kilo hver uke (den opprinnelige),
+   'avtagende' = like stor andel av vekten hver uke – mest i kilo i starten, mindre mot slutten. */
+const GRAF_KEY='campkalori_graf';
+function grafType(){try{return localStorage.getItem(GRAF_KEY)==='avtagende'?'avtagende':'lineaer';}catch(e){return 'lineaer';}}
+function settGrafType(t){try{localStorage.setItem(GRAF_KEY,t);}catch(e){}}
+const BAND_KG=1.5;
+function maalbane(s,g,n,type){
+  const t0=pd(SEASON_START),t1=pd(goalDate());
   if(n<=t0)return s;if(n>=t1)return g;
-  return s+(g-s)*((n-t0)/(t1-t0));
+  const f=(n-t0)/(t1-t0);
+  return type==='avtagende'?s*Math.pow(g/s,f):s+(g-s)*f;
+}
+function ukeprosent(s,g){const dg=(pd(goalDate())-pd(SEASON_START))/86400000;return dg>0?(1-Math.pow(g/s,7/dg))*100:null;}
+function expectedToday(type){
+  const s=startWeight(),g=goalWeight();if(s==null||g==null)return null;
+  return maalbane(s,g,today(),type||grafType());
 }
 function renderChart(box){
   if(!box)return;
   const Wd=640,H=300,L=46,R=16,T=16,B=34;
   const t0=pd('2026-08-01').getTime(),t1=pd('2027-07-01').getTime();
   const ser=weightSeries(),s=startWeight(),gT=DB.profile.maalTerje,gE=DB.profile.maalEgen;
+  const type=grafType(),gB=goalWeight();
   const vals=ser.map(x=>x.v);if(s!=null)vals.push(s);if(gT!=null)vals.push(gT);if(gE!=null)vals.push(gE);
+  if(type==='avtagende'&&gB!=null)vals.push(gB-BAND_KG);
   let lo=Math.min(...vals),hi=Math.max(...vals);
   if(hi-lo<4){const m=(hi+lo)/2;lo=m-2;hi=m+2;}
   lo=Math.floor(lo-1);hi=Math.ceil(hi+1);
@@ -1360,9 +1470,22 @@ function renderChart(box){
   });
   const gd=goalDate();
   let goalLine='';
+  /* punkter langs banen, én per uke (avtagende bane tegnes som kurve) */
+  function banePunkter(g,ekstra){
+    const pts=[],t0=pd(SEASON_START),t1=pd(gd);
+    for(let n=new Date(t0);n<t1;n.setDate(n.getDate()+7))pts.push([X(dstr(n)),Y(maalbane(s,g,n,'avtagende')+ekstra)]);
+    pts.push([X(gd),Y(g+ekstra)]);
+    return pts;
+  }
+  let band='';
+  if(type==='avtagende'&&s!=null&&gB!=null){
+    const opp=banePunkter(gB,BAND_KG),ned=banePunkter(gB,-BAND_KG).reverse();
+    band='<path d="M'+opp.concat(ned).map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L')+' Z" fill="'+(gB===gT?'#8e2a23':'#8a8880')+'" opacity="0.09"/>';
+  }
   function goalPath(g,col,lab,dash){
     if(s==null||g==null)return;
-    goalLine+='<line x1="'+X(SEASON_START)+'" y1="'+Y(s)+'" x2="'+X(gd)+'" y2="'+Y(g)+'" stroke="'+col+'" stroke-width="2" stroke-dasharray="'+dash+'" stroke-linecap="round"/>';
+    if(type==='avtagende')goalLine+='<path d="M'+banePunkter(g,0).map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L')+'" fill="none" stroke="'+col+'" stroke-width="2" stroke-dasharray="'+dash+'" stroke-linecap="round"/>';
+    else goalLine+='<line x1="'+X(SEASON_START)+'" y1="'+Y(s)+'" x2="'+X(gd)+'" y2="'+Y(g)+'" stroke="'+col+'" stroke-width="2" stroke-dasharray="'+dash+'" stroke-linecap="round"/>';
     if(gd<SEASON_END){
       goalLine+='<line x1="'+X(gd)+'" y1="'+Y(g)+'" x2="'+X(SEASON_END)+'" y2="'+Y(g)+'" stroke="'+col+'" stroke-width="1.4" stroke-dasharray="3 5" stroke-linecap="round" opacity="0.6"/>';
     }
@@ -1387,10 +1510,22 @@ function renderChart(box){
     const lp=ser[ser.length-1];
     lastLab='<text x="'+Math.min(X(lp.d)+8,Wd-R-30)+'" y="'+(Y(lp.v)-9)+'" font-size="11.5" font-weight="700" fill="#0b0b0b">'+kg(lp.v)+'</text>';
   }
-  box.innerHTML='<svg viewBox="0 0 '+Wd+' '+H+'" role="img" aria-label="Vektutvikling mot mål">'
-    +grid+ylab+xlab+todayLine+goalLine
+  let forkl='';
+  if(type==='avtagende'&&s!=null&&gB!=null&&gB<s){
+    const pr=ukeprosent(s,gB),nå=today()<pd(gd)?today():pd(SEASON_START);
+    const kgNå=maalbane(s,gB,nå,'avtagende')*pr/100,kgSlutt=gB*pr/100/(1-pr/100);
+    forkl='<div class="small" style="margin-top:6px">Avtagende målbane: like stor andel av vekten hver uke (ca. '+kg(Math.round(pr*100)/100)+' %). Det gir ca. '+kg(Math.round(kgNå*10)/10)+' kg per uke nå og ca. '+kg(Math.round(kgSlutt*10)/10)+' kg per uke mot slutten. Det skyggelagte båndet er ± '+kg(BAND_KG)+' kg – én ukeveiing innenfor båndet er i rute.</div>';
+  }
+  box.innerHTML='<div class="evfilter" style="margin-bottom:4px"><button data-graf="lineaer" class="'+(type==='lineaer'?'on':'')+'">Lineær målbane</button><button data-graf="avtagende" class="'+(type==='avtagende'?'on':'')+'">Avtagende målbane</button></div>'
+    +'<svg viewBox="0 0 '+Wd+' '+H+'" role="img" aria-label="Vektutvikling mot mål">'
+    +grid+ylab+xlab+todayLine+band+goalLine
     +'<path d="'+path+'" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
-    +dots+lastLab+hits+'</svg><div class="tip" id="charttip"></div>';
+    +dots+lastLab+hits+'</svg><div class="tip" id="charttip"></div>'+forkl;
+  box.querySelectorAll('[data-graf]').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.graf===grafType())return;
+    settGrafType(b.dataset.graf);
+    if(box.id==='chart'&&state.tab==='hjem')render();else renderChart(box);
+  }));
   const tip=box.querySelector('#charttip'),svg=box.querySelector('svg');
   svg.addEventListener('click',e=>{
     const c=e.target.closest('[data-i]');
@@ -1413,7 +1548,7 @@ function renderKosthold(){
     const dd=addD(mon,i),dds=dstr(dd);
     const in_=dds>=SEASON_START&&dds<=SEASON_END;
     strip+='<button data-day="'+dds+'" '+(in_?'':'disabled style="opacity:.35"')+' class="'+(dds===ds?'sel':'')+'">'
-      +DAGER_K[dd.getDay()]+'<span class="d">'+dd.getDate()+'</span><span class="dot '+(mealFilled(dds)?'on':'')+'"></span></button>';
+      +DAGER_K[dd.getDay()]+'<span class="d">'+dd.getDate()+'</span><span class="dot '+(mealFilled(dds)?'on':'')+(dagHarMerknad(dds)?' warn':'')+'"></span></button>';
   }
   const m=DB.meals[ds]||{};
   const r=REPORTS.find(x=>ds>=x.from&&ds<=x.to);
@@ -1426,14 +1561,17 @@ function renderKosthold(){
   if(d.getDay()===1&&DB.weights[ds]==null&&ds>=SEASON_START){
     html+='<div class="banner warn" style="padding:9px 12px;font-size:.8rem">Mandag = veiedag. <a href="#" data-go="vekt" style="color:inherit;font-weight:700">Registrer mandagsvekten →</a></div>';
   }
+  html+=tellerHtml(ds);
   html+='<div class="card">';
   FELT.forEach(([k,lab])=>{
-    html+='<label class="f klrow" for="f_'+k+'"><span>'+lab+'</span><button type="button" class="klbtn" data-kl="'+k+'" aria-label="Sett inn klokkeslett i '+esc(MALTIDNAVN[k]||k)+'">+ kl. nå</button></label>';
+    html+='<label class="f klrow" for="f_'+k+'"><span>'+lab+'</span><span class="klgrp">'
+      +(MFELT.includes(k)?'<button type="button" class="klbtn hv" data-hv="'+k+'" aria-label="Hurtigvalg for '+esc(MALTIDNAVN[k])+'">⚡ Hurtigvalg</button>':'')
+      +'<button type="button" class="klbtn" data-kl="'+k+'" aria-label="Sett inn klokkeslett i '+esc(MALTIDNAVN[k]||k)+'">+ kl. nå</button></span></label>';
     if(k==='annet'){
       html+='<div class="qadd"><input type="text" id="qa_annet" placeholder="F.eks. 1 kopp kaffe, 1 eple, 1 glass vann …" enterkeyhint="done" autocomplete="off">'
         +'<button type="button" class="btn sm" id="qa_btn">+ kl. <span id="qa_time"></span></button></div>';
     }
-    html+='<textarea class="grow" id="f_'+k+'" data-f="'+k+'" placeholder="'+(k==='m1'?'F.eks.: kl. 07:15 – 2 skiver brød, en med egg og en med hvit ost. 1 glass melk, 1 kopp svart kaffe.':k==='annet'?'Alt mellom måltidene – legges enklest til én og én i feltet over, så sorteres de etter klokkeslett her.':k==='trening'?'F.eks.: Camp Kalori-trening kl. 17, eller egentrening/gåtur':'')+'">'+esc(m[k]||'')+'</textarea>';
+    html+='<textarea class="grow" id="f_'+k+'" data-f="'+k+'" spellcheck="true" autocorrect="on" autocapitalize="sentences" lang="nb" placeholder="'+(k==='m1'?'F.eks.: kl. 07:15 – 2 skiver brød, en med egg og en med hvit ost. 1 glass melk, 1 kopp svart kaffe.':k==='annet'?'Alt mellom måltidene – legges enklest til én og én i feltet over, så sorteres de etter klokkeslett her.':k==='trening'?'F.eks.: Camp Kalori-trening kl. 17, eller egentrening/gåtur':'')+'">'+esc(m[k]||'')+'</textarea>';
     if(k!=='trening'){
       html+='<div class="photorow" data-pr="'+k+'"><label class="addph" for="pf_'+k+'" aria-label="Legg til bilde av '+esc(MALTIDNAVN[k]||k)+'">'
         +'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M3 8a2 2 0 012-2h2l1.5-2h7L17 6h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.4"/></svg>Bilde</label>'
@@ -1444,6 +1582,8 @@ function renderKosthold(){
   html+='<div class="small" style="margin-top:10px">Skriv alt du inntar – også kaffe, te og all drikke. Ikke vei maten, ikke tell kalorier. Måltid 1–5 følger dagen i tidsrekkefølge – innholdet forteller hva slags måltid det er, og du bruker bare de feltene du trenger. Klokkeslett er ikke påkrevd, men fører du «live» med <b>+ kl. nå</b>-knappen får både du og Terje frem regulariteten på måltider og væskeinntak. Lagres automatisk. Bilder er valgfritt og komprimeres til et lite format.</div></div>';
   V.innerHTML=html;
   bindGo();
+  bindTeller();
+  V.querySelectorAll('[data-hv]').forEach(b=>b.addEventListener('click',()=>hurtigvalg(b.dataset.hv)));
   V.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{
     const nd=dstr(addD(pd(state.kostDate),+b.dataset.nav));
     state.kostDate=clampSeason(nd);render();
@@ -1485,10 +1625,7 @@ function renderKosthold(){
       autosize(ta);
       const cur=DB.meals[state.kostDate]||(DB.meals[state.kostDate]={});
       cur[ta.dataset.f]=ta.value;
-      clearTimeout(ta._h);ta._h=setTimeout(()=>{saveDB();
-        const btn=V.querySelector('[data-day="'+state.kostDate+'"] .dot');
-        if(btn)btn.classList.toggle('on',mealFilled(state.kostDate));
-      },400);
+      clearTimeout(ta._h);ta._h=setTimeout(()=>{saveDB();oppdaterTeller();},400);
     });
   });
   // Hurtigregistrering av drikke/mellommåltider – én og én, sortert kronologisk i Annet
@@ -1521,6 +1658,402 @@ function renderKosthold(){
     document.getElementById('qa_annet').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();qaAdd();}});
     document.getElementById('qa_annet').addEventListener('focus',updTime);
   }
+}
+
+/* ==================== v4.1: TELLER, DAGSSJEKK OG HURTIGVALG ====================
+   Alt telles ut fra teksten som er ført – ingen egne datafelt trengs, så det virker på gamle dager,
+   på fri tekst og på rettelser Claude gjør i synkfila. Hurtigvalgene bruker de samme ordene.
+   «5 om dagen» følger Tronds egne regler (diabetes: mest grønt og bær, maks én frukt).
+   Måltider, melk, vann, middagsrotasjon og fet fisk-pålegg følger Terjes regler.
+   Manuelle rettelser: meals[dag].just = {melk:+1, ...} og meals[dag].middag = 'rodt' | ... */
+const MAAL={maltider:4,melk:2,grontMin:2,grontMaal:3,baerMin:1,baerMaks:2,fruktMaks:1,fem:5,vannMin:1.5,vannMaks:2,hullMin:270};
+const MIDDAGTYPER=[['rodt','Rødt kjøtt',2,true],['fetfisk','Fet fisk',2,false],['hvitfisk','Hvit fisk',1,false],['kylling','Kylling',1,false],['skalldyr','Skalldyr',1,false]];
+const MIDDAGNAVN={rodt:'Rødt kjøtt',fetfisk:'Fet fisk',hvitfisk:'Hvit fisk',kylling:'Kylling',skalldyr:'Skalldyr',annet:'Annet',ingen:'Ingen middag'};
+const FETFISK_PAALEGG_MAKS=5;
+const MFELT=['m1','m2','m3','m4','m5'];
+
+const L='\\p{L}';
+function ordRe(liste,flagg){return new RegExp('(?<!['+L+'])(?:'+liste.join('|')+')(?!['+L+'])',flagg||'giu');}
+function finn(re,t){re.lastIndex=0;const ut=[];let m;while((m=re.exec(t))){ut.push(m);if(!m[0])re.lastIndex++;}return ut;}
+const TALLORD={en:1,ein:1,ei:1,et:1,ett:1,to:2,tre:3,fire:4,fem:5,seks:6,sju:7,syv:7,åtte:8,ni:9,ti:10,halv:.5,halvt:.5,'et par':2,par:2,noen:2,'½':.5,'¼':.25,'¾':.75,'⅓':.33};
+function tall(s){
+  if(s==null)return 1;
+  s=String(s).toLowerCase().replace(/^ca\.?\s*/,'').replace(/^o(?=[,.]\d)/,'0').trim();
+  if(!s)return 1;
+  if(s in TALLORD)return TALLORD[s];
+  const n=parseFloat(s.replace(',','.'));
+  return isNaN(n)?1:n;
+}
+const TALL='(?:ca\\.?\\s*)?(?:\\d+(?:[,.]\\d+)?|[oO][,.]\\d+|½|¼|¾|et par|en|ein|ei|et|ett|to|tre|fire|fem|seks|sju|syv|åtte|ni|ti|halvt?|noen)';
+
+/* ---- ordlister ---- */
+const GRONT_RE=ordRe(['paprika'+'['+L+']*','agurk['+L+']*','tomat['+L+']*','cherrytomat['+L+']*','gulrot','gulrøtter','gulrøttene','brokkoli','blomkål','kål','rosenkål','grønnkål','spisskål','spinat','salat','grønn salat','salatblad['+L+']*','ruccola','isbergsalat','squash','aubergine','rødbet['+L+']*','purre['+L+']*','sopp','champignon['+L+']*','vårløk','rødløk','charlottløk','sjalottløk','løk','reddik['+L+']*','sukkererter','erter','asparges['+L+']*','aspargesbønner','brekkbønner','grønne bønner','selleri','stangselleri','sellerirot','pastinakk','kålrot','rotgrønnsak['+L+']*','grønnsak['+L+']*','fennikel','sukkermais','edamame']);
+const GRONT_UNNTAK=/saus|salsa|bønner$|ketchup|juice|suppe|puré|pure$|pesto|sild/;
+const BAER_ORD=['blåbær','bringebær','jordbær','bjørnebær','rips','solbær','tyttebær','multer','stikkelsbær','skogsbær','bærblanding','bær'];
+const BAER_RE=ordRe(BAER_ORD);
+const FRUKT_BASE={eple:'eple',epler:'eple',pære:'pære',pærer:'pære',banan:'banan',bananer:'banan',appelsin:'appelsin',appelsiner:'appelsin',klementin:'klementin',klementiner:'klementin',mandarin:'mandarin',mandariner:'mandarin',kiwi:'kiwi',plomme:'plomme',plommer:'plomme',plummer:'plomme',drue:'druer',druer:'druer',nektarin:'nektarin',nektariner:'nektarin',fersken:'fersken',mango:'mango',ananas:'ananas',melon:'melon',vannmelon:'melon',honningmelon:'melon',granateple:'granateple',dadler:'dadler',daddel:'dadler',aprikos:'aprikos',aprikoser:'aprikos',fiken:'fiken',sharonfrukt:'sharon',kirsebær:'kirsebær',moreller:'kirsebær',rosiner:'rosiner',grapefrukt:'grapefrukt'};
+const FRUKT_RE=ordRe(Object.keys(FRUKT_BASE));
+const SITRUS=new Set(['appelsin','klementin','mandarin','grapefrukt']);
+const JUICE_RE=/juice/i;
+const MELK_RE=new RegExp('(?<!['+L+'])('+TALL+')\\s+(?:stort\\s+|lite\\s+|halvt\\s+)?glass\\s+(?:med\\s+)?(?:skummet\\s?melk|skummetmelk|lettmelk|ekstra\\s?lett\\s?melk|melk|kulturmelk|kefir)','giu');
+const MELK_DL_RE=new RegExp('(?<!['+L+'])('+TALL+')\\s*dl\\s+(?:med\\s+)?(?:skummet\\s?melk|skummetmelk|lettmelk|ekstra\\s?lett\\s?melk|melk|kulturmelk|kefir)','giu');
+const VANN_GLASS=Regexp_safe('(?<!['+L+'])('+TALL+')\\s+(store?\\s+|små\\s+)?glass\\s+(?:med\\s+)?(?:kaldt\\s+)?vann(?!['+L+'])');
+const VANN_LITER=Regexp_safe('(?<!['+L+'])('+TALL+')\\s*(?:liter|l)\\s+(?:med\\s+)?vann(?!['+L+'])');
+const VANN_HALV=Regexp_safe('(?<!['+L+'])(?:('+TALL+')\\s+)?halv\\s?liter\\s+(?:med\\s+)?vann(?!['+L+'])');
+const VANN_DESI=Regexp_safe('(?<!['+L+'])((?:\\d|[oO])[,.]\\d+)\\s+(?:med\\s+)?vann(?!['+L+'])');
+const VANN_BOKS=Regexp_safe('(?<!['+L+'])('+TALL+')\\s+(?:boks(?:er)?|flaske(?:r)?)\\s+(?:med\\s+)?(?:ramløsa|farris|imsdal|mineralvann|kildevann|vann)(?!['+L+'])');
+function Regexp_safe(src){return new RegExp(src,'giu');}
+
+const MIDDAG_ORD={
+  fetfisk:['laks','laksefilet','laksen','ørret','ørreten','makrell','kveite','røye','sild','sardiner','fet fisk'],
+  hvitfisk:['torsk','torskefilet','sei','hyse','kolje','brosme','lange','lyr','steinbit','uer','rødspette','flyndre','breiflabb','fiskekaker','fiskeboller','fiskegrateng','hvit fisk','klippfisk','bacalao','lutefisk'],
+  skalldyr:['reker','scampi','krabbe','hummer','kreps','sjøkreps','blåskjell','skjell','kamskjell','sjømat'],
+  kylling:['kylling','kyllingfilet','kyllingbryst','kyllinglår','kyllingen','chicken','kalkun','kalkunfilet','kalkunbryst'],
+  rodt:['lasagne','taco','bolognese','kjøttboller','kjøttkaker','kjøttdeig','karbonade','karbonader','karbonadedeig','biff','entrecote','indrefilet','ytrefilet','svin','svinekjøtt','svinefilet','svinekotelett','koteletter','kotelett','ribbe','pinnekjøtt','lam','lammekjøtt','fårikål','elg','elgkjøtt','elghakk','hakk','hjort','reinsdyr','reinskav','kjøtt','pølse','pølser','burger','hamburger','andebryst','and','gryte med kjøtt']
+};
+const MIDDAG_RE={};Object.keys(MIDDAG_ORD).forEach(k=>{MIDDAG_RE[k]=ordRe(MIDDAG_ORD[k]);});
+const PAALEGG_FISK_FRASER=/(?<![\p{L}])(?:røkt|gravet|gravlaks|røkelaks|kald|varmrøkt|kaldrøkt)\s+laks(?![\p{L}])|røkelaks|gravlaks|sursild|kryddersild|makrell i tomat/giu;
+const FETFISK_PAALEGG_RE=ordRe(['røkelaks','røkt laks','gravlaks','gravet laks','varmrøkt laks','kaldrøkt laks','sursild','kryddersild','sild','makrell i tomat','makrell','laks','ørret']);
+const FETT_PAALEGG_RE=ordRe(['leverpostei','postei','servelat','salami','bacon','spekepølse','fårepølse','morrpølse','paté','pate','kjøttpølse','spekeskinke']);
+const BROD_RE=/skive|skiver|brød|knekkebrød|havregryn|grøt|axa|frokostblanding|lefse|flatbrød/i;
+const MIDDAG_TEGN=/potet|pasta|ris(?![\p{L}])|lasagne|taco|wrap|tortilla|middag|i form|ovnsbakt|gryte|hakk|suppe|salat med|hummer|krabbe|fajitas|wok|grateng|bolognese|kjøttboller|andebryst|biff|filet/iu;
+const UKLART=[[/(?<![\p{L}])et par(?![\p{L}])/iu,'«et par»','skriv et tall'],[/(?<![\p{L}])noen(?![\p{L}])/iu,'«noen»','skriv et tall'],[/(?<![\p{L}])litt(?![\p{L}])/iu,'«litt»','skriv omtrent hvor mye, f.eks. «1 ss»'],[/og smaker/iu,'«og smaker»','skriv hva det var'],[/(?<![\p{L}])(?:diverse|div\.)/iu,'«diverse»','skriv hva det var'],[/(?<![\p{L}])(?:osv|o\.l|etc)\.?(?![\p{L}])/iu,'«osv.»','skriv hva det var']];
+/* Feil som diktering gir om igjen. [mønster, erstatning, forklaring] */
+const SKRIVEFEIL=[
+  [/(?<![\p{L}])vottage(?![\p{L}])/giu,'cottage','«vottage» → «cottage»'],
+  [/(?<![\p{L}])cottage chese(?![\p{L}])/giu,'cottage cheese','«cottage chese» → «cottage cheese»'],
+  [/(?<![\p{L}])(?:isukkeret|isukret|usukkeret|usukkert|usukkret)(?![\p{L}])/giu,'usukret','→ «usukret»'],
+  [/(?<![\p{L}])plummer(?![\p{L}])/giu,'plommer','«plummer» → «plommer»'],
+  [/(?<![\p{L}\d])O,(\d)/gu,'0,$1','«O,» → «0,» (null, ikke bokstaven O)'],
+  [/(?<![\p{L}])kl\.(\d)/giu,'kl. $1','mellomrom etter «kl.»'],
+  [/(?<![\p{L}])T\.o\.m\. /gu,'Tom ','«T.o.m.» → «Tom» (betyr ellers «til og med»)'],
+  [/ {2,}/g,' ','doble mellomrom']
+];
+
+/* ---- analyse av én dag ---- */
+function feltTekst(m,k){return String((m&&m[k])||'').trim();}
+function harInnhold(t){return !!t.replace(/kl\.\s*\d{1,2}[:.]\d{2}\s*[–-]?\s*/g,'').trim();}
+function tidAv(t){const x=t.match(/kl\.?\s*(\d{1,2})[:.](\d{2})/i);return x?(+x[1])*60+(+x[2]):null;}
+function erBrodmaaltid(t){return BROD_RE.test(t)&&!MIDDAG_TEGN.test(t);}
+function middagstype(t){
+  const ren=t.replace(PAALEGG_FISK_FRASER,' ');
+  for(const k of ['fetfisk','hvitfisk','skalldyr','kylling','rodt']){if(finn(MIDDAG_RE[k],ren.toLowerCase()).length)return k;}
+  return 'annet';
+}
+function uteAvDrikke(t){
+  return t.replace(new RegExp('(?<!['+L+'])(?:'+TALL+')?\\s*(?:store?\\s+)?(?:glass|krus|kopp|kopper|liter|l|dl|boks|flaske)\\s+(?:med\\s+)?(?:vann|te|kaffe|melk|skummet\\s?melk|skummetmelk|lettmelk|appelsinjuice|juice|ramløsa|farris)[^.,]*','giu'),' ')
+    .replace(/(?:\d|[oO])[,.]\d+\s+(?:med\s+)?vann/giu,' ').replace(/halv\s?liter\s+vann/giu,' ').replace(/kl\.\s*\d{1,2}[:.]\d{2}\s*[–-]?/g,' ');
+}
+function harMengde(t){return /\d|½|¼|¾|(?<![\p{L}])(?:en|ett|et|ei|to|tre|fire|fem|seks|halv|halvt|kvart|porsjon|porsjoner|skive|skiver|ss|ts|dl|liten|lite|små|stor|store|neve|skje|skjeer|bit|biter|stykk|stk|filet|wraps?|plate|plater|tallerken|tallerkenen|skål|øse|porsjonsstykke|bryst|kyllingbryst|ganger)(?![\p{L}])/iu.test(t);}
+
+function analyserDag(ds){
+  const m=DB.meals[ds]||{},just=m.just||{};
+  const felt=MFELT.map(k=>({k,t:feltTekst(m,k)})).filter(f=>harInnhold(f.t));
+  const alle=MFELT.concat(['annet']).map(k=>({k,t:feltTekst(m,k)})).filter(f=>f.t);
+  const tekstAlle=alle.map(f=>f.t).join('\n');
+  // middag = siste måltid som ikke er et brødmåltid
+  let middag=null;
+  for(let i=felt.length-1;i>=0;i--){if(!erBrodmaaltid(felt[i].t)){middag=felt[i];break;}}
+  let mType=middag?middagstype(middag.t):'ingen';
+  const mTypeAuto=mType;
+  if(m.middag)mType=m.middag;
+  // grønt (maks 1 per småmåltid, 2 til middag), bær (porsjoner à 150 g), frukt
+  let gront=0,baer=0;const frukter=[];const fruktPerFelt={};
+  alle.forEach(f=>{
+    const lav=f.t.toLowerCase();
+    const g=new Set(finn(GRONT_RE,lav).map(x=>x[0]).filter(w=>!GRONT_UNNTAK.test(w)).map(w=>w.slice(0,5)));
+    gront+=Math.min(g.size+(/grønnsaker:\s*½\s*tallerken/.test(lav)?1:0),middag&&f.k===middag.k?2:1);
+    finn(BAER_RE,lav).forEach(x=>{
+      const etter=lav.slice(x.index+x[0].length,x.index+x[0].length+12);
+      if(/^\s*(?:syltetøy|gelé|saft|juice|yoghurt)/.test(etter))return;
+      const før=lav.slice(Math.max(0,x.index-18),x.index);
+      const gm=før.match(/(\d+)\s*(?:g|gram)\s+(?:\p{L}+\s+)?$/u),dl=før.match(/(\d+(?:[,.]\d+)?)\s*dl\s+(?:\p{L}+\s+)?$/u);
+      baer+=gm?Math.max(1,Math.round(+gm[1]/150)):dl?Math.max(1,Math.round(tall(dl[1])/2.5)):1;
+    });
+    const fs=new Set(finn(FRUKT_RE,lav).map(x=>FRUKT_BASE[x[0]]).filter(Boolean));
+    fruktPerFelt[f.k]=[...fs];fs.forEach(x=>frukter.push(x));
+  });
+  // melk og vann
+  let melk=0;finn(MELK_RE,tekstAlle).forEach(x=>{melk+=tall(x[1]);});
+  finn(MELK_DL_RE,tekstAlle).forEach(x=>{melk+=tall(x[1])/2;});
+  let vann=0;
+  finn(VANN_GLASS,tekstAlle).forEach(x=>{vann+=tall(x[1])*(x[2]&&/store?/i.test(x[2])?.3:.2);});
+  finn(VANN_LITER,tekstAlle).forEach(x=>{vann+=tall(x[1]);});
+  finn(VANN_HALV,tekstAlle).forEach(x=>{vann+=.5*(x[1]?tall(x[1]):1);});
+  finn(VANN_DESI,tekstAlle).forEach(x=>{vann+=tall(x[1]);});
+  finn(VANN_BOKS,tekstAlle).forEach(x=>{vann+=tall(x[1])*.33;});
+  vann=Math.round(vann*10)/10;
+  // fet fisk-pålegg og fete pålegg (bare på småmåltidene)
+  let fetfiskP=0,fettP=0;
+  felt.forEach(f=>{
+    if(middag&&f.k===middag.k)return;
+    const lav=f.t.toLowerCase();
+    if(finn(FETFISK_PAALEGG_RE,lav).length)fetfiskP++;
+    fettP+=new Set(finn(FETT_PAALEGG_RE,lav).map(x=>x[0])).size;
+  });
+  const fruktAnt=frukter.length;
+  const r={ds,felt,middag,mType,mTypeAuto,
+    maltider:felt.length,
+    melk:Math.max(0,melk+(just.melk||0)),
+    gront:Math.max(0,gront+(just.gront||0)),
+    baer:Math.max(0,baer+(just.baer||0)),
+    frukt:Math.max(0,fruktAnt+(just.frukt||0)),
+    vann:Math.max(0,Math.round((vann+(just.vann||0))*10)/10),
+    juice:JUICE_RE.test(tekstAlle),
+    frukter,fruktPerFelt,fetfiskP,fettP,just};
+  r.fem=r.gront+r.baer+r.frukt;
+  r.merknader=merknaderFor(r,m);
+  return r;
+}
+
+/* ---- dagssjekk ---- */
+function dagErFerdig(ds){const t=dstr(today());if(ds<t)return true;if(ds>t)return false;return new Date().getHours()>=21;}
+function merknaderFor(a,m){
+  const ut=[];const ferdig=dagErFerdig(a.ds);
+  const navn=k=>MALTIDNAVN[k]||k;
+  // skrivefeil – kan rettes med ett trykk
+  MFELT.concat(['annet','trening']).forEach(k=>{
+    const t=feltTekst(m,k);if(!t)return;
+    SKRIVEFEIL.forEach(([re,erst,forkl],i)=>{re.lastIndex=0;const x=re.exec(t);re.lastIndex=0;
+      if(x)ut.push({type:'feil',felt:k,tekst:navn(k)+': '+(forkl.startsWith('→')?'«'+x[0]+'» '+forkl:forkl),fiks:i});});
+  });
+  // uklare ord
+  MFELT.concat(['annet']).forEach(k=>{
+    const t=feltTekst(m,k);if(!t)return;
+    UKLART.forEach(([re,ord,råd])=>{if(re.test(t))ut.push({type:'uklart',felt:k,tekst:navn(k)+': '+ord+' – '+råd});});
+  });
+  if(a.middag&&!harMengde(uteAvDrikke(a.middag.t)))ut.push({type:'uklart',felt:a.middag.k,tekst:navn(a.middag.k)+' (middag): ingen mengder – f.eks. «3 små poteter», «¼ av formen», «2 wraps»'});
+  // Terjes regler
+  if(ferdig&&a.maltider<MAAL.maltider)ut.push({type:'terje',tekst:(a.maltider?'Bare '+a.maltider+' måltid'+(a.maltider>1?'er':''):'Ingen måltider')+' (Terje: 4)'});
+  const tider=a.felt.map(f=>({k:f.k,t:tidAv(f.t)})).filter(x=>x.t!=null).sort((x,y)=>x.t-y.t);
+  for(let i=1;i<tider.length;i++){const d=tider[i].t-tider[i-1].t;if(d>MAAL.hullMin)ut.push({type:'terje',tekst:Math.floor(d/60)+' t '+(d%60)+' min mellom '+klokke(tider[i-1].t)+' og '+klokke(tider[i].t)+' (Terje: maks ca. 4 t)'});}
+  if(ferdig&&a.melk<MAAL.melk)ut.push({type:'terje',tekst:(a.melk?tN(a.melk)+' glass':'Ingen')+' melk (Terje: 2 glass)'});
+  if(ferdig&&a.vann<MAAL.vannMin)ut.push({type:'terje',tekst:'Vann ca. '+tN(a.vann)+' l ført (Terje: 1,5–2 l) – eller står mengden uklart?'});
+  if(a.juice&&a.frukter.some(f=>SITRUS.has(f)))ut.push({type:'terje',tekst:'Sitrusfrukt samme dag som juice (Terje: unngå)'});
+  const sett={};a.frukter.forEach(f=>{sett[f]=(sett[f]||0)+1;});
+  Object.keys(sett).forEach(f=>{if(sett[f]>1)ut.push({type:'terje',tekst:'To ganger '+f+' i dag (Terje: ikke to like frukter samme dag)'});});
+  Object.keys(a.fruktPerFelt).forEach(k=>{if(a.fruktPerFelt[k].length>1)ut.push({type:'terje',felt:k,tekst:navn(k)+': to frukter i samme måltid (Terje: unngå)'});});
+  if(a.fetfiskP&&a.mType==='fetfisk')ut.push({type:'terje',tekst:'Fet fisk både på brødet og til middag (Terje: ikke samme dag)'});
+  // mine regler
+  if(a.frukt>MAAL.fruktMaks)ut.push({type:'mine',tekst:a.frukt+' frukter i dag (din regel: maks 1 – ta bær eller grønt i stedet)'});
+  if(ferdig&&a.fem<MAAL.fem)ut.push({type:'mine',tekst:'5 om dagen: '+a.fem+' av 5'+(a.baer?'':' – ingen bær')});
+  return ut;
+}
+function tN(v){const r=Math.round(v*10)/10;return String(r).replace('.',',');}
+function klokke(min){return pad(Math.floor(min/60))+':'+pad(min%60);}
+function rettSkrivefeil(ds,felt,i){
+  const m=DB.meals[ds];if(!m||!m[felt])return;
+  const [re,erst]=SKRIVEFEIL[i];re.lastIndex=0;
+  m[felt]=m[felt].replace(re,erst);saveDB();
+}
+function dagHarMerknad(ds){
+  if(ds>dstr(today())||!mealFilled(ds))return false;
+  return analyserDag(ds).merknader.some(x=>x.type==='feil'||x.type==='uklart');
+}
+
+/* ---- uka ---- */
+function analyserUke(ds){
+  const mon=pd(mondayOf(ds));const dager=[];
+  for(let i=0;i<7;i++){const d=dstr(addD(mon,i));if(d>=SEASON_START&&d<=SEASON_END)dager.push(analyserDag(d));}
+  const tell={rodt:0,fetfisk:0,hvitfisk:0,kylling:0,skalldyr:0,annet:0};
+  let fetfiskP=0,fettP=0,middager=0;
+  dager.forEach(a=>{if(a.mType&&a.mType!=='ingen'){tell[a.mType]=(tell[a.mType]||0)+1;middager++;}fetfiskP+=a.fetfiskP;fettP+=a.fettP;});
+  return {dager,tell,fetfiskP,fettP,middager};
+}
+
+/* ---- visning ---- */
+function pille(navn,verdi,maal,tilstand,data){
+  return '<button type="button" class="pille '+tilstand+'" '+(data||'')+'><span class="pn">'+navn+'</span><span class="pv">'+verdi+(maal?'<small> '+maal+'</small>':'')+'</span></button>';
+}
+const TELLER_APEN='campkalori_teller';
+function tellerÅpen(){try{return JSON.parse(localStorage.getItem(TELLER_APEN))||{sjekk:true};}catch(e){return {sjekk:true};}}
+function tellerHtml(ds){
+  const a=analyserDag(ds),u=analyserUke(ds),åpen=tellerÅpen();
+  const j=k=>a.just[k]?'*':'';
+  const st=(v,min)=>v>=min?'ok':'';
+  let h='<div class="card teller" id="tellbox"><div class="tlhead"><b>'+(ds===dstr(today())?'I dag':DAGER_K[pd(ds).getDay()]+' '+fmtShort(ds))+'</b><span class="small">trykk på et tall for å rette</span></div><div class="piller">';
+  h+=pille('Måltider',a.maltider,'/'+MAAL.maltider,st(a.maltider,MAAL.maltider));
+  h+=pille('Melk',tN(a.melk)+j('melk'),'/'+MAAL.melk,st(a.melk,MAAL.melk),'data-just="melk"');
+  h+=pille('Grønt',a.gront+j('gront'),'/'+MAAL.grontMin+'–'+MAAL.grontMaal,st(a.gront,MAAL.grontMin),'data-just="gront"');
+  h+=pille('Bær',a.baer+j('baer'),'/'+MAAL.baerMin+'–'+MAAL.baerMaks,st(a.baer,MAAL.baerMin),'data-just="baer"');
+  h+=pille('Frukt',a.frukt+j('frukt'),'maks '+MAAL.fruktMaks,a.frukt>MAAL.fruktMaks?'over':'ok','data-just="frukt"');
+  h+=pille('5 om dagen',a.fem,'/'+MAAL.fem,st(a.fem,MAAL.fem));
+  h+=pille('Vann, liter',tN(a.vann)+j('vann'),'/1,5–2',st(a.vann,MAAL.vannMin),'data-just="vann"');
+  h+=pille('Middag',a.mType==='ingen'?'–':MIDDAGNAVN[a.mType].replace('Rødt kjøtt','Kjøtt'),'','','data-uke="1"');
+  h+='</div>';
+  const over=MIDDAGTYPER.filter(([k,n,mål,maks])=>maks&&(u.tell[k]||0)>mål).length+(u.fetfiskP>FETFISK_PAALEGG_MAKS?1:0);
+  h+='<details class="tld" data-tk="uke"'+(åpen.uke?' open':'')+'><summary><b>Uke '+isoWeek(pd(ds)).week+'</b> · middager og pålegg'+(over?' <span class="badge bad">'+over+' over</span>':'')+'</summary><div class="piller">';
+  MIDDAGTYPER.forEach(([k,n,mål,maks])=>{
+    const v=u.tell[k]||0;
+    h+=pille(n,v,(maks?'maks ':'/')+mål,maks?(v>mål?'over':'ok'):(v>=mål?'ok':''),'data-uke="1"');
+  });
+  h+=pille('Fiskepålegg',u.fetfiskP,'maks '+FETFISK_PAALEGG_MAKS,u.fetfiskP>FETFISK_PAALEGG_MAKS?'over':'ok','data-uke="1"');
+  h+=pille('Fete pålegg',u.fettP,'helst 0',u.fettP>=3?'over':'','data-uke="1"');
+  h+='</div><div class="small" style="margin-top:6px">Middager ført: '+u.middager+' av '+u.dager.length+'. Fiskepålegg = røkelaks, sild, makrell o.l. Fete pålegg = leverpostei, servelat, salami, bacon.</div></details>';
+  const mk=a.merknader;
+  if(mk.length){
+    const ikon={feil:'✎',uklart:'?',terje:'T',mine:'D'};
+    const nTekst=mk.filter(x=>x.type==='feil'||x.type==='uklart').length;
+    h+='<details class="tld" data-tk="sjekk"'+(åpen.sjekk!==false?' open':'')+'><summary><b>Sjekk av dagen</b> · '+mk.length+' merknad'+(mk.length>1?'er':'')+(nTekst?' <span class="badge warn">'+nTekst+' i teksten</span>':'')+'</summary><ul class="sjekk">';
+    mk.forEach(x=>{
+      h+='<li class="'+x.type+'"><span class="ik">'+ikon[x.type]+'</span><span class="tx">'+esc(x.tekst)+'</span>'
+        +(x.type==='feil'?'<button type="button" class="btn sm" data-fiks="'+x.felt+'|'+x.fiks+'">Rett</button>':'')+'</li>';
+    });
+    h+='</ul><div class="small" style="margin-top:6px">✎ skrivefeil · ? uklart for Terje · T Terjes regel · D din egen regel</div></details>';
+  }else if(mealFilled(ds)){
+    h+='<div class="small" style="margin-top:10px;color:var(--good)">✓ Ingen merknader på dagen.</div>';
+  }
+  return h+'</div>';
+}
+function bindTeller(){
+  const box=document.getElementById('tellbox');if(!box)return;
+  box.querySelectorAll('[data-fiks]').forEach(b=>b.addEventListener('click',()=>{
+    const [felt,i]=b.dataset.fiks.split('|');
+    rettSkrivefeil(state.kostDate,felt,+i);
+    const ta=document.getElementById('f_'+felt);
+    if(ta){ta.value=DB.meals[state.kostDate][felt];autosize(ta);}
+    oppdaterTeller();toast('Rettet');
+  }));
+  box.querySelectorAll('[data-just]').forEach(b=>b.addEventListener('click',()=>justerModal(b.dataset.just)));
+  box.querySelectorAll('[data-uke]').forEach(b=>b.addEventListener('click',()=>middagModal()));
+  box.querySelectorAll('details[data-tk]').forEach(d=>d.addEventListener('toggle',()=>{const å=tellerÅpen();å[d.dataset.tk]=d.open;try{localStorage.setItem(TELLER_APEN,JSON.stringify(å));}catch(e){}}));
+}
+function oppdaterTeller(){
+  const box=document.getElementById('tellbox');if(!box)return;
+  const tmp=document.createElement('div');tmp.innerHTML=tellerHtml(state.kostDate);
+  box.replaceWith(tmp.firstChild);bindTeller();
+  oppdaterDagsprikker();
+}
+function oppdaterDagsprikker(){
+  V.querySelectorAll('.daystrip [data-day]').forEach(b=>{
+    const dot=b.querySelector('.dot');if(!dot)return;
+    dot.classList.toggle('on',mealFilled(b.dataset.day));
+    dot.classList.toggle('warn',dagHarMerknad(b.dataset.day));
+  });
+}
+const JUSTNAVN={melk:['Melk','glass',1],gront:['Grønt','porsjoner',1],baer:['Bær','porsjoner à ca. 150 g',1],frukt:['Frukt','stk.',1],vann:['Vann','liter',.1]};
+function justerModal(k){
+  const ds=state.kostDate,[n,enh,steg]=JUSTNAVN[k];
+  const vis=()=>{
+    const a=analyserDag(ds),just=(DB.meals[ds]&&DB.meals[ds].just)||{};
+    openModal('<h3>'+n+' '+fmtShort(ds)+'<button class="btn ghost sm" onclick="closeModal()">Lukk</button></h3>'
+      +'<div class="muted">Appen fant <b>'+tN(Math.round((a[k]-(just[k]||0))*10)/10)+'</b> '+enh+' i teksten. Tar den feil, retter du her – teksten i rapporten endres ikke.</div>'
+      +'<div class="justrad"><button class="btn sec" id="jm">−</button><span class="jv">'+tN(a[k])+'</span><button class="btn sec" id="jp">+</button></div>'
+      +(just[k]?'<button class="btn ghost sm" id="jr">Tilbake til det appen fant</button>':''));
+    const sett=d=>{const m=DB.meals[ds]||(DB.meals[ds]={});m.just=m.just||{};
+      const ny=Math.round(((m.just[k]||0)+d)*10)/10;if(ny)m.just[k]=ny;else delete m.just[k];
+      if(!Object.keys(m.just).length)delete m.just;saveDB();vis();oppdaterTeller();};
+    document.getElementById('jm').onclick=()=>{if(analyserDag(ds)[k]>0)sett(-steg);};
+    document.getElementById('jp').onclick=()=>sett(steg);
+    const jr=document.getElementById('jr');if(jr)jr.onclick=()=>{delete DB.meals[ds].just[k];if(!Object.keys(DB.meals[ds].just).length)delete DB.meals[ds].just;saveDB();vis();oppdaterTeller();};
+  };
+  vis();
+}
+function middagModal(){
+  const u=analyserUke(state.kostDate);
+  let h='<h3>Middager uke '+isoWeek(pd(state.kostDate)).week+'<button class="btn ghost sm" onclick="closeModal()">Lukk</button></h3>'
+    +'<div class="muted" style="margin-bottom:10px">Appen gjetter ut fra ordene. Velg riktig type hvis den tar feil.</div><div class="list">';
+  u.dager.forEach(a=>{
+    const opts=['rodt','fetfisk','hvitfisk','kylling','skalldyr','annet','ingen'].map(k=>'<option value="'+k+'"'+(a.mType===k?' selected':'')+'>'+MIDDAGNAVN[k]+(k===a.mTypeAuto&&DB.meals[a.ds]&&DB.meals[a.ds].middag?' (appens gjetning)':'')+'</option>').join('');
+    const txt=a.middag?a.middag.t.replace(/^kl\.\s*\d{1,2}[:.]\d{2}\s*[–-]\s*/,''):'–';
+    h+='<div class="mrad"><div><b>'+DAGER_K[pd(a.ds).getDay()]+' '+fmtShort(a.ds)+'</b><div class="small">'+esc(txt.length>90?txt.slice(0,88)+'…':txt)+'</div></div><select data-mt="'+a.ds+'">'+opts+'</select></div>';
+  });
+  h+='</div><div class="small" style="margin-top:10px">Terje per uke: 2 rødt kjøtt (maks), 2 fet fisk, 1 hvit fisk, 1 kylling, 1 skalldyr eller ekstra kylling/hvit fisk. Fet fisk-pålegg maks 5 i uka, ikke samme dag som fet fisk-middag.</div>';
+  openModal(h);
+  modalEl.querySelectorAll('[data-mt]').forEach(s=>s.addEventListener('change',()=>{
+    const ds=s.dataset.mt,m=DB.meals[ds]||(DB.meals[ds]={});
+    const auto=(()=>{const x=m.middag;delete m.middag;const v=analyserDag(ds).mTypeAuto;if(x)m.middag=x;return v;})();
+    if(s.value===auto)delete m.middag;else m.middag=s.value;
+    saveDB();oppdaterTeller();
+  }));
+}
+
+/* ---- merknader for en rapportperiode ---- */
+function periodeMerknader(r){
+  return daysInPeriod(r).filter(ds=>ds<=dstr(today())&&mealFilled(ds)).map(ds=>{
+    const mk=analyserDag(ds).merknader.filter(x=>x.type==='feil'||x.type==='uklart');return {ds,mk};
+  }).filter(x=>x.mk.length);
+}
+
+/* ==================== HURTIGVALG ==================== */
+/* Faste måltider: hele måltider med ett trykk. Lagres i profilen (synkes). Startlista er laget av det Trond
+   faktisk har spist august–oktober 2026. Byggeklosser: setter sammen ett måltid med faste ord og mengder. */
+const FASTE_START=[
+  'kjøleskapsgrøt: 1 dl Axa 4-korn i 2 dl skummet melk med kanel. En neve bringebær.',
+  '1 skive grovt brød med 1 kokt egg. 1 glass skummet melk.',
+  '1 skive grovt brød med 2 ss mager cottage cheese og 1 ts usukret syltetøy. 1 glass skummet melk.',
+  '1 skive grovt brød med 2 ss mager cottage cheese og en neve blåbær. 1 glass skummet melk.',
+  '1 skive grovt brød med et lag reker, 1 ts lett majones og agurk. 1 glass vann.',
+  '2 skiver grovt brød med 1 skive røkelaks og 1 kokt egg fordelt på begge. 1 glass skummet melk.',
+  '1 skive grovt brød med kalkunpålegg og ½ paprika. 1 glass vann.',
+  '1 skive grovt brød med kyllingpålegg og ½ paprika. 1 glass vann.',
+  '1 skive grovt brød med leverpostei og agurk. 1 glass skummet melk.'
+];
+const KLOSSER=[
+  ['Brød og grøt',[['Kjøleskapsgrøt: 1 dl Axa 4-korn i 2 dl skummet melk','start'],['kanel','til'],['1 skive grovt brød','start'],['2 små skiver grovt brød','start'],['1 stor skive grovt brød','start'],['2 skiver grovt brød','start'],['Havregryn med skummet melk','start'],['Axa 4-korn med skummet melk','start']]],
+  ['Pålegg',[['1 kokt egg','paa'],['2 ss mager cottage cheese','paa'],['1 ts usukret syltetøy','paa'],['et lag reker','paa'],['1 ts lett majones','paa'],['kalkunpålegg','paa'],['kyllingpålegg','paa'],['mager skinke','paa'],['1 skive røkelaks','paa'],['sursild','paa'],['ost','paa'],['leverpostei','paa']]],
+  ['Grønt',[['agurk','til'],['½ paprika','til'],['tomat','til'],['gulrot','til'],['rødbeter','til'],['salat','til']]],
+  ['Bær og frukt',[['en neve blåbær','egen'],['en neve bringebær','egen'],['en neve jordbær','egen'],['en liten skål bær','egen'],['1 eple','egen'],['1 pære','egen'],['en neve druer','egen']]],
+  ['Drikke',[['1 glass skummet melk','egen'],['1 glass lettmelk','egen'],['1 glass vann','egen'],['2 glass vann','egen'],['½ liter vann','egen'],['1 glass appelsinjuice 50/50 med vann','egen'],['1 krus te','egen']]],
+  ['Middag',[['1 porsjon','egen'],['forsynte meg 2 ganger','egen'],['1 porsjonsstykke laks','egen'],['1 kyllingbryst','egen'],['3 små poteter','egen'],['poteter: ½ tallerken','egen'],['pasta: ½ tallerken','egen'],['pasta: ¼ tallerken','egen'],['grønnsaker: ½ tallerken','egen'],['grønnsaker: ¼ tallerken','egen'],['grønn salat','egen'],['1 ss lettrømme','egen'],['2 ss saus','egen']]]
+];
+function fasteListe(){return Array.isArray(DB.profile.faste)?DB.profile.faste:FASTE_START.slice();}
+function settFaste(l){DB.profile.faste=l;saveDB();}
+function byggTekst(valgt){
+  const s=valgt.filter(v=>v[1]==='start').map(v=>v[0]),p=valgt.filter(v=>v[1]==='paa').map(v=>v[0]),
+    t=valgt.filter(v=>v[1]==='til').map(v=>v[0]),e=valgt.filter(v=>v[1]==='egen').map(v=>v[0]);
+  const og=l=>l.length<2?l.join(''):l.slice(0,-1).join(', ')+' og '+l[l.length-1];
+  let første='';
+  if(s.length){første=og(s);if(p.length||t.length)første+=' med '+og(p.concat(t));}
+  else if(p.length||t.length)første=og(p.concat(t));
+  const setn=[];if(første)setn.push(første);e.forEach(x=>setn.push(x));
+  return setn.map(x=>x.charAt(0).toUpperCase()+x.slice(1)+'.').join(' ').replace(/^(.)/,c=>c.toLowerCase());
+}
+function settInn(felt,tekst){
+  const ta=document.getElementById('f_'+felt);if(!ta)return;
+  const n=new Date(),stamp='kl. '+pad(n.getHours())+':'+pad(n.getMinutes())+' – ';
+  const v=ta.value.replace(/\s+$/,'');
+  if(!v)ta.value=stamp+tekst;
+  else if(/kl\.\s*\d{1,2}[:.]\d{2}\s*[–-]$/.test(v))ta.value=v+' '+tekst;
+  else ta.value=v+' '+tekst.charAt(0).toUpperCase()+tekst.slice(1);
+  autosize(ta);ta.dispatchEvent(new Event('input'));
+}
+function hurtigvalg(felt){
+  let valgt=[],rediger=false;
+  const vis=()=>{
+    const faste=fasteListe();
+    let h='<h3>Hurtigvalg · '+esc(MALTIDNAVN[felt])+'<button class="btn ghost sm" onclick="closeModal()">Lukk</button></h3>'
+      +'<div class="hvhead"><b>Mine faste måltider</b><button type="button" class="btn ghost sm" id="hvred">'+(rediger?'Ferdig':'Rediger')+'</button></div><div class="faste">';
+    faste.forEach((f,i)=>{
+      h+='<div class="fast"><button type="button" class="fastbtn" data-fast="'+i+'">'+esc(f)+'</button>'
+        +(rediger?'<button type="button" class="btn sec sm" data-opp="'+i+'" aria-label="Flytt opp"'+(i?'':' disabled')+'>↑</button><button type="button" class="btn sec sm" data-slett="'+i+'" aria-label="Slett">✕</button>':'')+'</div>';
+    });
+    if(!faste.length)h+='<div class="small">Ingen faste måltider ennå – sett sammen ett under og trykk «Lagre som fast».</div>';
+    h+='</div><div class="hvhead" style="margin-top:14px"><b>Sett sammen selv</b></div>';
+    KLOSSER.forEach(([gruppe,liste],gi)=>{
+      h+='<div class="klgr">'+gruppe+'</div><div class="klosser">';
+      liste.forEach(([t,typ],i)=>{const på=valgt.some(v=>v[0]===t);h+='<button type="button" class="kloss'+(på?' on':'')+'" data-kl2="'+gi+'|'+i+'">'+esc(t)+'</button>';});
+      h+='</div>';
+    });
+    h+='<div class="hvbunn"><div class="hvforh" id="hvforh">'+(valgt.length?esc(byggTekst(valgt)):'<span class="small">Trykk på det du spiste – teksten bygges her.</span>')+'</div>'
+      +'<div class="btnrow" style="margin-top:6px"><button type="button" class="btn" id="hvinn"'+(valgt.length?'':' disabled')+'>Sett inn</button>'
+      +'<button type="button" class="btn sec" id="hvlagre"'+(valgt.length?'':' disabled')+'>Lagre som fast</button>'
+      +'<button type="button" class="btn ghost" id="hvtom"'+(valgt.length?'':' disabled')+'>Tøm</button></div></div>';
+    openModal(h);
+    modalEl.querySelectorAll('[data-fast]').forEach(b=>b.addEventListener('click',()=>{if(rediger)return;settInn(felt,faste[+b.dataset.fast]);closeModal();toast('Satt inn');}));
+    modalEl.querySelectorAll('[data-slett]').forEach(b=>b.addEventListener('click',()=>{const l=faste.slice();l.splice(+b.dataset.slett,1);settFaste(l);vis();}));
+    modalEl.querySelectorAll('[data-opp]').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.opp,l=faste.slice();[l[i-1],l[i]]=[l[i],l[i-1]];settFaste(l);vis();}));
+    document.getElementById('hvred').onclick=()=>{rediger=!rediger;vis();};
+    modalEl.querySelectorAll('[data-kl2]').forEach(b=>b.addEventListener('click',()=>{
+      const [gi,i]=b.dataset.kl2.split('|').map(Number),k=KLOSSER[gi][1][i];
+      const j=valgt.findIndex(v=>v[0]===k[0]);if(j>=0)valgt.splice(j,1);else valgt.push(k);
+      const top=modalEl.scrollTop;vis();modalEl.scrollTop=top;
+    }));
+    document.getElementById('hvinn').onclick=()=>{settInn(felt,byggTekst(valgt));closeModal();toast('Satt inn');};
+    document.getElementById('hvlagre').onclick=()=>{const t=byggTekst(valgt);const l=fasteListe().slice();if(!l.includes(t))l.unshift(t);settFaste(l);valgt=[];vis();toast('Lagret som fast måltid');};
+    document.getElementById('hvtom').onclick=()=>{valgt=[];vis();};
+  };
+  vis();
 }
 
 function autosize(ta){
@@ -1584,8 +2117,8 @@ function renderVekt(){
       +(DB.profile.maalTerje!=null?'<br>→ Terjes mål <b>'+kg(DB.profile.maalTerje)+' kg</b> = <b>'+kg(s-DB.profile.maalTerje)+' kg</b> ned':'')
       +(DB.profile.maalEgen!=null?'<br>→ ditt mål <b>'+kg(DB.profile.maalEgen)+' kg</b> = <b>'+kg(s-DB.profile.maalEgen)+' kg</b> ned':'')
       +'<br>innen <b>'+fmt(goalDate())+'</b>.'
-      +(exp!=null?' Målbanen (Terjes mål) sier <b>'+kg(exp)+' kg</b> i dag.':'')
-      +'</div><div class="small" style="margin-top:6px">Begge målbanene vises i grafen – Terjes i rødt, ditt i grått.</div>'
+      +(exp!=null?' Målbanen ('+(DB.profile.maalTerje!=null?'Terjes mål':'ditt mål')+', '+(grafType()==='avtagende'?'avtagende':'lineær')+') sier <b>'+kg(exp)+' kg</b> i dag.':'')
+      +'</div><div class="small" style="margin-top:6px">Begge målbanene vises i grafen – Terjes i rødt, ditt i grått. Over grafen på Hjem velger du lineær eller avtagende målbane.</div>'
       :'<div class="small" style="margin-top:10px">Målene settes i veiledningssamtalen med Terje – Terjes anbefalte mål gjelder (kan justeres underveis). Begge kan settes her, og begge tegnes inn i grafen.</div>')
     +(goalDate()<SEASON_END?'<div class="small" style="margin-top:6px">NB: Terjes matchvekt måles uansett på sesongens siste dag, torsdag 24.06.2027 – etter måldatoen din viser grafen en «hold vekten»-linje frem dit.</div>':'')
     +'<div class="btnrow"><button id="gsave" class="btn sec sm">Lagre mål</button></div></div>';
@@ -1743,6 +2276,7 @@ function renderRapport(){
       const g=document.getElementById('mph');
       photos.forEach(p=>{const u=URL.createObjectURL(p.blob);const im=document.createElement('img');im.src=u;im.alt=photoFileName(p);g.appendChild(im);});
     }
+    modalEl.querySelectorAll('[data-gokost]').forEach(g=>g.addEventListener('click',()=>{closeModal();state.tab='kosthold';state.kostDate=g.dataset.gokost;render();}));
     const grafEl=document.getElementById('mgraf');
     const pdfOpts=()=>{DB.profile.pdfGraf=grafEl.checked;saveDB();return {graf:grafEl.checked};};
     document.getElementById('mpdfshare').addEventListener('click',()=>sharePdf(r,pdfOpts()));
@@ -1786,7 +2320,12 @@ function missingWarn(r){
   let out='';
   if(miss.length)out+='<div class="banner warn" style="font-size:.78rem;padding:8px 12px">Mangler kosthold for: '+miss.join(', ')+'</div>';
   if(mw.length)out+='<div class="banner warn" style="font-size:.78rem;padding:8px 12px">Mangler mandagsvekt: '+mw.join(' og ')+'</div>';
-  if(!out)out='<div class="banner good" style="font-size:.78rem;padding:8px 12px">Alle dager ført og vekt registrert – klar til innsending.</div>';
+  const pm=periodeMerknader(r);
+  if(pm.length){
+    out+='<div class="banner warn" style="font-size:.78rem;padding:8px 12px"><b>Sjekk før sending:</b> '+pm.length+' dag'+(pm.length>1?'er':'')+' har skrivefeil eller uklar tekst. Trykk for å gå til dagen.<div class="pmdager">'
+      +pm.map(x=>'<button type="button" class="btn sec sm" data-gokost="'+x.ds+'">'+DAGER_K[pd(x.ds).getDay()]+' '+fmt(x.ds).slice(0,5)+' ('+x.mk.length+')</button>').join('')+'</div></div>';
+  }
+  if(!out)out='<div class="banner good" style="font-size:.78rem;padding:8px 12px">Alle dager ført, vekt registrert og ingen merknader – klar til innsending.</div>';
   return out;
 }
 function mailtoFromText(r,text){
@@ -1830,7 +2369,7 @@ function renderPlan(){
 /* ==================== MER ==================== */
 function renderMer(){
   if(state.merPage)return renderMerPage(state.merPage);
-  const items=[['plan','Sesongplan og frister'],['synk','Synk med iCloud'],['kropp','Fremgangsbilder'],['trening','Trening og oppmøte'],['medisin','Medisinlogg'],['regler','Huskeregler'],['profil','Profil og treningstider'],['backup','Sikkerhetskopi og data'],['demo','Test appen (demo-modus)'],['om','Om appen og kontakt']];
+  const items=[['plan','Sesongplan og frister'],['synk','Synk'],['kropp','Fremgangsbilder'],['trening','Trening og oppmøte'],['medisin','Medisinlogg'],['regler','Huskeregler'],['profil','Profil og treningstider'],['backup','Sikkerhetskopi og data'],['demo','Test appen (demo-modus)'],['om','Om appen og kontakt']];
   V.innerHTML='<div class="merlist">'+items.map(([k,t])=>'<button data-mp="'+k+'">'+t+'<span class="ar">›</span></button>').join('')+'</div>';
   V.querySelectorAll('[data-mp]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.mp==='plan'){state.tab='plan';state.merPage=null;}else state.merPage=b.dataset.mp;render();}));
 }
@@ -2057,8 +2596,8 @@ function renderBackup(){
   const n=Object.keys(DB.meals).length,w=Object.keys(DB.weights).length;
   V.innerHTML=subhead('Sikkerhetskopi og data')
     +'<div class="card"><h2>Status</h2><div class="muted">'+n+' dager med kosthold · '+w+' veiinger · '+DB.meds.length+' medisinoppføringer · <span id="phstat">teller bilder …</span><br>Sist lagret: '+(DB.updated?new Date(DB.updated).toLocaleString('nb-NO'):'aldri')+'.<br>Lagring: '+(storageOK?'<span class="badge good">På denne enheten</span>':'<span class="badge warn">Testmodus – ikke varig</span>')+'</div></div>'
-    +'<div class="card"><h2>Sikkerhetskopi og overføring til Mac</h2><div class="muted">Dataene ligger kun på denne enheten. Ta jevnlig kopi – f.eks. hver søndag. Kopien inkluderer alle bildene, og den samme filen brukes til å flytte alt til Mac-en (eller tilbake): «Del kopi» → Arkiver i Filer → iCloud Drive, og «Gjenopprett» på den andre enheten.<br><br><b>NB:</b> Enhetene synkroniseres ikke automatisk – gjenoppretting erstatter alt på enheten. Rediger derfor på én enhet om gangen, og overfør kopien når du bytter.</div>'
-    +'<div class="btnrow"><button id="bshare">Del kopi (iCloud/AirDrop)</button><button id="bexp" class="btn sec">Last ned kopi</button><label class="btn sec" style="cursor:pointer">Gjenopprett<input type="file" id="bimp" accept=".json,application/json" style="display:none"></label></div></div>'
+    +'<div class="card"><h2>Sikkerhetskopi</h2><div class="muted">Synk-knappen øverst holder iPhone og Mac like, og alt som synkes ligger også i det private lageret ditt. Kopien her er en ekstra, full kopi i én fil. Den inkluderer alle bildene, også fremgangsbildene, som ikke synkes.<br><br><b>NB:</b> «Gjenopprett» erstatter alt på denne enheten med innholdet i kopien.</div>'
+    +'<div class="btnrow"><button id="bshare">Del kopi</button><button id="bexp" class="btn sec">Last ned kopi</button><label class="btn sec" style="cursor:pointer">Gjenopprett<input type="file" id="bimp" accept=".json,application/json" style="display:none"></label></div></div>'
     +'<div class="card"><h2>Slett alt</h2><div class="muted">Fjerner alle data fra appen på denne enheten.</div><div class="btnrow"><button class="btn sm" style="background:var(--bad)" id="bwipe">Slett alle data</button></div></div>';
   bindBack();
   photosAll().then(ph=>{
@@ -2087,7 +2626,7 @@ function renderBackup(){
     if(navigator.canShare&&navigator.canShare({files:[f]})&&navigator.share){
       try{
         await navigator.share({title:name,files:[f]});
-        toast('Velg «Arkiver i Filer» → iCloud Drive for å nå den fra Mac-en');
+        toast('Velg «Arkiver i Filer» for å ta vare på kopien');
       }catch(e){if(e&&e.name!=='AbortError'){downloadBlob(blob,name);toast('Delingen ble avbrutt – kopien er lastet ned i stedet');}}
     }else{
       downloadBlob(blob,name);
@@ -2125,14 +2664,14 @@ function renderBackup(){
 
 function renderOm(){
   V.innerHTML=subhead('Om appen og kontakt')
-    +'<div class="card"><h2>Camp Kalori 2026–2027</h2><div class="muted">Personlig registrerings-app for Camp Kalori-sesongen 10.08.2026–24.06.2027 hos Cardio Kickboxing &amp; Camp Kalori AS, Skullerud Aktivitetspark (Olaf Helsets vei 5, inngang K).<br><br>Appen er privat: alt lagres kun på din enhet, ingenting sendes automatisk. Rapporter sendes av deg selv, per e-post, som før.</div></div>'
+    +'<div class="card"><h2>Camp Kalori 2026–2027</h2><div class="muted">Personlig registrerings-app for Camp Kalori-sesongen 10.08.2026–24.06.2027 hos Cardio Kickboxing &amp; Camp Kalori AS, Skullerud Aktivitetspark (Olaf Helsets vei 5, inngang K).<br><br>Appen er privat: dataene ligger på enhetene dine og, når du trykker Synk, i ditt eget private lager på GitHub. Ingenting sendes til andre. Rapporter sender du selv, per e-post, som før.</div></div>'
     +'<div class="card"><h2>Kontakt</h2><div class="muted">'
     +'<b>Terje</b> (kosthold, helse, trening, fravær):<br>SMS/tlf <a href="tel:+4795066227">950 66 227</a> · <a href="mailto:'+TERJE_EPOST+'">'+TERJE_EPOST+'</a><br><br>'
     +'<b>Kathrine Cecilie</b> (påmeldinger, faktura, endring av kontaktinfo):<br><a href="mailto:'+KATHRINE_EPOST+'">'+KATHRINE_EPOST+'</a></div></div>'
     +'<div class="card"><h2>Nøkkeltall for sesongen</h2><div class="muted">'
     +REPORTS.length+' innleveringer · første trening 18.08.2026 · siste dag 24.06.2027 · 6 egentreningsuker (40, 52, 53, 8, 12, 13) · totalpris kr 44.000.</div></div>'
     +'<div class="card"><h2>Betaling</h2><div class="muted">Totalpris kr 44.000 for sesongen (bindende kontrakt, ingen angrerett/frys iht. kontrakten). Faktura kommer fra <b>noreply@mail.poweroffice.net</b> – sjekk søppelpost. Administrasjonsgebyr kr 60 per faktura. Spørsmål om faktura, betaling og påmeldinger: Kathrine på e-post.</div></div>'
-    +'<div class="small center" style="margin-top:14px">Versjon 3.0 · september 2026 · laget for Trond</div>';
+    +'<div class="small center" style="margin-top:14px">Versjon 4.0 · oktober 2026 · laget for Trond</div>';
   bindBack();
 }
 
@@ -2431,7 +2970,8 @@ function renderTreningFane(){
 
 /* ==================== HÅNDBOK (v3.0) ==================== */
 /* Innholdet ligger i datafila (DB.handbok.html), ikke i appens kode – appen er offentlig på GitHub,
-   håndboka inneholder helseopplysninger. Claude oppdaterer den i Camp Kalori/Data/handbok.html. */
+   håndboka inneholder helseopplysninger. Claude oppdaterer den i Camp Kalori/Data/handbok.html
+   og sender den med App/server/sky.py oppdater-handbok. */
 function hbSeksjoner(html){
   const t=document.createElement('div');t.innerHTML=html;
   return Array.from(t.querySelectorAll('section[id]')).map(s=>{
@@ -2461,22 +3001,30 @@ function hbFyllInn(rot){
 function renderHandbok(){
   const hb=DB.handbok;
   if(!hb||!hb.html){
-    V.innerHTML='<div class="card"><h2>Håndboka</h2><div class="muted">Håndboka ligger i datafila i iCloud, ikke i selve appen – den inneholder helseopplysninger, og appen ligger åpent på nettet.</div>'
-      +'<div class="muted" style="margin-top:8px">Hent den med <b>Mer → Synk med iCloud → Hent og flett inn</b>.</div>'
-      +'<div class="btnrow"><button class="btn sm" data-go-mer="synk">Gå til synk</button></div></div>'+notaterHtml();
+    V.innerHTML='<div class="card"><h2>Håndboka</h2><div class="muted">Håndboka følger med synken. Den ligger ikke i selve appen, fordi den inneholder helseopplysninger og appen ligger åpent på nettet.</div>'
+      +'<div class="muted" style="margin-top:8px">Trykk på <b>synk-knappen øverst</b>, så kommer den.</div></div>'+notaterHtml();
     bindGo();bindNotater();return;
   }
   const sek=hbSeksjoner(hb.html);
   if(!state.hbSek||(state.hbSek!=='notater'&&!sek.some(s=>s.id===state.hbSek)))state.hbSek=sek.length?sek[0].id:'notater';
-  let html='<div class="hbnav" role="tablist">'+sek.map(s=>'<button data-hbs="'+s.id+'" class="'+(s.id===state.hbSek?'on':'')+'">'+esc(s.navn)+'</button>').join('')
-    +'<button data-hbs="notater" class="'+(state.hbSek==='notater'?'on':'')+'">Notater</button></div>';
+  /* Kapittelvelger: nedtrekksmeny med ‹ ›, festet under toppen, og «Neste»-knapp nederst i kapitlet. */
+  const kap=sek.map(s=>({id:s.id,navn:s.navn})).concat([{id:'notater',navn:'Notater'}]);
+  const nr=kap.findIndex(s=>s.id===state.hbSek),neste=kap[nr+1];
+  let html='<div class="hbnav"><button id="hbforrige" aria-label="Forrige kapittel"'+(nr<=0?' disabled':'')+'>‹</button>'
+    +'<select id="hbvelg" aria-label="Kapittel">'+kap.map(s=>'<option value="'+s.id+'"'+(s.id===state.hbSek?' selected':'')+'>'+esc(s.navn)+'</option>').join('')+'</select>'
+    +'<button id="hbneste" aria-label="Neste kapittel"'+(neste?'':' disabled')+'>›</button></div>';
   if(state.hbSek==='notater')html+=notaterHtml();
   else html+='<div class="hb">'+sek.find(s=>s.id===state.hbSek).html+'</div>'
+    +'<div class="btnrow" style="justify-content:center"><button class="btn sec" id="hbnesteb">Neste: '+esc(neste.navn)+' ›</button></div>'
     +'<div class="small center" style="margin:10px 0 16px">Håndboka sist oppdatert '+esc(hb.oppdatert||'–')+'</div>';
   V.innerHTML=html;
-  const aktiv=V.querySelector('.hbnav .on');if(aktiv)aktiv.scrollIntoView({block:'nearest',inline:'center'});
-  V.querySelectorAll('[data-hbs]').forEach(b=>b.addEventListener('click',()=>{state.hbSek=b.dataset.hbs;render();}));
+  V.querySelector('.hbnav').style.top=document.querySelector('header.app').offsetHeight+'px';
+  const gåTil=id=>{state.hbSek=id;render();};
+  document.getElementById('hbvelg').addEventListener('change',e=>gåTil(e.target.value));
+  document.getElementById('hbforrige').addEventListener('click',()=>gåTil(kap[nr-1].id));
+  document.getElementById('hbneste').addEventListener('click',()=>gåTil(neste.id));
   if(state.hbSek==='notater'){bindNotater();return;}
+  document.getElementById('hbnesteb').addEventListener('click',()=>gåTil(neste.id));
   const rot=V.querySelector('.hb');
   hbFyllInn(rot);
   rot.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
@@ -2493,7 +3041,7 @@ function renderHandbok(){
 function notaterHtml(){
   const n=DB.notater||{};
   const ids=Object.keys(n).sort((a,b)=>(n[b].endret||'')>(n[a].endret||'')?1:-1);
-  return '<div class="card"><h2>Notater<span class="mini">synkes med iCloud</span></h2><div class="muted">Lim inn tekster, spørsmål til Terje, svar fra Claude – alt du vil ha for hånden. Notatene ligger i datafila, så Claude kan lese dem.</div>'
+  return '<div class="card"><h2>Notater<span class="mini">synkes</span></h2><div class="muted">Lim inn tekster, spørsmål til Terje, svar fra Claude – alt du vil ha for hånden. Notatene ligger i datafila, så Claude kan lese dem.</div>'
     +'<div class="btnrow"><button class="btn sm" id="nnytt">Nytt notat</button></div></div>'
     +(ids.length?'<div class="list">'+ids.map(id=>'<div class="li"><div class="bod"><div class="t">'+esc(n[id].tittel||'Uten tittel')+'</div>'
       +'<div class="s notat-tekst">'+esc(n[id].tekst||'')+'</div><div class="small" style="margin-top:4px">Endret '+(n[id].endret?new Date(n[id].endret).toLocaleString('nb-NO'):'–')+'</div>'
@@ -2534,15 +3082,27 @@ setInterval(()=>{
   el.textContent=ms<0?'Forfalt':(dd>0?dd+' d '+hh+' t':hh+' t '+mi+' min');
 },30000);
 
+/* Ny versjon av appen: nettleseren ser etter ny sw.js når appen åpnes eller hentes fram igjen. Når den nye
+   har tatt over, lastes siden på nytt av seg selv – står du og skriver, venter den til du er ferdig. */
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
-  window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});
+  const haddeSw=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(!haddeSw)return;
+    const last=()=>{try{sessionStorage.setItem('ck_oppdatert','1');}catch(e){}location.reload();};
+    if(redigererNå())document.addEventListener('focusout',()=>setTimeout(()=>{if(!redigererNå())last();},300));
+    else last();
+  });
+  window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(reg=>{
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)reg.update().catch(()=>{});});
+  }).catch(()=>{});});
 }
 migrerBilder();
 render();
-if(DB.sistLagret==null&&DB.sistSynk){DB.sistLagret=DB.sistSynk;saveDB();}
+try{if(sessionStorage.getItem('ck_oppdatert')){sessionStorage.removeItem('ck_oppdatert');toast('Appen er oppdatert');}}catch(e){}
+if(!inDemo()&&!profilTom(DB.profile)&&!(DB._st||{})['profile|']){DB._st=DB._st||{};DB._st['profile|']=PROFIL_STEMPEL;saveDB();}
 document.getElementById('synkknapp').addEventListener('click',synkKnappTrykk);
 oppdaterSynkMerke();
-if(LOKAL_SERVER)serverStatus();
+skySjekk();
 </script>
 </body>
 </html>
