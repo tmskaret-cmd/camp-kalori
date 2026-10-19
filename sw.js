@@ -1,9 +1,12 @@
-/* Camp Kalori service worker – cache-first, slik at appen virker uten nett */
-const CACHE = 'campkalori-v15';
+/* Camp Kalori service worker – cache-first, slik at appen virker uten nett.
+   CACHE-linja settes av App/server/publiser.py ut fra innholdet i appen. Ikke endre den for hånd. */
+const CACHE = 'campkalori-9a556b09f4';
 const FILES = ['./', './index.html', './manifest.json', './ikon-180.png', './ikon-192.png', './ikon-512.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE)
+    .then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' }))))
+    .then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(
@@ -13,7 +16,7 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
-  if (new URL(e.request.url).pathname.startsWith('/api/')) return;  // datafila på Mac-en skal aldri caches
+  if (new URL(e.request.url).origin !== self.location.origin) return;  // synken mot GitHub skal aldri caches
   e.respondWith(
     caches.match(e.request, { ignoreSearch: true }).then(hit => {
       const net = fetch(e.request).then(res => {
