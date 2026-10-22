@@ -1,6 +1,6 @@
 /* Camp Kalori service worker – cache-first, slik at appen virker uten nett.
    CACHE-linja settes av App/server/publiser.py ut fra innholdet i appen. Ikke endre den for hånd. */
-const CACHE = 'campkalori-fea979b8fd';
+const CACHE = 'campkalori-3fef12255c';
 const FILES = ['./', './index.html', './manifest.json', './ikon-180.png', './ikon-192.png', './ikon-512.png'];
 
 self.addEventListener('install', e => {
