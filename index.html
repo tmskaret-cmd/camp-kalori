@@ -1718,6 +1718,12 @@ const VANN_HALV=Regexp_safe('(?<!['+L+'])(?:('+TALL+')\\s+)?halv\\s?liter\\s+(?:
 const VANN_DESI=Regexp_safe('(?<!['+L+'])((?:\\d|[oO])[,.]\\d+)\\s+(?:med\\s+)?vann(?!['+L+'])');
 const VANN_BOKS=Regexp_safe('(?<!['+L+'])('+TALL+')\\s+(?:boks(?:er)?|flaske(?:r)?)\\s+(?:med\\s+)?(?:ramløsa|farris|imsdal|mineralvann|kildevann|vann)(?!['+L+'])');
 function Regexp_safe(src){return new RegExp(src,'giu');}
+/* Et vanlig glass regnes som 2 dl. «stort» = 1,5 glass, «lite/små» = 0,75, «halvt» = 0,5. */
+const GLASS_L=0.2;
+function glassFaktor(ord){ord=(ord||'').toLowerCase();return /^stor/.test(ord)?1.5:/^(?:lit|lil|små)/.test(ord)?.75:/^halv/.test(ord)?.5:1;}
+/* Juice i glass: «et glass appelsinjuice 50/50 med vann», «et glass juice/vann», «et glass blandet appelsinjuice og vann», «et halvt glass appelsinjuice». */
+const JUICE_GLASS=Regexp_safe('(?<!['+L+'])('+TALL+')\\s+(?:(stort|store|lite|lille|små|halvt|halve)\\s+)?glass\\s+(?:med\\s+)?(blandet\\s+)?(?:['+L+']*juice)([^.,;\\n]*?)(?=[.,;\\n]|\\s+og\\s+(?:et|en|ett|to|tre|fire|\\d|ca)(?!['+L+'])|$)');
+const JUICE_BLANDET=/50\s*[\/:]\s*50|\/\s*vann|(?:og|med)\s+vann|blandet|halvt\s+om\s+halvt|fortynnet/i;
 
 const MIDDAG_ORD={
   fetfisk:['laks','laksefilet','laksen','ørret','ørreten','makrell','kveite','røye','sild','sardiner','fet fisk'],
@@ -1792,7 +1798,16 @@ function analyserDag(ds){
   let melk=0;finn(MELK_RE,tekstAlle).forEach(x=>{melk+=tall(x[1]);});
   finn(MELK_DL_RE,tekstAlle).forEach(x=>{melk+=tall(x[1])/2;});
   let vann=0;
-  finn(VANN_GLASS,tekstAlle).forEach(x=>{vann+=tall(x[1])*(x[2]&&/store?/i.test(x[2])?.3:.2);});
+  finn(VANN_GLASS,tekstAlle).forEach(x=>{vann+=tall(x[1])*glassFaktor(x[2])*GLASS_L;});
+  // juice: blandet 50/50 gir et halvt glass juice + et halvt glass vann; 1 glass juice = 1 frukt (maks 1 per dag)
+  let juiceGlass=0;
+  finn(JUICE_GLASS,tekstAlle).forEach(x=>{
+    const ant=tall(x[1])*glassFaktor(x[2]);
+    const blandet=!!x[3]||JUICE_BLANDET.test(x[4]||'');
+    juiceGlass+=blandet?ant/2:ant;
+    if(blandet)vann+=ant/2*GLASS_L;
+  });
+  const juiceFrukt=Math.min(1,Math.floor(juiceGlass*2+1e-9)/2);
   finn(VANN_LITER,tekstAlle).forEach(x=>{vann+=tall(x[1]);});
   finn(VANN_HALV,tekstAlle).forEach(x=>{vann+=.5*(x[1]?tall(x[1]):1);});
   finn(VANN_DESI,tekstAlle).forEach(x=>{vann+=tall(x[1]);});
@@ -1812,7 +1827,8 @@ function analyserDag(ds){
     melk:Math.max(0,melk+(just.melk||0)),
     gront:Math.max(0,gront+(just.gront||0)),
     baer:Math.max(0,baer+(just.baer||0)),
-    frukt:Math.max(0,fruktAnt+(just.frukt||0)),
+    frukt:Math.max(0,fruktAnt+juiceFrukt+(just.frukt||0)),
+    juiceGlass,juiceFrukt,
     vann:Math.max(0,Math.round((vann+(just.vann||0))*10)/10),
     juice:JUICE_RE.test(tekstAlle),
     frukter,fruktPerFelt,fetfiskP,fettP,just};
@@ -1850,8 +1866,8 @@ function merknaderFor(a,m){
   Object.keys(a.fruktPerFelt).forEach(k=>{if(a.fruktPerFelt[k].length>1)ut.push({type:'terje',felt:k,tekst:navn(k)+': to frukter i samme måltid (Terje: unngå)'});});
   if(a.fetfiskP&&a.mType==='fetfisk')ut.push({type:'terje',tekst:'Fet fisk både på brødet og til middag (Terje: ikke samme dag)'});
   // mine regler
-  if(a.frukt>MAAL.fruktMaks)ut.push({type:'mine',tekst:a.frukt+' frukter i dag (din regel: maks 1 – ta bær eller grønt i stedet)'});
-  if(ferdig&&a.fem<MAAL.fem)ut.push({type:'mine',tekst:'5 om dagen: '+a.fem+' av 5'+(a.baer?'':' – ingen bær')});
+  if(a.frukt>MAAL.fruktMaks)ut.push({type:'mine',tekst:tN(a.frukt)+' frukter i dag'+(a.juiceFrukt?' (juicen teller '+tN(a.juiceFrukt)+')':'')+' (din regel: maks 1 – ta bær eller grønt i stedet)'});
+  if(ferdig&&a.fem<MAAL.fem)ut.push({type:'mine',tekst:'5 om dagen: '+tN(a.fem)+' av 5'+(a.baer?'':' – ingen bær')});
   return ut;
 }
 function tN(v){const r=Math.round(v*10)/10;return String(r).replace('.',',');}
@@ -1891,8 +1907,8 @@ function tellerHtml(ds){
   h+=pille('Melk',tN(a.melk)+j('melk'),'/'+MAAL.melk,st(a.melk,MAAL.melk),'data-just="melk"');
   h+=pille('Grønt',a.gront+j('gront'),'/'+MAAL.grontMin+'–'+MAAL.grontMaal,st(a.gront,MAAL.grontMin),'data-just="gront"');
   h+=pille('Bær',a.baer+j('baer'),'/'+MAAL.baerMin+'–'+MAAL.baerMaks,st(a.baer,MAAL.baerMin),'data-just="baer"');
-  h+=pille('Frukt',a.frukt+j('frukt'),'maks '+MAAL.fruktMaks,a.frukt>MAAL.fruktMaks?'over':'ok','data-just="frukt"');
-  h+=pille('5 om dagen',a.fem,'/'+MAAL.fem,st(a.fem,MAAL.fem));
+  h+=pille(a.juiceFrukt?'Frukt (m/juice)':'Frukt',tN(a.frukt)+j('frukt'),'maks '+MAAL.fruktMaks,a.frukt>MAAL.fruktMaks?'over':'ok','data-just="frukt"');
+  h+=pille('5 om dagen',tN(a.fem),'/'+MAAL.fem,st(a.fem,MAAL.fem));
   h+=pille('Vann, liter',tN(a.vann)+j('vann'),'/1,5–2',st(a.vann,MAAL.vannMin),'data-just="vann"');
   h+=pille('Middag',a.mType==='ingen'?'–':MIDDAGNAVN[a.mType].replace('Rødt kjøtt','Kjøtt'),'','','data-uke="1"');
   h+='</div>';
