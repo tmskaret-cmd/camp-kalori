@@ -321,6 +321,11 @@ details.tld[open] summary{margin-bottom:6px}
 .pille.ok .pv{color:var(--good)}
 .pille.over{background:var(--bad-soft);border-color:#efc7c6}
 .pille.over .pv{color:var(--bad)}
+.pille.plan{border-style:dashed}
+.tltips{margin-top:8px;font-size:.78rem;line-height:1.4;color:var(--text-2)}
+.tltips div+div{margin-top:3px}
+.tlsum{font-weight:500;color:var(--text-2)}
+.mnav{display:flex;justify-content:space-between;gap:8px;margin-bottom:10px}
 ul.sjekk{list-style:none;display:flex;flex-direction:column;gap:5px}
 ul.sjekk li{display:flex;align-items:center;gap:8px;font-size:.8rem;line-height:1.35;background:#faf9f7;border-radius:9px;padding:6px 8px}
 ul.sjekk li .tx{flex:1}
@@ -1682,9 +1687,12 @@ function renderKosthold(){
    Måltider, melk, vann, middagsrotasjon og fet fisk-pålegg følger Terjes regler.
    Manuelle rettelser: meals[dag].just = {melk:+1, ...} og meals[dag].middag = 'rodt' | ... */
 const MAAL={maltider:4,melk:2,grontMin:2,grontMaal:3,baerMin:1,baerMaks:2,fruktMaks:1,fem:5,vannMin:1.5,vannMaks:2,hullMin:270};
-const MIDDAGTYPER=[['rodt','Rødt kjøtt',2,true],['fetfisk','Fet fisk',2,false],['hvitfisk','Hvit fisk',1,false],['kylling','Kylling',1,false],['skalldyr','Skalldyr',1,false]];
 const MIDDAGNAVN={rodt:'Rødt kjøtt',fetfisk:'Fet fisk',hvitfisk:'Hvit fisk',kylling:'Kylling',skalldyr:'Skalldyr',annet:'Annet',ingen:'Ingen middag'};
 const FETFISK_PAALEGG_MAKS=5;
+/* Rødt kjøtt-potten: Helsedirektoratet (2024) høyst 350 g rødt kjøtt i uka, pålegg medregnet.
+   En kjøttmiddag regnes som ca. 135 g, en påleggsskive som ca. 15 g. */
+const ROD_UKE_G=350,ROD_MIDDAG_G=135,ROD_SKIVE_G=15;
+const PLANNAVN={rodt:'Rødt kjøtt',fetfisk:'Fet fisk',hvitfisk:'Hvit fisk',kylling:'Kylling',skalldyr:'Skalldyr',annet:'Annet (f.eks. eggmiddag)'};
 const MFELT=['m1','m2','m3','m4','m5'];
 
 const L='\\p{L}';
@@ -1735,8 +1743,16 @@ const MIDDAG_ORD={
 const MIDDAG_RE={};Object.keys(MIDDAG_ORD).forEach(k=>{MIDDAG_RE[k]=ordRe(MIDDAG_ORD[k]);});
 const PAALEGG_FISK_FRASER=/(?<![\p{L}])(?:røkt|gravet|gravlaks|røkelaks|kald|varmrøkt|kaldrøkt)\s+laks(?![\p{L}])|røkelaks|gravlaks|sursild|kryddersild|makrell i tomat/giu;
 const FETFISK_PAALEGG_RE=ordRe(['røkelaks','røkt laks','gravlaks','gravet laks','varmrøkt laks','kaldrøkt laks','sursild','kryddersild','sild','makrell i tomat','makrell','laks','ørret']);
+const RODT_PAALEGG_ORD=['skinke','kokt skinke','røkt skinke','spekeskinke','roastbiff','servelat','mager servelat','leverpostei','postei','salami','bacon','spekepølse','fårepølse','morrpølse','kjøttpølse','rullepølse','sylte','hamburgerrygg','pastrami','kjøttpålegg','paté','pate'];
+const RODT_PAALEGG_RE=ordRe(RODT_PAALEGG_ORD);
+const FETFISK_PAALEGG_ORD=['røkelaks','røkt laks','gravlaks','gravet laks','varmrøkt laks','kaldrøkt laks','sursild','kryddersild','sild','makrell i tomat','makrell','laks','ørret'];
+/* «to skiver med sursild» = 2 skiver; ellers regnes et måltid med pålegget som 1 skive. */
+function skiverMed(t,ord){
+  const re=new RegExp('(?<!['+L+'])('+TALL+')\\s+(?:små\\s+|store\\s+|halve\\s+)?skiver?\\s+(?:grovt\\s+brød\\s+|brød\\s+)?med\\s+(?:mager\\s+|lett\\s+)?(?:'+ord.join('|')+')(?!['+L+'])','iu');
+  const x=t.match(re);return x?Math.min(3,Math.max(1,Math.round(tall(x[1])))):1;
+}
 const FETT_PAALEGG_RE=ordRe(['leverpostei','postei','servelat','salami','bacon','spekepølse','fårepølse','morrpølse','paté','pate','kjøttpølse','spekeskinke']);
-const BROD_RE=/skive|skiver|brød|knekkebrød|havregryn|grøt|axa|frokostblanding|lefse|flatbrød/i;
+const BROD_RE=/skive|skiver|brød|knekkebrød|havregryn|grøt|axa|frokostblanding|lefse|flatbrød|(?<![\p{L}])korn(?![\p{L}])|müsli|musli|granola/iu;
 const MIDDAG_TEGN=/potet|pasta|ris(?![\p{L}])|lasagne|taco|wrap|tortilla|middag|i form|ovnsbakt|gryte|hakk|suppe|salat med|hummer|krabbe|fajitas|wok|grateng|bolognese|kjøttboller|andebryst|biff|filet/iu;
 const UKLART=[[/(?<![\p{L}])et par(?![\p{L}])/iu,'«et par»','skriv et tall'],[/(?<![\p{L}])noen(?![\p{L}])/iu,'«noen»','skriv et tall'],[/(?<![\p{L}])litt(?![\p{L}])/iu,'«litt»','skriv omtrent hvor mye, f.eks. «1 ss»'],[/og smaker/iu,'«og smaker»','skriv hva det var'],[/(?<![\p{L}])(?:diverse|div\.)/iu,'«diverse»','skriv hva det var'],[/(?<![\p{L}])(?:osv|o\.l|etc)\.?(?![\p{L}])/iu,'«osv.»','skriv hva det var']];
 /* Feil som diktering gir om igjen. [mønster, erstatning, forklaring] */
@@ -1778,6 +1794,7 @@ function analyserDag(ds){
   let mType=middag?middagstype(middag.t):'ingen';
   const mTypeAuto=mType;
   if(m.middag)mType=m.middag;
+  const plan=(mType==='ingen'&&m.plan)?m.plan:null;   // planlagt middag – gjelder bare til middagen er ført
   // grønt (maks 1 per småmåltid, 2 til middag), bær (porsjoner à 150 g), frukt
   let gront=0,baer=0;const frukter=[];const fruktPerFelt={};
   alle.forEach(f=>{
@@ -1814,11 +1831,12 @@ function analyserDag(ds){
   finn(VANN_BOKS,tekstAlle).forEach(x=>{vann+=tall(x[1])*.33;});
   vann=Math.round(vann*10)/10;
   // fet fisk-pålegg og fete pålegg (bare på småmåltidene)
-  let fetfiskP=0,fettP=0;
+  let fetfiskP=0,fettP=0,fetfiskSkiver=0,rodtSkiver=0;
   felt.forEach(f=>{
     if(middag&&f.k===middag.k)return;
     const lav=f.t.toLowerCase();
-    if(finn(FETFISK_PAALEGG_RE,lav).length)fetfiskP++;
+    if(finn(FETFISK_PAALEGG_RE,lav).length){fetfiskP++;fetfiskSkiver+=skiverMed(lav,FETFISK_PAALEGG_ORD);}
+    if(finn(RODT_PAALEGG_RE,lav).length)rodtSkiver+=skiverMed(lav,RODT_PAALEGG_ORD);
     fettP+=new Set(finn(FETT_PAALEGG_RE,lav).map(x=>x[0])).size;
   });
   const fruktAnt=frukter.length;
@@ -1831,7 +1849,7 @@ function analyserDag(ds){
     juiceGlass,juiceFrukt,
     vann:Math.max(0,Math.round((vann+(just.vann||0))*10)/10),
     juice:JUICE_RE.test(tekstAlle),
-    frukter,fruktPerFelt,fetfiskP,fettP,just};
+    frukter,fruktPerFelt,fetfiskP,fettP,fetfiskSkiver,rodtSkiver,plan,just};
   r.fem=r.gront+r.baer+r.frukt;
   r.merknader=merknaderFor(r,m);
   return r;
@@ -1886,10 +1904,29 @@ function dagHarMerknad(ds){
 function analyserUke(ds){
   const mon=pd(mondayOf(ds));const dager=[];
   for(let i=0;i<7;i++){const d=dstr(addD(mon,i));if(d>=SEASON_START&&d<=SEASON_END)dager.push(analyserDag(d));}
-  const tell={rodt:0,fetfisk:0,hvitfisk:0,kylling:0,skalldyr:0,annet:0};
-  let fetfiskP=0,fettP=0,middager=0;
-  dager.forEach(a=>{if(a.mType&&a.mType!=='ingen'){tell[a.mType]=(tell[a.mType]||0)+1;middager++;}fetfiskP+=a.fetfiskP;fettP+=a.fettP;});
-  return {dager,tell,fetfiskP,fettP,middager};
+  const tell={rodt:0,fetfisk:0,hvitfisk:0,kylling:0,skalldyr:0,annet:0},plan={rodt:0,fetfisk:0,hvitfisk:0,kylling:0,skalldyr:0,annet:0};
+  let fetfiskP=0,fettP=0,middager=0,planlagt=0,fetfiskS=0,rodtS=0;const uplanlagt=[];
+  dager.forEach(a=>{
+    if(a.mType&&a.mType!=='ingen'){tell[a.mType]=(tell[a.mType]||0)+1;middager++;}
+    else if(a.plan){plan[a.plan]=(plan[a.plan]||0)+1;planlagt++;}
+    else if(a.ds>=dstr(today()))uplanlagt.push(a.ds);
+    fetfiskP+=a.fetfiskP;fettP+=a.fettP;fetfiskS+=a.fetfiskSkiver;rodtS+=a.rodtSkiver;
+  });
+  const sum=k=>(tell[k]||0)+(plan[k]||0);
+  /* Terje: fet fisk på brødet erstatter én av de to fet fisk-middagene (da inntil 5 skiver i uka). */
+  const paaleggsuke=fetfiskS>0,middagsuke=!paaleggsuke&&sum('fetfisk')>=2;
+  const fetMaal=paaleggsuke?1:2;
+  const fleksMaal=1+(paaleggsuke?1:0);   // skalldyr eller ekstra kylling/hvit fisk (+ plassen fet fisk-pålegget frigjør)
+  const fleksBrukt=sum('skalldyr')+Math.max(0,sum('kylling')-1)+Math.max(0,sum('hvitfisk')-1)+sum('annet');
+  const igjen={
+    rodt:Math.max(0,2-sum('rodt')),fetfisk:Math.max(0,fetMaal-sum('fetfisk')),hvitfisk:Math.max(0,1-sum('hvitfisk')),
+    kylling:Math.max(0,1-sum('kylling')),fri:Math.max(0,fleksMaal-fleksBrukt),
+    fiskSkiver:middagsuke?0:Math.max(0,FETFISK_PAALEGG_MAKS-fetfiskS),
+    rodtSkiver:Math.floor((ROD_UKE_G-sum('rodt')*ROD_MIDDAG_G)/ROD_SKIVE_G)-rodtS
+  };
+  const over={rodt:sum('rodt')>2,fetfisk:sum('fetfisk')>fetMaal,hvitfisk:sum('hvitfisk')>2,kylling:sum('kylling')>2,fri:fleksBrukt>fleksMaal,
+    fiskSkiver:fetfiskS>FETFISK_PAALEGG_MAKS||(paaleggsuke&&sum('fetfisk')>=2),rodtSkiver:igjen.rodtSkiver<0};
+  return {dager,tell,plan,sum,fetfiskP,fettP,fetfiskS,rodtS,middager,planlagt,uplanlagt,paaleggsuke,middagsuke,fetMaal,fleksMaal,igjen,over};
 }
 
 /* ---- visning ---- */
@@ -1901,26 +1938,53 @@ function tellerÅpen(){try{return JSON.parse(localStorage.getItem(TELLER_APEN))|
 function tellerHtml(ds){
   const a=analyserDag(ds),u=analyserUke(ds),åpen=tellerÅpen();
   const j=k=>a.just[k]?'*':'';
-  const st=(v,min)=>v>=min?'ok':'';
-  let h='<div class="card teller" id="tellbox"><div class="tlhead"><b>'+(ds===dstr(today())?'I dag':DAGER_K[pd(ds).getDay()]+' '+fmtShort(ds))+'</b><span class="small">trykk på et tall for å rette</span></div><div class="piller">';
-  h+=pille('Måltider',a.maltider,'/'+MAAL.maltider,st(a.maltider,MAAL.maltider));
-  h+=pille('Melk',tN(a.melk)+j('melk'),'/'+MAAL.melk,st(a.melk,MAAL.melk),'data-just="melk"');
-  h+=pille('Grønt',a.gront+j('gront'),'/'+MAAL.grontMin+'–'+MAAL.grontMaal,st(a.gront,MAAL.grontMin),'data-just="gront"');
-  h+=pille('Bær',a.baer+j('baer'),'/'+MAAL.baerMin+'–'+MAAL.baerMaks,st(a.baer,MAAL.baerMin),'data-just="baer"');
-  h+=pille(a.juiceFrukt?'Frukt (m/juice)':'Frukt',tN(a.frukt)+j('frukt'),'maks '+MAAL.fruktMaks,a.frukt>MAAL.fruktMaks?'over':'ok','data-just="frukt"');
-  h+=pille('5 om dagen',tN(a.fem),'/'+MAAL.fem,st(a.fem,MAAL.fem));
-  h+=pille('Vann, liter',tN(a.vann)+j('vann'),'/1,5–2',st(a.vann,MAAL.vannMin),'data-just="vann"');
-  h+=pille('Middag',a.mType==='ingen'?'–':MIDDAGNAVN[a.mType].replace('Rødt kjøtt','Kjøtt'),'','','data-uke="1"');
+  const iDag=dstr(today()),fortid=ds<iDag;
+  const dagNavn=ds===iDag?'i dag':DAGER_K[pd(ds).getDay()]+' '+fmtShort(ds);
+  /* «igjen»-pille: stort tall = det som gjenstår, lite = det som er ført */
+  const ig=(navn,rest,har,data,erOver)=>pille(navn,erOver?'over':(rest>0?tN(rest):'✓'),'· har '+har,erOver?'over':(rest>0?'':'ok'),data);
+  let h='<div class="card teller" id="tellbox"><div class="tlhead"><b>'+(fortid?'Manglet ':'Igjen ')+dagNavn+'</b><span class="small">trykk på et tall for å rette</span></div><div class="piller">';
+  h+=ig('Måltider',Math.max(0,MAAL.maltider-a.maltider),a.maltider);
+  h+=ig('Melk, glass',Math.max(0,MAAL.melk-a.melk),tN(a.melk)+j('melk'),'data-just="melk"');
+  h+=ig('Grønt',Math.max(0,MAAL.grontMin-a.gront),a.gront+j('gront'),'data-just="gront"');
+  h+=ig('Bær',Math.max(0,MAAL.baerMin-a.baer),a.baer+j('baer'),'data-just="baer"');
+  h+=ig(a.juiceFrukt?'Frukt (m/juice)':'Frukt',Math.max(0,MAAL.fruktMaks-a.frukt),tN(a.frukt)+j('frukt'),'data-just="frukt"',a.frukt>MAAL.fruktMaks);
+  h+=ig('5 om dagen',Math.max(0,MAAL.fem-a.fem),tN(a.fem));
+  h+=ig('Vann, liter',Math.max(0,Math.round((MAAL.vannMin-a.vann)*10)/10),tN(a.vann)+j('vann'),'data-just="vann"');
+  const mt=a.mType!=='ingen'?a.mType:a.plan;
+  h+=pille('Middag',mt?MIDDAGNAVN[mt].replace('Rødt kjøtt','Kjøtt'):'–',a.mType==='ingen'&&a.plan?'plan':'',a.mType==='ingen'&&a.plan?'plan':'','data-uke="1"');
   h+='</div>';
-  const over=MIDDAGTYPER.filter(([k,n,mål,maks])=>maks&&(u.tell[k]||0)>mål).length+(u.fetfiskP>FETFISK_PAALEGG_MAKS?1:0);
-  h+='<details class="tld" data-tk="uke"'+(åpen.uke?' open':'')+'><summary><b>Uke '+isoWeek(pd(ds)).week+'</b> · middager og pålegg'+(over?' <span class="badge bad">'+over+' over</span>':'')+'</summary><div class="piller">';
-  MIDDAGTYPER.forEach(([k,n,mål,maks])=>{
-    const v=u.tell[k]||0;
-    h+=pille(n,v,(maks?'maks ':'/')+mål,maks?(v>mål?'over':'ok'):(v>=mål?'ok':''),'data-uke="1"');
-  });
-  h+=pille('Fiskepålegg',u.fetfiskP,'maks '+FETFISK_PAALEGG_MAKS,u.fetfiskP>FETFISK_PAALEGG_MAKS?'over':'ok','data-uke="1"');
+  // påleggstips for dagen ut fra middagen (ført eller planlagt) og uka
+  const tips=[];
+  if(!fortid){
+    if(mt==='fetfisk')tips.push('Fet fisk til middag – ikke fet fisk på brødet i dag.');
+    else if(mt==='rodt')tips.push('Kjøtt til middag – ta kalkun, kylling, lett ost eller egg på brødet, ikke rødt kjøtt eller svin.');
+    if(u.middagsuke)tips.push('Middagsuke (to fet fisk-middager) – ingen fet fisk på brødet denne uka.');
+    else if(u.paaleggsuke&&mt!=='fetfisk'&&u.igjen.fiskSkiver>0)tips.push('Påleggsuke – du kan ta fet fisk på brødet ('+u.igjen.fiskSkiver+' skive'+(u.igjen.fiskSkiver>1?'r':'')+' igjen i uka).');
+    if(!mt)tips.push('Ingen middag planlagt. Trykk på Middag for å planlegge.');
+  }
+  if(tips.length)h+='<div class="tltips">'+tips.map(x=>'<div>'+esc(x)+'</div>').join('')+'</div>';
+  // uka
+  const restListe=[['rodt','rødt kjøtt'],['fetfisk','fet fisk'],['hvitfisk','hvit fisk'],['kylling','kylling'],['fri','skalldyr/fri']]
+    .filter(([k])=>u.igjen[k]>0).map(([k,n])=>u.igjen[k]+' '+n);
+  const nOver=Object.values(u.over).filter(Boolean).length;
+  h+='<details class="tld" data-tk="uke"'+(åpen.uke?' open':'')+'><summary><b>Uke '+isoWeek(pd(ds)).week+'</b> <span class="tlsum">· igjen: '+(restListe.length?restListe.join(', '):'ingenting')+'</span>'+(nOver?' <span class="badge bad">'+nOver+' over</span>':'')+'</summary><div class="piller">';
+  const wk=(navn,k)=>{const p=u.plan[k]||0,s=u.tell[k]||0;
+    return pille(navn,u.over[k]?'over':(u.igjen[k]>0?u.igjen[k]:'✓'),(p?'· '+(s?s+' + ':'')+p+' plan':'· '+s+' spist'),u.over[k]?'over':(u.igjen[k]>0?'':'ok'),'data-uke="1"');};
+  h+=wk('Rødt kjøtt','rodt');
+  h+=wk('Fet fisk','fetfisk');
+  h+=wk('Hvit fisk','hvitfisk');
+  h+=wk('Kylling','kylling');
+  h+=pille('Skalldyr/fri',u.over.fri?'over':(u.igjen.fri>0?u.igjen.fri:'✓'),'· av '+u.fleksMaal,u.over.fri?'over':(u.igjen.fri>0?'':'ok'),'data-uke="1"');
+  h+=pille('Fisk på brød',u.over.fiskSkiver?'over':u.igjen.fiskSkiver,'· har '+u.fetfiskS,u.over.fiskSkiver?'over':'','data-uke="1"');
+  h+=pille('Rødt på brød',u.over.rodtSkiver?'over':u.igjen.rodtSkiver,'· har '+u.rodtS,u.over.rodtSkiver?'over':'','data-uke="1"');
   h+=pille('Fete pålegg',u.fettP,'helst 0',u.fettP>=3?'over':'','data-uke="1"');
-  h+='</div><div class="small" style="margin-top:6px">Middager ført: '+u.middager+' av '+u.dager.length+'. Fiskepålegg = røkelaks, sild, makrell o.l. Fete pålegg = leverpostei, servelat, salami, bacon.</div></details>';
+  h+='</div><div class="small" style="margin-top:6px">';
+  h+=u.paaleggsuke?'<b>Påleggsuke:</b> fet fisk på brødet ('+u.fetfiskS+' skive'+(u.fetfiskS>1?'r':'')+') erstatter én fet fisk-middag. Plassen går til skalldyr, ekstra kylling/hvit fisk eller eggmiddag.'
+    :u.middagsuke?'<b>Middagsuke:</b> to fet fisk-middager – ingen fet fisk på brødet.'
+    :'Fet fisk: to middager, <i>eller</i> én middag og inntil 5 skiver på brødet.';
+  if(u.uplanlagt.length)h+=' Ikke planlagt: '+u.uplanlagt.map(d=>DAGER_K[pd(d).getDay()]).join(', ')+'.';
+  h+=' Pålegg telles i skiver. Rødt på brød = Helsedirektoratets 350 g rødt kjøtt i uka minus kjøttmiddagene.';
+  h+='</div><button type="button" class="btn sec sm" data-uke="1" style="margin-top:8px">Planlegg middager</button></details>';
   const mk=a.merknader;
   if(mk.length){
     const ikon={feil:'✎',uklart:'?',terje:'T',mine:'D'};
@@ -1980,22 +2044,40 @@ function justerModal(k){
   };
   vis();
 }
-function middagModal(){
-  const u=analyserUke(state.kostDate);
-  let h='<h3>Middager uke '+isoWeek(pd(state.kostDate)).week+'<button class="btn ghost sm" onclick="closeModal()">Lukk</button></h3>'
-    +'<div class="muted" style="margin-bottom:10px">Appen gjetter ut fra ordene. Velg riktig type hvis den tar feil.</div><div class="list">';
+function middagModal(ukeDs){
+  ukeDs=ukeDs||state.kostDate;
+  const u=analyserUke(ukeDs),mon=pd(mondayOf(ukeDs));
+  let h='<h3>Middager uke '+isoWeek(mon).week+'<button class="btn ghost sm" onclick="closeModal()">Lukk</button></h3>'
+    +'<div class="mnav"><button class="btn ghost sm" data-uk="-7">‹ Forrige uke</button><button class="btn ghost sm" data-uk="7">Neste uke ›</button></div>'
+    +'<div class="muted" style="margin-bottom:10px">Ført middag: appen gjetter typen ut fra ordene – rett hvis den tar feil. Dager uten middag: velg hva du planlegger, så trekkes det fra i «igjen».</div><div class="list">';
   u.dager.forEach(a=>{
-    const opts=['rodt','fetfisk','hvitfisk','kylling','skalldyr','annet','ingen'].map(k=>'<option value="'+k+'"'+(a.mType===k?' selected':'')+'>'+MIDDAGNAVN[k]+(k===a.mTypeAuto&&DB.meals[a.ds]&&DB.meals[a.ds].middag?' (appens gjetning)':'')+'</option>').join('');
-    const txt=a.middag?a.middag.t.replace(/^kl\.\s*\d{1,2}[:.]\d{2}\s*[–-]\s*/,''):'–';
-    h+='<div class="mrad"><div><b>'+DAGER_K[pd(a.ds).getDay()]+' '+fmtShort(a.ds)+'</b><div class="small">'+esc(txt.length>90?txt.slice(0,88)+'…':txt)+'</div></div><select data-mt="'+a.ds+'">'+opts+'</select></div>';
+    const m=DB.meals[a.ds]||{};let opts,lab;
+    if(a.middag||m.middag){
+      opts=['rodt','fetfisk','hvitfisk','kylling','skalldyr','annet','ingen'].map(k=>'<option value="'+k+'"'+(a.mType===k?' selected':'')+'>'+MIDDAGNAVN[k]+(k===a.mTypeAuto&&m.middag?' (appens gjetning)':'')+'</option>').join('');
+      lab=a.middag?a.middag.t.replace(/^kl\.\s*\d{1,2}[:.]\d{2}\s*[–-]\s*/,''):'–';
+      lab=esc(lab.length>90?lab.slice(0,88)+'…':lab);
+    }else{
+      opts='<option value="">– ikke planlagt –</option>'+Object.keys(PLANNAVN).map(k=>'<option value="'+k+'"'+(m.plan===k?' selected':'')+'>'+PLANNAVN[k]+'</option>').join('');
+      lab=m.plan?'<i>planlagt</i>':'ikke ført';
+    }
+    h+='<div class="mrad"><div><b>'+DAGER_K[pd(a.ds).getDay()]+' '+fmtShort(a.ds)+'</b><div class="small">'+lab+'</div></div><select data-mt="'+a.ds+'" data-modus="'+(a.middag||m.middag?'fort':'plan')+'">'+opts+'</select></div>';
   });
-  h+='</div><div class="small" style="margin-top:10px">Terje per uke: 2 rødt kjøtt (maks), 2 fet fisk, 1 hvit fisk, 1 kylling, 1 skalldyr eller ekstra kylling/hvit fisk. Fet fisk-pålegg maks 5 i uka, ikke samme dag som fet fisk-middag.</div>';
+  const rest=[['rodt','rødt kjøtt'],['fetfisk','fet fisk'],['hvitfisk','hvit fisk'],['kylling','kylling'],['fri','skalldyr eller ekstra kylling/hvit fisk/eggmiddag']].filter(([k])=>u.igjen[k]>0).map(([k,n])=>u.igjen[k]+' '+n);
+  h+='</div><div class="small" style="margin-top:10px"><b>Igjen å fordele:</b> '+(rest.length?rest.join(', '):'ingenting')+'. '
+    +(u.paaleggsuke?'Påleggsuke – fet fisk på brødet erstatter én fet fisk-middag.':u.middagsuke?'Middagsuke – ingen fet fisk på brødet.':'')
+    +'</div><div class="small" style="margin-top:6px">Terje per uke: 2 rødt kjøtt (maks), 2 fet fisk, 1 hvit fisk, 1 kylling, 1 skalldyr eller ekstra kylling/hvit fisk, aldri mer enn 2 like. Fet fisk på brødet (inntil 5 skiver) erstatter én fet fisk-middag.</div>';
   openModal(h);
+  modalEl.querySelectorAll('[data-uk]').forEach(b=>b.addEventListener('click',()=>middagModal(dstr(addD(mon,+b.dataset.uk)))));
   modalEl.querySelectorAll('[data-mt]').forEach(s=>s.addEventListener('change',()=>{
     const ds=s.dataset.mt,m=DB.meals[ds]||(DB.meals[ds]={});
-    const auto=(()=>{const x=m.middag;delete m.middag;const v=analyserDag(ds).mTypeAuto;if(x)m.middag=x;return v;})();
-    if(s.value===auto)delete m.middag;else m.middag=s.value;
-    saveDB();oppdaterTeller();
+    if(s.dataset.modus==='plan'){
+      if(s.value)m.plan=s.value;else delete m.plan;
+      if(!Object.keys(m).length)delete DB.meals[ds];
+    }else{
+      const auto=(()=>{const x=m.middag;delete m.middag;const v=analyserDag(ds).mTypeAuto;if(x)m.middag=x;return v;})();
+      if(s.value===auto)delete m.middag;else m.middag=s.value;
+    }
+    saveDB();oppdaterTeller();middagModal(ukeDs);
   }));
 }
 
