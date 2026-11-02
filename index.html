@@ -443,7 +443,7 @@ let storageOK=true, MEMSTORE=null;
 function defaultDB(){return {
   profile:{navn:'',hoyde:null,startvekt:null,maalEgen:null,maalTerje:null,maalDato:null,
            kroppPaaminn:'30',tider:{tir:'17',ons:'17',tor:'17'}},
-  weights:{}, meals:{}, meds:[], attendance:{}, sent:{}, updated:null
+  weights:{}, meals:{}, meds:[], attendance:{}, sent:{}, blodsukker:{}, updated:null
 };}
 function loadDB(){
   try{
@@ -529,7 +529,7 @@ function photoIndexOf(list){
    Datafila ligger i det private lageret «camp-kalori-data» på GitHub, måltidsbildene som egne filer i bilder/.
    De samme reglene står i App/server/sky.py – endres det ene stedet, må det andre følge med. */
 const SYNK_FIL='camp-kalori-data.json';
-const SYNK_SAMLINGER=['weights','meals','attendance','sent','notater'];
+const SYNK_SAMLINGER=['weights','meals','attendance','sent','notater','blodsukker'];
 const SKY_API='https://api.github.com',SKY_LAGER='camp-kalori-data',SKY_BILDER='bilder/',SKY_KEY='campkalori_sky';
 /* Tilkoblingen (nøkkel, eier, hva som sist ble synket) hører til enheten og ligger utenfor DB, så den aldri synkes. */
 let SKY={};
@@ -1338,8 +1338,8 @@ function renderHjem(){
   }
   if(ts===SEASON_START){
     html+='<div class="banner warn"><b>I dag er første veiedag – startvekten!</b> Vei deg om morgenen, ta bilde der du står på vekten (føtter og vekttall synlig), og send begge deler til Terje før kl. 14:00. <a href="#" data-go="vekt" style="color:inherit;font-weight:700">Registrer startvekt og bilde →</a></div>';
-  }else if(t.getDay()===1&&ts>=SEASON_START&&ts<=SEASON_END&&DB.weights[ts]==null){
-    html+='<div class="banner warn"><b>I dag er veiedag.</b> Vei deg om morgenen og registrer mandagsvekten – den skal med i rapporten. <a href="#" data-go="vekt" style="color:inherit;font-weight:700">Registrer vekt →</a></div>';
+  }else if(t.getDay()===1&&ts>=SEASON_START&&ts<=SEASON_END&&veiedagUferdig(ts)){
+    html+=veiedagBanner(ts);
   }
   if(ts==='2027-06-24'){
     html+='<div class="banner good"><b>Siste dag!</b> Send morgenvekten (sluttvekten) og siste rapport før kl. 14:00. Gratulerer med gjennomført Camp Kalori-år!</div>';
@@ -1394,6 +1394,7 @@ function renderHjem(){
     html+='<div class="card"><h2>Vekten din</h2><div class="muted">Ingen vekt registrert ennå. Første veiing er mandag 10. august 2026 – din egen vekt, hver mandag morgen.</div><div class="btnrow"><button data-go="vekt" class="btn sm">Registrer vekt</button></div></div>';
   }
 
+  html+=bsKort();
   html+='<div id="kroppRem"></div>';
 
   // Kommende hendelser
@@ -1442,6 +1443,64 @@ function evLi(e){
 
 /* ---------- vektserie/graf ---------- */
 function weightSeries(){return Object.keys(DB.weights).sort().map(d=>({d,v:DB.weights[d]})).filter(x=>x.v!=null);}
+/* Morgenblodsukker fra Contour: DB.blodsukker[dato]={v,kl}, første måling før kl. 12. Føres inn av «Hent»-knappen
+   på Mac-en (App/server/hent_helsedata.py), som også henter vekt og blodtrykk fra Withings. */
+const BS_MAAL=[3.9,7.2];
+function bsSerie(){const b=DB.blodsukker||{};return Object.keys(b).sort().map(d=>({d,v:b[d]&&b[d].v,kl:b[d]&&b[d].kl})).filter(x=>x.v!=null);}
+function erMac(){return /Macintosh/.test(navigator.userAgent)&&!(navigator.maxTouchPoints>1);}
+/* Knappen åpner campkalori://hent – Mac-programmet «Camp Kalori» tar imot den. Virker bare på Mac-en. */
+function hentKnapp(cls){return erMac()?'<a class="btn '+(cls||'sm')+'" href="campkalori://hent">Hent vekt, blodtrykk og blodsukker</a>':'';}
+function veiedagUferdig(ts){return DB.weights[ts]==null||!(DB.blodsukker||{})[ts];}
+function veiedagBanner(ts){
+  const li=(ok,txt)=>'<li>'+txt+(ok?' <b>✓</b>':'')+'</li>';
+  return '<div class="banner warn"><b>I dag er veiedag.</b><ol style="margin:6px 0 8px 18px;padding:0">'
+    +li(DB.weights[ts]!=null,'Vei deg om morgenen.')
+    +li(false,'Mål blodtrykket med BPM Connect.')
+    +li(!!(DB.blodsukker||{})[ts],'Eksporter blodsukkeret fra Contour-appen (CSV) og lagre fila i Jottacloud → Contour.')
+    +'</ol>'+(erMac()?hentKnapp('sm')+' <a href="#" data-go="vekt" style="color:inherit;font-weight:700;margin-left:6px">eller registrer vekten selv →</a>'
+      :'Trykk så «Hent» i Camp Kalori på Mac-en – eller <a href="#" data-go="vekt" style="color:inherit;font-weight:700">registrer vekten selv →</a>')
+    +'</div>';
+}
+function bsGraf(ser){
+  const Wd=640,H=210,L=40,R=14,T=12,B=30;
+  const t0=pd(ser[0].d).getTime(),t1=Math.max(pd(ser[ser.length-1].d).getTime(),today().getTime())+86400000;
+  const vals=ser.map(p=>p.v);
+  const lo=Math.min(4,Math.floor(Math.min(...vals))),hi=Math.max(12,Math.ceil(Math.max(...vals)));
+  const X=d=>L+(pd(d).getTime()-t0)/(t1-t0)*(Wd-L-R),Y=v=>T+(hi-v)/(hi-lo)*(H-T-B);
+  let g='<rect x="'+L+'" y="'+Y(BS_MAAL[1])+'" width="'+(Wd-L-R)+'" height="'+(Y(BS_MAAL[0])-Y(BS_MAAL[1]))+'" fill="#008300" opacity="0.08"/>';
+  for(let v=Math.ceil(lo/2)*2;v<=hi;v+=2){
+    g+='<line x1="'+L+'" y1="'+Y(v)+'" x2="'+(Wd-R)+'" y2="'+Y(v)+'" stroke="#eeede9"/>'
+      +'<text x="'+(L-6)+'" y="'+(Y(v)+3.5)+'" text-anchor="end" font-size="10.5" fill="#8a8880">'+v+'</text>';
+  }
+  for(let m=new Date(pd(ser[0].d).getFullYear(),pd(ser[0].d).getMonth()+1,1);m.getTime()<t1;m.setMonth(m.getMonth()+1)){
+    const x=X(dstr(m));
+    g+='<line x1="'+x+'" y1="'+T+'" x2="'+x+'" y2="'+(H-B)+'" stroke="#f3f2ef"/><text x="'+(x+3)+'" y="'+(H-B+15)+'" font-size="10.5" fill="#8a8880">'+MND_K[m.getMonth()]+'</text>';
+  }
+  /* snitt per uke (mandag–søndag), tegnet midt i uka */
+  const uker={};ser.forEach(p=>{const m=mondayOf(p.d);(uker[m]=uker[m]||[]).push(p.v);});
+  const snitt=Object.keys(uker).sort().map(m=>{const a=uker[m];return [X(dstr(addD(pd(m),3))),Y(a.reduce((s,v)=>s+v,0)/a.length)];});
+  const farge=v=>v>10?'#c22a28':v>BS_MAAL[1]?'#a36a00':'#008300';
+  g+=ser.map(p=>'<circle cx="'+X(p.d).toFixed(1)+'" cy="'+Y(p.v).toFixed(1)+'" r="2.8" fill="'+farge(p.v)+'" opacity="0.75"><title>'+fmt(p.d)+' kl. '+(p.kl||'')+': '+tN(p.v)+'</title></circle>').join('');
+  if(snitt.length>1)g+='<path d="M'+snitt.map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' L')+'" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>';
+  return '<svg viewBox="0 0 '+Wd+' '+H+'" role="img" aria-label="Morgenblodsukker">'+g+'</svg>'
+    +'<div class="small" style="margin-top:4px">Prikker: hver morgen (grønn innenfor 3,9–7,2, gul over, rød over 10). Blå linje: snitt per uke.</div>';
+}
+function bsKort(){
+  const ser=bsSerie();if(!ser.length)return '';
+  const sist=ser[ser.length-1],dager=Math.round((today()-pd(sist.d))/86400000);
+  const snitt=(a,b)=>{const x=ser.filter(p=>p.d>=a&&p.d<=b).map(p=>p.v);return x.length?x.reduce((s,v)=>s+v,0)/x.length:null;};
+  const s7=snitt(dstr(addD(today(),-6)),dstr(today())),f7=snitt(dstr(addD(today(),-13)),dstr(addD(today(),-7)));
+  const kl=v=>v==null?'':v<=BS_MAAL[1]?'good':v>10?'bad':'';
+  return '<div class="card"><h2>Blodsukker om morgenen<span class="mini">mål 3,9–7,2</span></h2>'
+    +'<div class="statrow">'
+    +'<div class="stat"><div class="v '+kl(sist.v)+'">'+tN(sist.v)+'</div><div class="l">siste ('+fmtShort(sist.d)+')</div></div>'
+    +'<div class="stat"><div class="v '+kl(s7)+'">'+(s7!=null?tN(s7):'–')+'</div><div class="l">snitt siste 7 dager</div></div>'
+    +'<div class="stat"><div class="v '+kl(f7)+'">'+(f7!=null?tN(f7):'–')+'</div><div class="l">snitt uka før</div></div>'
+    +'</div><div class="chartbox" style="margin-top:10px">'+bsGraf(ser)+'</div>'
+    +(dager>7?'<div class="banner warn" style="margin-top:8px">Siste blodsukker i appen er '+dager+' dager gammelt. Eksporter CSV fra Contour-appen til Jottacloud → Contour'+(erMac()?' og trykk Hent.':' og trykk «Hent» på Mac-en.')+'</div>':'')
+    +(erMac()?'<div class="btnrow">'+hentKnapp('sec sm')+'</div>':'')
+    +'</div>';
+}
 function startWeight(){if(DB.profile.startvekt!=null)return DB.profile.startvekt;if(DB.weights[SEASON_START]!=null)return DB.weights[SEASON_START];const s=weightSeries();return s.length?s[0].v:null;}
 function goalWeight(){return DB.profile.maalTerje!=null?DB.profile.maalTerje:DB.profile.maalEgen;}
 function goalDate(){
@@ -1578,7 +1637,9 @@ function renderKosthold(){
     +'<input type="date" id="kdate" value="'+ds+'" min="'+SEASON_START+'" max="'+SEASON_END+'" style="position:absolute;inset:0;opacity:0;width:100%;height:100%" aria-label="Velg dato"></div>'
     +'<button data-nav="1" aria-label="Neste dag">›</button></div>'
     +'<div class="daystrip">'+strip+'</div>';
-  if(d.getDay()===1&&DB.weights[ds]==null&&ds>=SEASON_START){
+  if(d.getDay()===1&&ds>=SEASON_START&&ds===dstr(today())&&veiedagUferdig(ds)){
+    html+='<div class="banner warn" style="padding:9px 12px;font-size:.8rem">Mandag = veiedag: vekt, blodtrykk og blodsukker. '+(erMac()?hentKnapp('sm'):'<a href="#" data-go="hjem" style="color:inherit;font-weight:700">Se Hjem →</a>')+'</div>';
+  }else if(d.getDay()===1&&DB.weights[ds]==null&&ds>=SEASON_START){
     html+='<div class="banner warn" style="padding:9px 12px;font-size:.8rem">Mandag = veiedag. <a href="#" data-go="vekt" style="color:inherit;font-weight:700">Registrer mandagsvekten →</a></div>';
   }
   html+=tellerHtml(ds);
@@ -2045,6 +2106,12 @@ function justerModal(k){
   };
   vis();
 }
+/* Hvor mange av en middagstype som er ledig i uka (planlegging). Ekstra kylling/hvit fisk, skalldyr og
+   eggmiddag deler «skalldyr/fri»-plassen. Er det null igjen, kan typen likevel velges – den vises da som for mange. */
+function middagLedig(u,k){return k==='rodt'?u.igjen.rodt:k==='fetfisk'?u.igjen.fetfisk:k==='hvitfisk'?u.igjen.hvitfisk+u.igjen.fri:k==='kylling'?u.igjen.kylling+u.igjen.fri:u.igjen.fri;}
+function middagOver(u,k){return k==='rodt'?u.over.rodt:k==='fetfisk'?u.over.fetfisk
+  :k==='hvitfisk'?u.over.hvitfisk||(u.over.fri&&u.sum('hvitfisk')>1):k==='kylling'?u.over.kylling||(u.over.fri&&u.sum('kylling')>1)
+  :(k==='skalldyr'||k==='annet')?u.over.fri:false;}
 function middagModal(ukeDs){
   ukeDs=ukeDs||state.kostDate;
   const u=analyserUke(ukeDs),mon=pd(mondayOf(ukeDs));
@@ -2058,13 +2125,18 @@ function middagModal(ukeDs){
       lab=a.middag?a.middag.t.replace(/^kl\.\s*\d{1,2}[:.]\d{2}\s*[–-]\s*/,''):'–';
       lab=esc(lab.length>90?lab.slice(0,88)+'…':lab);
     }else{
-      opts='<option value="">– ikke planlagt –</option>'+Object.keys(PLANNAVN).map(k=>'<option value="'+k+'"'+(m.plan===k?' selected':'')+'>'+PLANNAVN[k]+'</option>').join('');
+      opts='<option value="">– ikke planlagt –</option>'+Object.keys(PLANNAVN).map(k=>{const n=middagLedig(u,k);
+        return '<option value="'+k+'"'+(m.plan===k?' selected':'')+'>'+PLANNAVN[k]+(m.plan===k?'':' – '+(n>0?n+' igjen':'ingen igjen (blir for mange)'))+'</option>';}).join('');
       lab=m.plan?'<i>planlagt</i>':'ikke ført';
     }
-    h+='<div class="mrad"><div><b>'+DAGER_K[pd(a.ds).getDay()]+' '+fmtShort(a.ds)+'</b><div class="small">'+lab+'</div></div><select data-mt="'+a.ds+'" data-modus="'+(a.middag||m.middag?'fort':'plan')+'">'+opts+'</select></div>';
+    const type=a.mType&&a.mType!=='ingen'?a.mType:m.plan;
+    h+='<div class="mrad"><div><b>'+DAGER_K[pd(a.ds).getDay()]+' '+fmtShort(a.ds)+'</b>'+(type&&middagOver(u,type)?' <span class="badge bad">for mange</span>':'')+'<div class="small">'+lab+'</div></div><select data-mt="'+a.ds+'" data-modus="'+(a.middag||m.middag?'fort':'plan')+'">'+opts+'</select></div>';
   });
   const rest=[['rodt','rødt kjøtt'],['fetfisk','fet fisk'],['hvitfisk','hvit fisk'],['kylling','kylling'],['fri','skalldyr eller ekstra kylling/hvit fisk/eggmiddag']].filter(([k])=>u.igjen[k]>0).map(([k,n])=>u.igjen[k]+' '+n);
-  h+='</div><div class="small" style="margin-top:10px"><b>Igjen å fordele:</b> '+(rest.length?rest.join(', '):'ingenting')+'. '
+  const forMange=[['rodt','rødt kjøtt',2],['fetfisk','fet fisk',u.fetMaal],['hvitfisk','hvit fisk',2],['kylling','kylling',2]].filter(([k])=>u.over[k]).map(([k,n,maks])=>u.sum(k)+' '+n+' (maks '+maks+')');
+  if(u.over.fri)forMange.push('for mange ekstra (skalldyr, eggmiddag eller kylling/hvit fisk utover én)');
+  h+='</div>'+(forMange.length?'<div class="small" style="margin-top:10px;color:var(--bad)"><b>For mange:</b> '+forMange.join(', ')+'.</div>':'')
+    +'<div class="small" style="margin-top:10px"><b>Igjen å fordele:</b> '+(rest.length?rest.join(', '):'ingenting')+'. '
     +(u.paaleggsuke?'Påleggsuke – fet fisk på brødet erstatter én fet fisk-middag.':u.middagsuke?'Middagsuke – ingen fet fisk på brødet.':'')
     +'</div><div class="small" style="margin-top:6px">Terje per uke: 2 rødt kjøtt (maks), 2 fet fisk, 1 hvit fisk, 1 kylling, 1 skalldyr eller ekstra kylling/hvit fisk, aldri mer enn 2 like. Fet fisk på brødet (inntil 5 skiver) erstatter én fet fisk-middag.</div>';
   openModal(h);
@@ -2206,7 +2278,8 @@ function renderVekt(){
     +'<div class="grid2"><div><label class="f">Dato</label><input type="date" id="wdate" value="'+clampSeason(defDate)+'" min="'+SEASON_START+'" max="'+SEASON_END+'"></div>'
     +'<div><label class="f">Vekt (kg)</label><input type="number" id="wval" inputmode="decimal" step="0.01" min="30" max="300" placeholder="f.eks. 92,4"></div></div>'
     +'<div class="btnrow"><button id="wsave">Lagre vekt</button></div>'
-    +'<div class="small" style="margin-top:8px">Vei deg hver mandag morgen på din egen vekt. På reise: ta med vekten din.</div></div>';
+    +'<div class="small" style="margin-top:8px">Vei deg hver mandag morgen på din egen vekt. På reise: ta med vekten din.'+(erMac()?' Knappen under henter vekta fra Withings (og blodtrykk og blodsukker) og fører den inn her.':'')+'</div>'
+    +(erMac()?'<div class="btnrow">'+hentKnapp('sec sm')+'</div>':'')+'</div>';
 
   // Startvekt-kort: Terje krever bilde av vekten ved første innlevering (kun 10.08)
   const svW=DB.weights[SEASON_START];
