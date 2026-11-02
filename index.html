@@ -329,10 +329,11 @@ details.tld[open] summary{margin-bottom:6px}
 ul.sjekk{list-style:none;display:flex;flex-direction:column;gap:5px}
 ul.sjekk li{display:flex;align-items:center;gap:8px;font-size:.8rem;line-height:1.35;background:#faf9f7;border-radius:9px;padding:6px 8px}
 ul.sjekk li .tx{flex:1}
-ul.sjekk li .ik{flex:none;width:20px;height:20px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:800;background:#ecebe7;color:var(--text-2)}
-ul.sjekk li.feil .ik{background:var(--bad-soft);color:var(--bad)}
-ul.sjekk li.terje .ik,ul.sjekk li.uklart .ik{background:var(--warn-soft);color:var(--warn)}
-ul.sjekk li.mine .ik{background:#eaf2fc;color:#173e6e}
+ul.sjekk li.feil{border-left:3px solid var(--bad)}
+ul.sjekk li.uklart{border-left:3px solid var(--warn)}
+ul.sjekk li.terje,ul.sjekk li.mine{border-left:3px solid #d8d6d0}
+.sjgr{font-size:.74rem;margin:10px 0 4px}
+.sjgr.feil b{color:var(--bad)} .sjgr.uklart b{color:var(--warn)}
 .daystrip button .dot.warn{background:var(--warn)}
 .klgrp{display:inline-flex;gap:6px}
 .klbtn.hv{background:var(--accent-soft);color:var(--accent)}
@@ -1779,8 +1780,12 @@ const FRUKT_BASE={eple:'eple',epler:'eple',pære:'pære',pærer:'pære',banan:'b
 const FRUKT_RE=ordRe(Object.keys(FRUKT_BASE));
 const SITRUS=new Set(['appelsin','klementin','mandarin','grapefrukt']);
 const JUICE_RE=/juice/i;
-const MELK_RE=new RegExp('(?<!['+L+'])('+TALL+')\\s+(?:stort\\s+|lite\\s+|halvt\\s+)?glass\\s+(?:med\\s+)?(?:skummet\\s?melk|skummetmelk|lettmelk|ekstra\\s?lett\\s?melk|melk|kulturmelk|kefir)','giu');
-const MELK_DL_RE=new RegExp('(?<!['+L+'])('+TALL+')\\s*dl\\s+(?:med\\s+)?(?:skummet\\s?melk|skummetmelk|lettmelk|ekstra\\s?lett\\s?melk|melk|kulturmelk|kefir)','giu');
+/* Melk: «et glass skummetmelk», «et halvt glass syrnet skummetmelk», «1/2 glass surnet skummetmelk»,
+   «et og et halvt glass melk», «2 dl skummet melk». Syrnet melk, kulturmelk og kefir teller som melk. */
+const MELK_TYPE='(?:(?:syrnet|surnet|kald|varm)\\s+)?(?:skummet\\s?melk|skummetmelk|lettmelk|ekstra\\s?lett\\s?melk|melk|kulturmelk|kefir)';
+const MELK_RE=new RegExp('(?<!['+L+'\\d/])('+TALL+'|\\d+\\s*/\\s*\\d+)(\\s+og\\s+(?:et\\s+|ett\\s+|en\\s+)?halvt?)?\\s+(?:(stort|store|lite|lille|små|halvt|halve)\\s+)?glass\\s+(?:med\\s+)?'+MELK_TYPE,'giu');
+const MELK_DL_RE=new RegExp('(?<!['+L+'\\d/])('+TALL+'|\\d+\\s*/\\s*\\d+)\\s*dl\\s+(?:med\\s+)?'+MELK_TYPE,'giu');
+function melkTall(s){const b=/^(\d+)\s*\/\s*(\d+)$/.exec(String(s).trim());return b?(+b[2]?b[1]/b[2]:0):tall(s);}
 const VANN_GLASS=Regexp_safe('(?<!['+L+'])('+TALL+')\\s+(store?\\s+|små\\s+)?glass\\s+(?:med\\s+)?(?:kaldt\\s+)?vann(?!['+L+'])');
 const VANN_LITER=Regexp_safe('(?<!['+L+'])('+TALL+')\\s*(?:liter|l)\\s+(?:med\\s+)?vann(?!['+L+'])');
 const VANN_HALV=Regexp_safe('(?<!['+L+'])(?:('+TALL+')\\s+)?halv\\s?liter\\s+(?:med\\s+)?vann(?!['+L+'])');
@@ -1839,7 +1844,7 @@ function middagstype(t){
   return 'annet';
 }
 function uteAvDrikke(t){
-  return t.replace(new RegExp('(?<!['+L+'])(?:'+TALL+')?\\s*(?:store?\\s+)?(?:glass|krus|kopp|kopper|liter|l|dl|boks|flaske)\\s+(?:med\\s+)?(?:vann|te|kaffe|melk|skummet\\s?melk|skummetmelk|lettmelk|appelsinjuice|juice|ramløsa|farris)[^.,]*','giu'),' ')
+  return t.replace(new RegExp('(?<!['+L+'])(?:'+TALL+')?\\s*(?:(?:store?|lite|halvt|halve)\\s+)?(?:glass|krus|kopp|kopper|liter|l|dl|boks|flaske)\\s+(?:med\\s+)?(?:(?:syrnet|surnet)\\s+)?(?:vann|te|kaffe|melk|skummet\\s?melk|skummetmelk|lettmelk|appelsinjuice|juice|ramløsa|farris)[^.,]*','giu'),' ')
     .replace(/(?:\d|[oO])[,.]\d+\s+(?:med\s+)?vann/giu,' ').replace(/halv\s?liter\s+vann/giu,' ').replace(/kl\.\s*\d{1,2}[:.]\d{2}\s*[–-]?/g,' ');
 }
 function harMengde(t){return /\d|½|¼|¾|(?<![\p{L}])(?:en|ett|et|ei|to|tre|fire|fem|seks|halv|halvt|kvart|porsjon|porsjoner|skive|skiver|ss|ts|dl|liten|lite|små|stor|store|neve|skje|skjeer|bit|biter|stykk|stk|filet|wraps?|plate|plater|tallerken|tallerkenen|skål|øse|porsjonsstykke|bryst|kyllingbryst|ganger)(?![\p{L}])/iu.test(t);}
@@ -1873,8 +1878,8 @@ function analyserDag(ds){
     fruktPerFelt[f.k]=[...fs];fs.forEach(x=>frukter.push(x));
   });
   // melk og vann
-  let melk=0;finn(MELK_RE,tekstAlle).forEach(x=>{melk+=tall(x[1]);});
-  finn(MELK_DL_RE,tekstAlle).forEach(x=>{melk+=tall(x[1])/2;});
+  let melk=0;finn(MELK_RE,tekstAlle).forEach(x=>{melk+=melkTall(x[1])*glassFaktor(x[3])+(x[2]?.5:0);});
+  finn(MELK_DL_RE,tekstAlle).forEach(x=>{melk+=melkTall(x[1])/2;});
   let vann=0;
   finn(VANN_GLASS,tekstAlle).forEach(x=>{vann+=tall(x[1])*glassFaktor(x[2])*GLASS_L;});
   // juice: blandet 50/50 gir et halvt glass juice + et halvt glass vann. Kostrådene: inntil 1 dl (et halvt glass) juice = én porsjon,
@@ -2049,14 +2054,21 @@ function tellerHtml(ds){
   h+='</div><button type="button" class="btn sec sm" data-uke="1" style="margin-top:8px">Planlegg middager</button></details>';
   const mk=a.merknader;
   if(mk.length){
-    const ikon={feil:'✎',uklart:'?',terje:'T',mine:'D'};
-    const nTekst=mk.filter(x=>x.type==='feil'||x.type==='uklart').length;
-    h+='<details class="tld" data-tk="sjekk"'+(åpen.sjekk!==false?' open':'')+'><summary><b>Sjekk av dagen</b> · '+mk.length+' merknad'+(mk.length>1?'er':'')+(nTekst?' <span class="badge warn">'+nTekst+' i teksten</span>':'')+'</summary><ul class="sjekk">';
-    mk.forEach(x=>{
-      h+='<li class="'+x.type+'"><span class="ik">'+ikon[x.type]+'</span><span class="tx">'+esc(x.tekst)+'</span>'
-        +(x.type==='feil'?'<button type="button" class="btn sm" data-fiks="'+x.felt+'|'+x.fiks+'">Rett</button>':'')+'</li>';
+    /* Merknadene vises i hver sin gruppe, så skrivefeil ikke blandes med manglende opplysninger og regler. */
+    const n=t=>mk.filter(x=>x.type===t).length,nRegel=n('terje')+n('mine');
+    const sum=[n('feil')?'<span class="badge bad">'+n('feil')+' skrivefeil</span>':'',n('uklart')?'<span class="badge warn">'+n('uklart')+' mangler opplysninger</span>':'',
+      nRegel?'<span class="badge neutral">'+nRegel+' regel'+(nRegel>1?'er':'')+'</span>':''].filter(Boolean).join(' ');
+    h+='<details class="tld" data-tk="sjekk"'+(åpen.sjekk!==false?' open':'')+'><summary><b>Sjekk av dagen</b> '+sum+'</summary>';
+    MERKNADSGRUPPER.forEach(([type,tittel,hjelp])=>{
+      const liste=mk.filter(x=>x.type===type);if(!liste.length)return;
+      h+='<div class="sjgr '+type+'"><b>'+tittel+'</b>'+(hjelp?' <span class="small">'+hjelp+'</span>':'')+'</div><ul class="sjekk">';
+      liste.forEach(x=>{
+        h+='<li class="'+type+'"><span class="tx">'+esc(x.tekst)+'</span>'
+          +(type==='feil'?'<button type="button" class="btn sm" data-fiks="'+x.felt+'|'+x.fiks+'">Rett</button>':'')+'</li>';
+      });
+      h+='</ul>';
     });
-    h+='</ul><div class="small" style="margin-top:6px">✎ skrivefeil · ? uklart for Terje · T Terjes regel · D din egen regel</div></details>';
+    h+='</details>';
   }else if(mealFilled(ds)){
     h+='<div class="small" style="margin-top:10px;color:var(--good)">✓ Ingen merknader på dagen.</div>';
   }
@@ -2155,6 +2167,15 @@ function middagModal(ukeDs){
 }
 
 /* ---- merknader for en rapportperiode ---- */
+const MERKNADSGRUPPER=[
+  ['feil','Skrivefeil','– trykk Rett, så byttes ordet'],
+  ['uklart','Mangler opplysninger','– Terje ser ikke mengden eller hva det er; skriv det tydeligere'],
+  ['terje','Terjes regler',''],
+  ['mine','Dine egne regler','']];
+function merknadTelling(mk){
+  const f=mk.filter(x=>x.type==='feil').length,u=mk.filter(x=>x.type==='uklart').length;
+  return [f?f+' skrivefeil':'',u?u+' mangler':''].filter(Boolean).join(', ');
+}
 function periodeMerknader(r){
   return daysInPeriod(r).filter(ds=>ds<=dstr(today())&&mealFilled(ds)).map(ds=>{
     const mk=analyserDag(ds).merknader.filter(x=>x.type==='feil'||x.type==='uklart');return {ds,mk};
@@ -2509,8 +2530,8 @@ function missingWarn(r){
   if(mw.length)out+='<div class="banner warn" style="font-size:.78rem;padding:8px 12px">Mangler mandagsvekt: '+mw.join(' og ')+'</div>';
   const pm=periodeMerknader(r);
   if(pm.length){
-    out+='<div class="banner warn" style="font-size:.78rem;padding:8px 12px"><b>Sjekk før sending:</b> '+pm.length+' dag'+(pm.length>1?'er':'')+' har skrivefeil eller uklar tekst. Trykk for å gå til dagen.<div class="pmdager">'
-      +pm.map(x=>'<button type="button" class="btn sec sm" data-gokost="'+x.ds+'">'+DAGER_K[pd(x.ds).getDay()]+' '+fmt(x.ds).slice(0,5)+' ('+x.mk.length+')</button>').join('')+'</div></div>';
+    out+='<div class="banner warn" style="font-size:.78rem;padding:8px 12px"><b>Sjekk før sending:</b> '+pm.length+' dag'+(pm.length>1?'er':'')+' har skrivefeil eller mangler opplysninger. Trykk for å gå til dagen.<div class="pmdager">'
+      +pm.map(x=>'<button type="button" class="btn sec sm" data-gokost="'+x.ds+'">'+DAGER_K[pd(x.ds).getDay()]+' '+fmt(x.ds).slice(0,5)+' ('+merknadTelling(x.mk)+')</button>').join('')+'</div></div>';
   }
   if(!out)out='<div class="banner good" style="font-size:.78rem;padding:8px 12px">Alle dager ført, vekt registrert og ingen merknader – klar til innsending.</div>';
   return out;
