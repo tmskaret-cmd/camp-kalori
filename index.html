@@ -781,6 +781,7 @@ function skyOppsett(melding){
 }
 /* Trykk på knappen øverst */
 async function synkKnappTrykk(){
+  sjekkVersjon();
   if(!SKY.token){skyOppsett();return;}
   if(skyOpptatt)return;
   const inn=await skySynk();
@@ -797,7 +798,7 @@ async function skyAuto(){
   const inn=await skySynk();
   if(inn>0){toast(inn===1?'1 ny post hentet':inn+' nye poster hentet');synkRender();}
 }
-async function skySjekkOgHent(){await skySjekk();if(skyNytt||ulagret())skyAuto();}
+async function skySjekkOgHent(){if(Date.now()-versjonSjekket>600000)sjekkVersjon();await skySjekk();if(skyNytt||ulagret())skyAuto();}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(ulagret())skyAuto();}else skySjekkOgHent();});
 window.addEventListener('focus',()=>skySjekkOgHent());
 setInterval(()=>{if(!document.hidden)skySjekkOgHent();},60000);
@@ -809,10 +810,12 @@ function renderSynk(){
   html+='<div class="card"><h2>Tilkobling</h2><div class="muted">'
     +(SKY.token?'Koblet til det private lageret <b>'+esc(SKY.eier)+'/'+SKY_LAGER+'</b> på GitHub.<br>Sist synket: '+(SKY.sistSynk?new Date(SKY.sistSynk).toLocaleString('nb-NO'):'aldri')+'.':'Denne enheten er ikke koblet til ennå.')
     +'</div><div class="btnrow">'+(SKY.token?'<button id="ssynk" class="btn sm">Synk nå</button><button id="sbytt" class="btn sec sm">Bytt nøkkel</button>':'<button id="sbytt" class="btn sm">Koble til</button>')+'</div></div>';
+  html+='<div class="card"><h2>Appversjon</h2><div class="muted"><b>'+versjonTekst()+'</b><br>Samme tall på iPhone og Mac = samme app. Synken ser også etter ny versjon (når du trykker på knappen øverst, og hvert tiende minutt). Finnes det en, lastes appen på nytt av seg selv.</div><div class="btnrow"><button id="sver" class="btn sec sm">Se etter ny versjon nå</button></div></div>';
   html+='<div class="small">Fremgangsbildene synkes ikke. De blir på enheten de er tatt på. En full kopi med alt finner du under Mer → Sikkerhetskopi og data.</div>';
   V.innerHTML=html;bindBack();
   const s=document.getElementById('ssynk');if(s)s.addEventListener('click',async()=>{await synkKnappTrykk();if(state.merPage==='synk')render();});
   document.getElementById('sbytt').addEventListener('click',()=>skyOppsett());
+  document.getElementById('sver').addEventListener('click',async()=>{await lesVersjon();const ny=await sjekkVersjon();if(!ny)toast(swReg?'Du har siste versjon ('+appVersjon+')':'Fikk ikke sjekket versjonen her');if(state.merPage==='synk')render();});
 }
 
 /* ---------- sesongdata ---------- */
@@ -1652,6 +1655,7 @@ function renderKosthold(){
   }else if(d.getDay()===1&&DB.weights[ds]==null&&ds>=SEASON_START){
     html+='<div class="banner warn" style="padding:9px 12px;font-size:.8rem">Mandag = veiedag. <a href="#" data-go="vekt" style="color:inherit;font-weight:700">Registrer mandagsvekten →</a></div>';
   }
+  html+='<div class="btnrow" style="margin:0 0 10px"><button type="button" class="btn sec sm" id="planlegg">Planlegg ukas middager</button></div>';
   html+=tellerHtml(ds);
   html+='<div class="card">';
   FELT.forEach(([k,lab])=>{
@@ -1674,6 +1678,7 @@ function renderKosthold(){
   V.innerHTML=html;
   bindGo();
   bindTeller();
+  const plb=document.getElementById('planlegg');if(plb)plb.addEventListener('click',()=>middagModal());
   V.querySelectorAll('[data-hv]').forEach(b=>b.addEventListener('click',()=>hurtigvalg(b.dataset.hv)));
   V.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{
     const nd=dstr(addD(pd(state.kostDate),+b.dataset.nav));
@@ -1850,7 +1855,9 @@ const SKRIVEFEIL=[
 function feltTekst(m,k){return String((m&&m[k])||'').trim();}
 function harInnhold(t){return !!t.replace(/kl\.\s*\d{1,2}[:.]\d{2}\s*[–-]?\s*/g,'').trim();}
 function tidAv(t){const x=t.match(/kl\.?\s*(\d{1,2})[:.](\d{2})/i);return x?(+x[1])*60+(+x[2]):null;}
-function erBrodmaaltid(t){return BROD_RE.test(t)&&!MIDDAG_TEGN.test(t);}
+/* Kalde kokte poteter ved brødskiva gjør ikke måltidet til middag (avtalt 11.11.2026). */
+const KALDE_POTETER_RE=/kalde?\s+(?:kokte?\s+)?potet(?:er)?|(?:kokte?\s+)?potet(?:er)?\s*\(?\s*kalde?(?![\p{L}])/giu;
+function erBrodmaaltid(t){return BROD_RE.test(t)&&!MIDDAG_TEGN.test(t.replace(KALDE_POTETER_RE,' '));}
 function middagstype(t){
   const ren=t.replace(PAALEGG_FISK_FRASER,' ');
   for(const k of ['fetfisk','hvitfisk','skalldyr','kylling','rodt']){if(finn(MIDDAG_RE[k],ren.toLowerCase()).length)return k;}
@@ -2164,7 +2171,8 @@ function middagModal(ukeDs){
   h+='</div>'+(forMange.length?'<div class="small" style="margin-top:10px;color:var(--bad)"><b>For mange:</b> '+forMange.join(', ')+'.</div>':'')
     +'<div class="small" style="margin-top:10px"><b>Anbefalt rotasjon, gjenstår:</b> '+(rest.length?rest.join(', '):'ingenting')+(u.igjen.rodt>0?' – og inntil '+u.igjen.rodt+' rødt kjøtt':'')+'. '
     +(u.paaleggsuke?'Påleggsuke – fet fisk på brødet erstatter én fet fisk-middag.':u.middagsuke?'Middagsuke – ingen fet fisk på brødet.':'')
-    +'</div><div class="small" style="margin-top:6px">Terje per uke: høyst 2 rødt kjøtt og 2 fet fisk, og aldri mer enn 2 like middager. Gjerne 1 hvit fisk, 1 kylling og 1 skalldyr. Andre dager kan være eggmiddag eller bondeomelett (Annet), eller bare brødmat (Ingen middag). Fet fisk på brødet (inntil 5 skiver) erstatter én fet fisk-middag.</div>';
+    +'</div><div class="small" style="margin-top:6px">Terje per uke: høyst 2 rødt kjøtt og 2 fet fisk, og aldri mer enn 2 like middager. Gjerne 1 hvit fisk, 1 kylling og 1 skalldyr. Andre dager kan være eggmiddag eller bondeomelett (Annet), eller bare brødmat (Ingen middag). Fet fisk på brødet (inntil 5 skiver) erstatter én fet fisk-middag.</div>'
+    +'<div class="small" style="margin-top:6px"><b>Tallerkenen:</b> en håndflate kjøtt, fisk eller kylling (Terje: ca. 120–130 g ferdig), en neve eller to grønnsaker, og resten poteter, pasta eller ris – spis deg mett på dem. Krabbe med brød føres som skalldyrmiddag.</div>';
   openModal(h);
   modalEl.querySelectorAll('[data-uk]').forEach(b=>b.addEventListener('click',()=>middagModal(dstr(addD(mon,+b.dataset.uk)))));
   modalEl.querySelectorAll('[data-mt]').forEach(s=>s.addEventListener('change',()=>{
@@ -2893,7 +2901,7 @@ function renderOm(){
     +'<div class="card"><h2>Nøkkeltall for sesongen</h2><div class="muted">'
     +REPORTS.length+' innleveringer · første trening 18.08.2026 · siste dag 24.06.2027 · 6 egentreningsuker (40, 52, 53, 8, 12, 13) · totalpris kr 44.000.</div></div>'
     +'<div class="card"><h2>Betaling</h2><div class="muted">Totalpris kr 44.000 for sesongen (bindende kontrakt, ingen angrerett/frys iht. kontrakten). Faktura kommer fra <b>noreply@mail.poweroffice.net</b> – sjekk søppelpost. Administrasjonsgebyr kr 60 per faktura. Spørsmål om faktura, betaling og påmeldinger: Kathrine på e-post.</div></div>'
-    +'<div class="small center" style="margin-top:14px">Versjon 4.0 · oktober 2026 · laget for Trond</div>';
+    +'<div class="small center" style="margin-top:14px">'+versjonTekst()+' · laget for Trond</div>';
   bindBack();
 }
 
@@ -3304,6 +3312,23 @@ setInterval(()=>{
   el.textContent=ms<0?'Forfalt':(dd>0?dd+' d '+hh+' t':hh+' t '+mi+' min');
 },30000);
 
+/* Versjon = merket i sw.js (campkalori-<merke>), som publiser.py setter ut fra innholdet i appen. Synken spør også
+   GitHub om det finnes en nyere sw.js; gjør den det, installeres den, og siden lastes på nytt (controllerchange under). */
+let appVersjon='',swReg=null,nyVersjon=false,versjonSjekket=0;
+function lesVersjon(){
+  if(!('caches' in window))return Promise.resolve('');
+  return caches.keys().then(k=>{k=k.filter(n=>/^campkalori-/.test(n));appVersjon=k.length?k[k.length-1].slice(11,18):'';return appVersjon;}).catch(()=>'');
+}
+async function sjekkVersjon(){
+  if(!swReg)return false;
+  versjonSjekket=Date.now();
+  try{await swReg.update();}catch(e){return false;}
+  nyVersjon=!!(swReg.installing||swReg.waiting);
+  if(nyVersjon)toast('Ny versjon av appen – den lastes inn av seg selv');
+  return nyVersjon;
+}
+function versjonTekst(){return (appVersjon?'Versjon '+appVersjon:'Versjon ukjent')+(nyVersjon?' – ny versjon lastes inn …':'');}
+
 /* Ny versjon av appen: nettleseren ser etter ny sw.js når appen åpnes eller hentes fram igjen. Når den nye
    har tatt over, lastes siden på nytt av seg selv – står du og skriver, venter den til du er ferdig. */
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
@@ -3315,6 +3340,7 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
     else last();
   });
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(reg=>{
+    swReg=reg;lesVersjon();
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)reg.update().catch(()=>{});});
   }).catch(()=>{});});
 }
